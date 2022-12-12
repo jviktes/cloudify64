@@ -1,21 +1,21 @@
-import { DEFAULT_TEXTAREA_ROWS } from '../../common/src/inputs/consts';
-import BlueprintIdInputField from '../../common/src/inputs/fields/BlueprintIdInputField' ;// ./fields/BlueprintIdInputField'; '../../common/src/Consts';
-import BooleanInputField from '../../common/src/inputs/fields/BooleanInputField';
-import CapabilityValueInputField from '../../common/src/inputs/fields/CapabilityValueInputField';
-import DeploymentIdInputField from '../../common/src/inputs/fields/DeploymentIdInputField';
-import GenericInputField from '../../common/src/inputs/fields/GenericInputField';
-import NodeInstanceInputField from '../../common/src/inputs/fields/NodeInstanceInputField';
-import NodeTypeInputField from '../../common/src/inputs/fields/NodeTypeInputField';
-import NumberInputField from '../../common/src/inputs/fields/NumberInputField';
-import ScalingGroupInputField from '../../common/src/inputs/fields/ScalingGroupInputField';
-import SecretKeyInputField from '../../common/src/inputs/fields/SecretKeyInputField';
-import StringInputField from '../../common/src/inputs/fields/StringInputField';
-import TextareaInputField from '../../common/src/inputs/fields/TextareaInputField';
-import ValueListInputField from '../../common/src/inputs/fields/ValueListInputField';
-import NodeIdInputField from '../../common/src/inputs/fields/NodeIdInputField';
-import getConstraintValueFunction from  '../../common/src/inputs/utils/getConstraintValueFunction'; //'./utils/getConstraintValueFunction';
+import { DEFAULT_TEXTAREA_ROWS } from '../../../common/src/inputs/consts';
+import BlueprintIdInputField from '../../../common/src/inputs/fields/BlueprintIdInputField' ;// ./fields/BlueprintIdInputField'; '../../common/src/Consts';
+import BooleanInputField from '../../../common/src/inputs/fields/BooleanInputField';
+import CapabilityValueInputField from '../../../common/src/inputs/fields/CapabilityValueInputField';
+import DeploymentIdInputField from '../.././../common/src/inputs/fields/DeploymentIdInputField';
+import GenericInputField from '../../../common/src/inputs/fields/GenericInputField';
+import NodeInstanceInputField from '../../../common/src/inputs/fields/NodeInstanceInputField';
+import NodeTypeInputField from '../../../common/src/inputs/fields/NodeTypeInputField';
+import NumberInputField from '../../../common/src/inputs/fields/NumberInputField';
+import ScalingGroupInputField from '../../../common/src/inputs/fields/ScalingGroupInputField';
+import SecretKeyInputField from '../../../common/src/inputs/fields/SecretKeyInputField';
+import StringInputField from '../../../common/src/inputs/fields/StringInputField';
+import TextareaInputField from '../../../common/src/inputs/fields/TextareaInputField';
+import ValueListInputField from '../../../common/src/inputs/fields/ValueListInputField';
+import NodeIdInputField from '../../../common/src/inputs/fields/NodeIdInputField';
+import getConstraintValueFunction from  '../../../common/src/inputs/utils/getConstraintValueFunction'; //'./utils/getConstraintValueFunction';
 
-import type { Input, OnChange } from '../../common/src/inputs/types';
+import type { Input, OnChange } from '../../../common/src/inputs/types';
 
 function isListComponentInputType(input: Input): boolean {
     return !!(input.item_type && input.type === 'list');

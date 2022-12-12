@@ -1,9 +1,9 @@
 import type { FunctionComponent } from 'react';
-import type { FullBlueprintData } from '../../common/src/blueprints/BlueprintActions';//'../blueprints/BlueprintActions'; //'../blueprints/BlueprintActions';
+import type { FullBlueprintData } from '../../../common/src/blueprints/BlueprintActions';//'../blueprints/BlueprintActions'; //'../blueprints/BlueprintActions';
 // import DataTypesButton from '../../common/src/inputs/DataTypesButton';
 //import InputsHelpIcon from '../../common/src/inputs/InputsHelpIcon';
 import InputFields from './InputFieldsWizard';
-import type { OnChange } from '../../common/src/inputs/types';
+import type { OnChange } from '../../../common/src/inputs/types';
 // import YamlFileButton from '../../common/src/inputs/YamlFileButton';//../inputs/YamlFileButton';
 
 // const t = Stage.Utils.getT('widgets.common.deployments.deployModal');

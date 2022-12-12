@@ -1,7 +1,7 @@
-import Help from  '../../common/src/inputs/InputHelp'; //'./InputHelp';
+import Help from  '../../../common/src/inputs/InputHelp'; //'./InputHelp';
 import InputField from './InputFieldWizard';
 //import getInputFieldInitialValue from '../../common/src/inputs/utils/getInputFieldInitialValue'; //'./utils/getInputFieldInitialValue';
-import type { DataType, Input, OnChange } from '../../common/src/inputs/types'; //'./types';
+import type { DataType, Input, OnChange } from '../../../common/src/inputs/types'; //'./types';
 import { DataTable, Form } from 'cloudify-ui-components';
 import {Icon } from 'semantic-ui-react';
 import { getInputsOrderByCategories } from './wizardUtils';

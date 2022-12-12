@@ -1,12 +1,12 @@
 import type { ComponentProps, FunctionComponent } from 'react';
-import type { BlueprintDeployParams } from '../../../widgets/common/src/blueprints/BlueprintActions';  //'../blueprints/BlueprintActions';
-import type { WorkflowOptions } from '../../../widgets/common/src/deployments/DeploymentActions'; //widgets/deployments/DeploymentActions
+import type { BlueprintDeployParams } from '../../../../widgets/common/src/blueprints/BlueprintActions';  //'../blueprints/BlueprintActions';
+import type { WorkflowOptions } from '../../../../widgets/common/src/deployments/DeploymentActions'; //widgets/deployments/DeploymentActions
 
-import type { WorkflowParameters } from '../../../widgets/common/src/executeWorkflow'; //'../executeWorkflow';
+import type { WorkflowParameters } from '../../../../widgets/common/src/executeWorkflow'; //'../executeWorkflow';
 import GenericDeployModal from './GenericDeployModalWizard';//'../../../widgets/common/src/deployModal/GenericDeployModal';//'./GenericDeployModalWizard'; //'./GenericDeployModal';
-import BlueprintActions from '../../../widgets/common/src/blueprints/BlueprintActions';
-import DeploymentActions from '../../../widgets/common/src/deployments/DeploymentActions';//'../deployments/DeploymentActions';
-import { getErrorObject } from '../../../widgets/common/src/inputs/utils/errors'; //'../inputs/utils/errors';
+import BlueprintActions from '../../../../widgets/common/src/blueprints/BlueprintActions';
+import DeploymentActions from '../../../../widgets/common/src/deployments/DeploymentActions';//'../deployments/DeploymentActions';
+import { getErrorObject } from '../../../../widgets/common/src/inputs/utils/errors'; //'../inputs/utils/errors';
 
 const t = (key: string, options?: Record<string, any>) =>
     Stage.i18n.t(`widgets.common.deployments.deployModal.${key}`, options);

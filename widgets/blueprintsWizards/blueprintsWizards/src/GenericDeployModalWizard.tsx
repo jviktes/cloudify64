@@ -1,33 +1,33 @@
 import { AccordionTitleProps, CheckboxProps } from 'semantic-ui-react';
 import React, { SyntheticEvent } from 'react';
-import FileActions from '../../common/src/actions/FileActions';//'../actions/FileActions';
-import BlueprintActions, { FullBlueprintData } from '../../common/src/blueprints/BlueprintActions';
+import FileActions from '../../../common/src/actions/FileActions';//'../actions/FileActions';
+import BlueprintActions, { FullBlueprintData } from '../../../common/src/blueprints/BlueprintActions';
 //import DynamicDropdown from '../../common/src/components/DynamicDropdown';
-import Consts from '../../common/src/Consts';
+import Consts from '../../../common/src/Consts';
 //import LabelsInput from '../../common/src/labels/LabelsInput';
-import MissingSecretsError from '../../common/src/secrets/MissingSecretsError';
+import MissingSecretsError from '../../../common/src/secrets/MissingSecretsError';
 //import AccordionSectionWithDivider from '../../common/src/components/accordion/AccordionSectionWithDivider';
 //import DeploymentInputs from './DeploymentInputsWizard';
-import DeployModalActions, { Buttons as ApproveButtons } from '../../common/src/deployModal/DeployModalActions';
+import DeployModalActions, { Buttons as ApproveButtons } from '../../../common/src/deployModal/DeployModalActions';
 //import { ExecuteWorkflowInputs, executeWorkflow } from '../../common/src/executeWorkflow';
-import { executeWorkflow } from '../../common/src/executeWorkflow';
+import { executeWorkflow } from '../../../common/src/executeWorkflow';
 import type {
     BaseWorkflowInputs,
     UserWorkflowInputsState,
     Workflow,
     WorkflowParameters,
     WorkflowOptions
-} from '../../common/src/executeWorkflow';
-import type { DropdownValue, Field } from '../../common/src/types';
-import type { BlueprintDeployParams } from '../../common/src/blueprints/BlueprintActions';
+} from '../../../common/src/executeWorkflow';
+import type { DropdownValue, Field } from '../../../common/src/types';
+import type { BlueprintDeployParams } from '../../../common/src/blueprints/BlueprintActions';
 import type { Label } from '.../../../widgets/common/src/labels/types';
-import getInputFieldInitialValue from '../../common/src/inputs/utils/getInputFieldInitialValue';
-import getUpdatedInputs from '../../common/src/inputs/utils/getUpdatedInputs';
-import getInputsMap from '../../common/src/inputs/utils/getInputsMap';
-import getInputsInitialValues from '../../common/src/inputs/utils/getInputsInitialValues';
-import { addErrors } from '../../common/src/inputs/utils/errors';
-import getInputsWithoutValues from '../../common/src/inputs/utils/getInputsWithoutValues';
-import type { FilterRule } from '../../common/src/filters/types';
+import getInputFieldInitialValue from '../../../common/src/inputs/utils/getInputFieldInitialValue';
+import getUpdatedInputs from '../../../common/src/inputs/utils/getUpdatedInputs';
+import getInputsMap from '../../../common/src/inputs/utils/getInputsMap';
+import getInputsInitialValues from '../../../common/src/inputs/utils/getInputsInitialValues';
+import { addErrors } from '../../../common/src/inputs/utils/errors';
+import getInputsWithoutValues from '../../../common/src/inputs/utils/getInputsWithoutValues';
+import type { FilterRule } from '../../../common/src/filters/types';
 
 //import { capitalize, chain, filter, lowerCase, map, sortBy, size } from 'lodash';
 import {sortBy} from 'lodash';
