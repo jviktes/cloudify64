@@ -37,6 +37,6 @@
     "customCssPath": ""
   },
   "widgets": {
-    "allowedModules": ["lodash", "body", "elkjs"]
+    "allowedModules": ["lodash", "body", "elkjs","fs-extra","moment"]
   }
 }
