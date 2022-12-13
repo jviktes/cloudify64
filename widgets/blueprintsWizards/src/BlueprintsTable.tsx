@@ -64,10 +64,10 @@ export default function BlueprintsTable({
                                     <>
                                         <Button
                                         icon="wizard"
-                                        content="Create"
+                                        content="Provision"
                                         basic
                                         labelPosition="left"
-                                        title="Run deployment wizard"
+                                        title="Provision"
                                         onClick={event => {
                                             event.stopPropagation();
                                             onCreateDeploymentWizard(item);
