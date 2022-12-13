@@ -2,7 +2,7 @@ import { DEFAULT_TEXTAREA_ROWS } from '../../common/src/inputs/consts';
 import BlueprintIdInputField from '../../common/src/inputs/fields/BlueprintIdInputField' ;// ./fields/BlueprintIdInputField'; '../../common/src/Consts';
 import BooleanInputField from '../../common/src/inputs/fields/BooleanInputField';
 import CapabilityValueInputField from '../../common/src/inputs/fields/CapabilityValueInputField';
-import DeploymentIdInputField from '../../common/src/inputs/fields/DeploymentIdInputField';
+import DeploymentIdInputField from '.././../common/src/inputs/fields/DeploymentIdInputField';
 import GenericInputField from '../../common/src/inputs/fields/GenericInputField';
 import NodeInstanceInputField from '../../common/src/inputs/fields/NodeInstanceInputField';
 import NodeTypeInputField from '../../common/src/inputs/fields/NodeTypeInputField';

@@ -183,8 +183,8 @@ const stepsDefinition = [
     
     { key: 'GeneralStep', label: 'General', isDone: true, component: EmptyComponent },//1
     { key: 'ClusteringStep', label: 'Availability settings', isDone: false, component: EmptyComponent },//2
-    { key: 'VMConfigStep', label: 'VM configuration', isDone: false, component: EmptyComponent }, //3
-    { key: 'SWConfigStep', label: 'SW configuration', isDone: false, component: EmptyComponent },//4  
+    { key: 'SWConfigStep', label: 'SW configuration', isDone: false, component: EmptyComponent },//3
+    { key: 'VMConfigStep', label: 'VM configuration', isDone: false, component: EmptyComponent }, //4   
     { key: 'GSNStep', label: 'GSN', isDone: false, component: EmptyComponent },//5
     ]
 
