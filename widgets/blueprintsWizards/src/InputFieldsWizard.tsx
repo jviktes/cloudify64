@@ -931,7 +931,7 @@ export default function InputFields({
 
             if (input.name=="service_names") {
                 return (<div>
-                    <DataTable className="agentsGsnCountries table-scroll-gsn">
+                    <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
                     <DataTable.Column label="Service name" name="service_name" width='10%'  />
                     <DataTable.Column label="Service" name="service" width='10%' />
                     <DataTable.Column label="Installed" name="installed" width='10%' />
