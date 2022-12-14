@@ -40,8 +40,36 @@ export default class TestDetails extends React.Component<TestResultProps> {
     // eslint-disable-next-line class-methods-use-this
     renderActualValues(itemData) {
         // replacing \\n --> <br>
-        const content = itemData?.actual_value?.replace(/\\n/g, '<br>');
-        return <div dangerouslySetInnerHTML={{ __html: content }} />;
+        try {
+            const content = itemData?.actual_value?.replace(/\\n/g, '<br>');
+            return <div dangerouslySetInnerHTML={{ __html: content }} />;
+        } catch (error) {
+            try {
+                const content = JSON.stringify(itemData?.actual_value);
+                return <div dangerouslySetInnerHTML={{ __html: content }} />;
+            } catch (error) {
+                const content = "Bad data format!";
+                return <div dangerouslySetInnerHTML={{ __html: content }} />;
+            }
+
+
+        }
+    }
+
+    renderExpectedValues(itemData) {
+        // replacing \\n --> <br>
+        try {
+            const content = itemData?.expected_value?.replace(/\\n/g, '<br>');
+            return <div dangerouslySetInnerHTML={{ __html: content }} />;
+        } catch (error) {
+            try {
+                const content = JSON.stringify(itemData?.expected_value);
+                return <div dangerouslySetInnerHTML={{ __html: content }} />;
+            } catch (error) {
+                const content = "Bad data format!";
+                return <div dangerouslySetInnerHTML={{ __html: content }} />;
+            }
+        }
     }
 
     render() {
@@ -67,7 +95,7 @@ export default class TestDetails extends React.Component<TestResultProps> {
                             <DataTable.Data>{this.renderTestResult(item)}</DataTable.Data>
                             <DataTable.Data>{item.description}</DataTable.Data>
                             <DataTable.Data>{this.renderActualValues(item)}</DataTable.Data>
-                            <DataTable.Data>{item.expected_value}</DataTable.Data>
+                            <DataTable.Data>{this.renderExpectedValues(item)}</DataTable.Data>
                         </DataTable.Row>
                     ))}
                 </DataTable>

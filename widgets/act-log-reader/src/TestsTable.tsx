@@ -83,8 +83,9 @@ export default class TestsTable extends React.Component<TestDataProps> {
                     <DataTable.Column label="Test class" name="class" width="10%" />
                     <DataTable.Column label="Result" name="result" width="10%" />
                     <DataTable.Column label="Passed" name="passed" width="5%" />
+                    <DataTable.Column label="Warnings" name="warnings" width="6%" />
                     <DataTable.Column label="Failed" name="failed" width="5%" />
-                    <DataTable.Column label="File name" name="fileName" width="35%" />
+                    <DataTable.Column label="File name" name="fileName" width="29%" />
                     {_.map(data.items, item => (
                         <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row
@@ -102,10 +103,13 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                 <DataTable.Data style={{ width: '5%' }}>
                                     <span style={{ color: 'green' }}>{item.passedTestsCount}</span>
                                 </DataTable.Data>
+                                <DataTable.Data style={{ width: '6%' }}>
+                                    <span style={{ color: 'orange' }}>{item.warningTestsCount}</span>
+                                </DataTable.Data>
                                 <DataTable.Data style={{ width: '5%' }}>
                                     <span style={{ color: 'red' }}>{item.failedTestsCount}</span>
                                 </DataTable.Data>
-                                <DataTable.Data style={{ width: '35%' }}>{item.fileName}</DataTable.Data>
+                                <DataTable.Data style={{ width: '29%' }}>{item.fileName}</DataTable.Data>
                             </DataTable.Row>
 
                             <DataTable.Row
