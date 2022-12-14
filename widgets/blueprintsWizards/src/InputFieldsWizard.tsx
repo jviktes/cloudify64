@@ -431,6 +431,30 @@ function DataDiskTable({
         { text: 'ReadOnly', name: 'ReadOnly', value: 'ReadOnly' },
         { text: 'ReadWrite', name: 'ReadWrite', value: 'ReadWrite' },]
 
+    const LetterDiskWindows =    
+    [
+        { text: 'G', name: 'G', value: 'G' },
+        { text: 'H', name: 'H', value: 'H' },
+        { text: 'I', name: 'I', value: 'I' },
+        { text: 'J', name: 'J', value: 'J' },
+        { text: 'K', name: 'K', value: 'K' },
+        { text: 'L', name: 'L', value: 'L' },
+        { text: 'M', name: 'M', value: 'M' },
+        { text: 'N', name: 'N', value: 'N' },
+        { text: 'O', name: 'O', value: 'O' },
+        { text: 'P', name: 'P', value: 'P' },
+        { text: 'Q', name: 'Q', value: 'Q' },
+        { text: 'R', name: 'R', value: 'R' },
+        { text: 'S', name: 'S', value: 'S' },
+        { text: 'T', name: 'T', value: 'T' },
+        { text: 'U', name: 'U', value: 'U' },
+        { text: 'V', name: 'V', value: 'V' },
+        { text: 'W', name: 'W', value: 'W' },
+        { text: 'X', name: 'X', value: 'X' },
+        { text: 'Y', name: 'Y', value: 'Y' },
+        { text: 'Z', name: 'Z', value: 'Z' },
+    ]
+
     const getDiskLabelValue = (_valueLabel: any) => {
         try {
             return _valueLabel[0];
@@ -456,6 +480,13 @@ function DataDiskTable({
     }
 
     const getDiskMountpointValueToBlueprintFormat = (_value: string) => {
+        //"mountpoint": [{"path": "/web"}],
+        var _obj = [];
+        _obj.push({"path":_value});
+        return _obj;
+    }
+
+    const getDiskMountpointValueToBlueprintFormatAny = (_value: any) => {
         //"mountpoint": [{"path": "/web"}],
         var _obj = [];
         _obj.push({"path":_value});
@@ -515,12 +546,16 @@ function DataDiskTable({
 
     const getOperationtype = () => {
         console.log(osInfo);
-        if (osInfo=="Windows") {
+
+        if (osInfo==undefined ||  osInfo.default==undefined) {return null;}
+
+        if (osInfo.default.toLowerCase()=="windows") {
             return "windows";
         }
         else {
             return "";
         }
+
     }
     const isRequiredDisk = (item:any) => {
         //console.log(item);
@@ -531,13 +566,47 @@ function DataDiskTable({
             return false;
         }
     }
+
+    const htmlRenderMountPoint=(item:any)=> {
+        if (getOperationtype()=="windows") {
+
+            return (<Form.Dropdown
+                name="mount_point"
+                selection
+                options={LetterDiskWindows}
+                value={getDiskMountingPointValue(item.mountpoint)}
+                disabled={isRequiredDisk(item)}
+                onChange={(e, { value}) => onItemChange(e.target,item,"mountpoint",getDiskMountpointValueToBlueprintFormatAny(value?.toString()))}
+            />)
+        }
+        else {
+            return (<Form.Input
+                name="mount_point"
+                placeholder={'Mount point'}
+                value={getDiskMountingPointValue(item.mountpoint)}
+                disabled={isRequiredDisk(item)}
+                onChange={(e, { value }) => onItemChange(e.target,item,"mountpoint",getDiskMountpointValueToBlueprintFormat(value))}
+            />)
+        }
+    }
+
+    const getTableLabelForMountPoint = () => {
+        if (getOperationtype()=="windows"){
+            return ("Disk letter");    
+        }
+        else {
+            return ("Mount point");    
+        }
+
+    }
+
     return (
             <div>
                 <DataTable className="agentsGsnCountries table-scroll-gsn">
                             <DataTable.Column label="Disk type" name="disk_type" width='10%'  />
                             <DataTable.Column label="Disk size" name="disk_size" width='10%' />
                             <DataTable.Column label="Host caching" name="host_caching" width='10%' />
-                            <DataTable.Column label="Mount point" name="mount_point" width='30%'/>
+                            <DataTable.Column label={getTableLabelForMountPoint()} name="mount_point" width='30%'/>
                             <DataTable.Column label="Disk label" name="disk_label"  width='35%'/>
                             <DataTable.Column label="" name=""  width='5%'/>
                     {_.map(inputStates, item => (
@@ -573,13 +642,7 @@ function DataDiskTable({
                                 {htmlRenderEmptyErrorState(item.error,'51px')}
                              </DataTable.Data>
                              <DataTable.Data style={{ width: '30%' }}>
-                                <Form.Input
-                                        name="mount_point"
-                                        placeholder={'Mount point'}
-                                        value={getDiskMountingPointValue(item.mountpoint)}
-                                        disabled={isRequiredDisk(item)}
-                                        onChange={(e, { value }) => onItemChange(e.target,item,"mountpoint",getDiskMountpointValueToBlueprintFormat(value))}
-                                />
+                                {htmlRenderMountPoint(item)}
                                 {htmlRenderEmptyErrorState(item.error,'40px')}
                              </DataTable.Data>
                              <DataTable.Data style={{ width: '30%' }}>
@@ -611,7 +674,7 @@ function DataDiskTable({
                     ))}
                 </DataTable>
                          {htmlRenderAddButton(inputStates,GetDiskCountLimit())}
-                         <div>Max data disks: {GetDiskCountLimit()}, OS: {getOperationtype()}</div>
+                         <div>Max data disks: {GetDiskCountLimit()}</div>
             </div>
         );
 }
