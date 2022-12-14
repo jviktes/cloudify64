@@ -26,9 +26,10 @@ export default function SWConfigStep(this: any, { toolbox, blueprint, index,titl
     const category = "swconfig";
 
     const orderedInputsWithoutValues=getDeploymentInputsByCategories(deploymentInputs,category);
-    //console.log(orderedInputsWithoutValues);
+    console.log(orderedInputsWithoutValues);
+
     //only for demo!
-    if (!orderedInputsWithoutValues) {
+    if (orderedInputsWithoutValues) {
         return (<div style={{overflow: "visible",padding:"10px"}}>
         <DeploymentInputs
             toolbox={toolbox}

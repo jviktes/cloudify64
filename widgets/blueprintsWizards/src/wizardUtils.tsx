@@ -59,8 +59,8 @@ export default function getDeploymentInputsByCategories( _deploymentInputs: Reco
         }
 
         if (category=="swconfig") {
-            if (inputName=="sw_apps") {
-                inputsWithoutValues[inputName] = _deploymentInputs["sw_apps"];
+            if (inputName=="service_names") {
+                inputsWithoutValues[inputName] = _deploymentInputs["service_names"];
             }
         }
 
@@ -91,8 +91,8 @@ export default function getDeploymentInputsByCategories( _deploymentInputs: Reco
 const generalOrder = ["product_name", "quantity","environment","location", "network_segment"];
 const clusteringOrder = ["ha_concept","availability_zone","availability_set"];
 const vmconfigOrder = ["vm_size","os_disk_type","disk_size","data_disks"];
-const swconfigOrder = ["sw_apps"];
-const gsnOrder = ["business_unit","impact","impacted_region","impacted_country","business_service"];
+const swconfigOrder = ["service_names"];
+const gsnOrder = ["business_unit","impact","impacted_region","impacted_country","business_service","os_type"];
 
 export function getInputsOrderByCategories (_inputs: Record<string, any>) {
 

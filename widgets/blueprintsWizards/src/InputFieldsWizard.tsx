@@ -311,11 +311,13 @@ function RegionSelectField({
 function DataDiskTable({
     //diskData,
     vmInfo,
+    osInfo,
     toolbox,
     inputStates,
 }: {
     diskData: any;
     vmInfo:any;
+    osInfo:any;
     toolbox: Stage.Types.Toolbox;
     inputStates:any;
 }) {
@@ -360,7 +362,6 @@ function DataDiskTable({
         else {
             _changedDataDisk[0].error = "";
         }
-
     }
 
     const RemoveDisk=(_item: any)=> {
@@ -511,6 +512,25 @@ function DataDiskTable({
             return <p style={{ color: 'red', height:margin}}></p>
         }
     }
+
+    const getOperationtype = () => {
+        console.log(osInfo);
+        if (osInfo=="Windows") {
+            return "windows";
+        }
+        else {
+            return "";
+        }
+    }
+    const isRequiredDisk = (item:any) => {
+        //console.log(item);
+        if (item.required!=null) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
     return (
             <div>
                 <DataTable className="agentsGsnCountries table-scroll-gsn">
@@ -557,6 +577,7 @@ function DataDiskTable({
                                         name="mount_point"
                                         placeholder={'Mount point'}
                                         value={getDiskMountingPointValue(item.mountpoint)}
+                                        disabled={isRequiredDisk(item)}
                                         onChange={(e, { value }) => onItemChange(e.target,item,"mountpoint",getDiskMountpointValueToBlueprintFormat(value))}
                                 />
                                 {htmlRenderEmptyErrorState(item.error,'40px')}
@@ -565,6 +586,7 @@ function DataDiskTable({
                                 <Form.Input
                                         name="label"
                                         placeholder={'Disk label'}
+                                        disabled={isRequiredDisk(item)}
                                         value={getDiskLabelValue(item.label)}
                                         onChange={(e, { value }) => onItemChange(e.target,item,"label",getDiskLabelValueToBlueprintFormat(value))}
                                 />
@@ -577,6 +599,7 @@ function DataDiskTable({
                                     link
                                     color='red'
                                     bordered
+                                    disabled={isRequiredDisk(item)}
                                     title="Delete data disk"
                                     onClick={(event: Event) => {
                                         event.stopPropagation();
@@ -588,7 +611,7 @@ function DataDiskTable({
                     ))}
                 </DataTable>
                          {htmlRenderAddButton(inputStates,GetDiskCountLimit())}
-                         <div>Max data disks: {GetDiskCountLimit()}</div>
+                         <div>Max data disks: {GetDiskCountLimit()}, OS: {getOperationtype()}</div>
             </div>
         );
 }
@@ -631,7 +654,7 @@ export default function InputFields({
     inputs = getInputsOrderByCategories(inputs);
     const getQuantity = ()=> {
         let _quantity  = allDeploymentInputs["quantity"];
-        console.log(_quantity);
+        //console.log(_quantity);
         return _quantity;
     };
 
@@ -700,7 +723,7 @@ export default function InputFields({
                         { text: '2', name: '2', value: '2 ' },
                         { text: '3', name: '2', value: '3 ' },
                     ]
-                    console.log("quantity");
+                    //console.log("quantity");
                     let _quantity= getQuantity();
 
                     if (_quantity==1) {
@@ -810,10 +833,10 @@ export default function InputFields({
             }
 
             if (input.name=="data_disks") {
-                console.log("data_disks");
+                //console.log("data_disks");
                 return <div className="field">
                     <label style={{ display: "inline-block" }}>{input.display_label}</label>
-                        <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])}></DataDiskTable>
+                        <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])}></DataDiskTable>
                 </div>
             }
             
@@ -861,8 +884,8 @@ export default function InputFields({
             }
 
             if (input.name=="location") {
-                console.log("location");
-                console.log(input);
+                //console.log("location");
+                //console.log(input);
 
                 let _locationOptions = [];
 
@@ -904,6 +927,35 @@ export default function InputFields({
                 </div>
 
                 )
+            }
+
+            if (input.name=="service_names") {
+                return (<div>
+                    <DataTable className="agentsGsnCountries table-scroll-gsn">
+                    <DataTable.Column label="Service name" name="service_name" width='10%'  />
+                    <DataTable.Column label="Service" name="service" width='10%' />
+                    <DataTable.Column label="Installed" name="installed" width='10%' />
+
+                    {_.map(JSON.parse(inputsState[input.name]), item => (
+                            <DataTable.Row key={JSON.stringify(item.key)} >
+                                <DataTable.Data style={{ width: '10%' }}>{item.service_name}
+                                </DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{item.service}
+                                </DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>
+                                    
+                                    <Form.Field> 
+                                    <Form.Input
+                                        type="Checkbox"
+                                        checked
+                                        />
+                                    </Form.Field> 
+
+                                </DataTable.Data>
+                            </DataTable.Row>
+                    ))}
+                    </DataTable>
+                </div>)
             }
 
             //all normal input fieds:
