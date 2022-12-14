@@ -16,9 +16,13 @@ module.exports = async function(r) {
     const _searchParam = lodash.castArray(params._search)[0];
     const _sizeParam = lodash.castArray(params._size)[0];
     const _tenantName =  lodash.castArray(params.tenant)[0];   
+
+    console.log(_tenantName);
     //<archive-root-folder>\<tentant-ID> 
-    const folder = '/opt/manager/resources/archive/'+_tenantName +'/';  
+    const folder = '/opt/manager/resources/archive/'+_tenantName +'/'; 
     
+    // const folder = '/Users/romansebranek/DHL/testFolder/resources/archive';  //localhost: default_tenant
+
     //TODO tady nějaka authorizace:
     //const _actualTenant = helper.Manager.getSelectedTenant();
     //console.log("Actual tenant: "+_actualTenant);
@@ -60,6 +64,7 @@ module.exports = async function(r) {
             let _code = [];
             let _testResultArray = [];
             let _passedTestsCount = 0;
+            let _warningTestsCount = 0;
             let _failedTestsCount = 0;
             let _testResultSummary = [];
 
@@ -81,6 +86,9 @@ module.exports = async function(r) {
 	                    if (_testData.result.toString().toLowerCase() && _testData.result.toString().toLowerCase().indexOf("failed")!== -1) {
 	                        _failedTestsCount++;
 	                    }
+                        if (_testData.result.toString().toLowerCase() && _testData.result.toString().toLowerCase().indexOf("warning")!== -1) {
+	                        _warningTestsCount++;
+                        }
 	
 	                    _testResultArray.push(
 	                        {
@@ -128,6 +136,7 @@ module.exports = async function(r) {
                 "deployment_id":value.deployment_id,
                 "deployment_name":value.deployment_name, 
                 "passedTestsCount" : _passedTestsCount,
+                "warningTestsCount" : _warningTestsCount,
                 "failedTestsCount": _failedTestsCount,
                 "testResultSummary": _testResultSummary,
                 "testResultArray":_testResultArray,
