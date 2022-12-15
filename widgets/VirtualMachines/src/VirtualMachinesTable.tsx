@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import type { Tests } from './types';
 import TestsPropType from './props/TestsPropType';
+import { Button } from 'semantic-ui-react';
 import { identity } from 'lodash';
 //import TestDetails from './TestDetails';
 
@@ -15,6 +16,7 @@ interface VirtualMachinesDataProps {
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
 }
+
 // eslint-disable-next-line react/prefer-stateless-function
 export default class VirtualMachinesTable extends React.Component<VirtualMachinesDataProps> {
     // static propTypes: any;
@@ -28,9 +30,18 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return toolbox.refresh(fetchParams);
     };
 
-    refreshData() {
+    // refreshData() {
+    //     const { toolbox } = this.props;
+    //     toolbox.refresh();
+    // }
+
+    //melo by odfiltrovat a zobrazit jen jeden radek:
+    getParrent=(filteredId:any)=> {
         const { toolbox } = this.props;
-        toolbox.refresh();
+        console.log("GetParrent for:"+filteredId);
+        const params = {deployment_id: filteredId };
+        var res = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+        console.log("GetParrent resuts:"+JSON.stringify(res));
     }
 
     render() {
@@ -40,11 +51,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
-        // console.log(data);
+        console.log(data);
 
         return (
             <div>
                 <span>Current tenant: {tenantName}</span>
+                <span>Version widget:{widget.definition.version}</span>
                 <DataTable
                     className="agentsTable table-scroll"
                     fetchData={this.fetchGridData}
@@ -52,31 +64,36 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     sortAscending={widget.configuration.sortAscending}
                     searchable
                 >
-                    <DataTable.Column label="Test date" name="testDatum" width="10%" />
-                    <DataTable.Column label="Virtual machine" name="virtualMachine" width="25%" />
-                    <DataTable.Column label="Test class" name="class" width="10%" />
-                    <DataTable.Column label="Result" name="result" width="10%" />
-                    <DataTable.Column label="Passed" name="passed" width="5%" />
-                    <DataTable.Column label="Failed" name="failed" width="5%" />
-                    <DataTable.Column label="File name" name="fileName" width="35%" />
+                    <DataTable.Column label="Id" name="id" width="10%" />
+                    <DataTable.Column label="Labels" name="labels" width="25%" />
+                    <DataTable.Column label="Blueprint name" name="blueprint_id" name="class" width="10%" />
+                    {/* <DataTable.Column label="Type" name="type" width="25%" /> */}
+                    
+
+                    <DataTable.Column label="Actions" name="actions" name="class" width="10%" />
                     {_.map(data.items, item => (                   
                             <DataTable.Row
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
                             >
-                                <DataTable.Data style={{ width: '10%' }}>{item.testDatum}</DataTable.Data>
-                                <DataTable.Data style={{ width: '25%' }}>{item.virtualMachine}</DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{item.class}</DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{item.id}</DataTable.Data>
+                                <DataTable.Data style={{ width: '25%' }}>{JSON.stringify(item.labels)}</DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{item.blueprint_id}</DataTable.Data>
+                                {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
                                 <DataTable.Data style={{ width: '10%' }}>
-                                    {item.testResultSummary}
+
+                                    <Button
+                                        icon="wizard"
+                                        content="Get parrent"
+                                        basic
+                                        labelPosition="left"
+                                        title="Get parrent"
+                                                onClick={(event: Event) => {
+                                                    event.stopPropagation();
+                                                    this.getParrent(item.id);
+                                         } } />
+
                                 </DataTable.Data>
-                                <DataTable.Data style={{ width: '5%' }}>
-                                    <span style={{ color: 'green' }}>{item.passedTestsCount}</span>
-                                </DataTable.Data>
-                                <DataTable.Data style={{ width: '5%' }}>
-                                    <span style={{ color: 'red' }}>{item.failedTestsCount}</span>
-                                </DataTable.Data>
-                                <DataTable.Data style={{ width: '35%' }}>{item.fileName}</DataTable.Data>
                             </DataTable.Row>
                     ))}
                 </DataTable>

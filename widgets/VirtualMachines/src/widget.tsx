@@ -14,6 +14,7 @@ Stage.defineWidget({
     isReact: true,
     hasReadme: true,
     hasStyle:true,
+    version:"0.1",
     categories: [Stage.GenericConfig.CATEGORY.OTHERS],
     permission: Stage.GenericConfig.CUSTOM_WIDGET_PERMISSIONS.CUSTOM_ALL,
     // initialConfiguration: [
@@ -32,6 +33,7 @@ Stage.defineWidget({
             items: data
         };
         console.log(formattedData);
+        console.log(widget.definition.version)
         return <VirtualMachinesTable widget={widget} data={formattedData} toolbox={toolbox} />;
     }
 });

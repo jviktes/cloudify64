@@ -264,15 +264,15 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
             cookie: headers.cookie
         }
     };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
     let spireDeployments = [];
 
-    return helper.Manager.doPost('/deployments', {
+    return helper.Manager.doGet('/deployments', {
         params: {
-            _include: 'id,workflows,capabilities,description,latest_execution,labels',
-            description:
-                'This blueprint creates several VMs, installs a Manager on each of them, ' +
-                'creates a Spire Management Cluster between all the managers and uploads ' +
-                'several auxiliary resources to the cluster.\n'
+            _include: 'id,labels'
+            
         },
         ...commonManagerRequestOptions
     })
