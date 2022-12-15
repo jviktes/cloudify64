@@ -267,20 +267,38 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     // parsing parametres:
     const params = { ...req.query };
     console.log(params);
-    let _searchParam = params.deployment_id;
+    let _searchParam = params._search;
     let spireDeployments = [];
 
     return helper.Manager.doGet('/deployments', {
         params: {
             _include: 'id,labels,blueprint_id',
-            _search:_searchParam
+            //_search:_searchParam
         },
         ...commonManagerRequestOptions
     })
         .then(data => {
             console.log('get_vm_deployments results:');
-            console.log(data);
-            spireDeployments = data.items;
+            //OK cconsole.log("data:");
+            //OK cconsole.log(data);
+            //spireDeployments = data.items;
+            //OK console.log(data.metadata.pagination.total);
+
+            data.items.forEach(element => {
+                //console.log(element);
+                spireDeployments.push(element);
+            });
+
+            if (_searchParam!=undefined) {
+                console.log("spireDeployments search:");
+                console.log(spireDeployments[1]);
+                
+                //spireDeployments = spireDeployments[1];
+                let spireDeploymentsFiltered = [];
+                spireDeploymentsFiltered.push(spireDeployments[1]);
+                return Promise.all(spireDeploymentsFiltered);
+
+            }
             //console.log(spireDeployments);
             return Promise.all(spireDeployments);
         })

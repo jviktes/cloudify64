@@ -26,22 +26,27 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     fetchGridData = fetchParams => {
+        console.log("fetchGridData:"+JSON.stringify(fetchParams));
         const { toolbox } = this.props;
         return toolbox.refresh(fetchParams);
     };
 
-    // refreshData() {
-    //     const { toolbox } = this.props;
-    //     toolbox.refresh();
-    // }
+    refreshData() {
+        const { toolbox } = this.props;
+        toolbox.refresh();
+    }
 
     //melo by odfiltrovat a zobrazit jen jeden radek:
     getParrent=(filteredId:any)=> {
         const { toolbox } = this.props;
         console.log("GetParrent for:"+filteredId);
         const params = {deployment_id: filteredId };
+
+
+
         var res = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
         console.log("GetParrent resuts:"+JSON.stringify(res));
+        //this.props.data = res;
     }
 
     render() {
@@ -69,7 +74,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Blueprint name" name="blueprint_id" name="class" width="10%" />
                     {/* <DataTable.Column label="Type" name="type" width="25%" /> */}
                     
-
                     <DataTable.Column label="Actions" name="actions" name="class" width="10%" />
                     {_.map(data.items, item => (                   
                             <DataTable.Row
