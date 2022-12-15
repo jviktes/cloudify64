@@ -267,12 +267,13 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     // parsing parametres:
     const params = { ...req.query };
     console.log(params);
+    let _searchParam = params.deployment_id;
     let spireDeployments = [];
 
     return helper.Manager.doGet('/deployments', {
         params: {
-            _include: 'id,labels'
-            
+            _include: 'id,labels,blueprint_id',
+            _search:_searchParam
         },
         ...commonManagerRequestOptions
     })

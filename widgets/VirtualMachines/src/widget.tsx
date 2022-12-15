@@ -32,8 +32,8 @@ Stage.defineWidget({
         const formattedData = {
             items: data
         };
-        console.log(formattedData);
-        console.log(widget.definition.version)
+        //console.log(formattedData);
+        //console.log(widget.definition.version)
         return <VirtualMachinesTable widget={widget} data={formattedData} toolbox={toolbox} />;
     }
 });

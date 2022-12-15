@@ -51,7 +51,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
-        console.log(data);
+        //console.log(data);
 
         return (
             <div>
