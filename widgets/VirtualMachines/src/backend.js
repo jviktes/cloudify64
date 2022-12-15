@@ -272,41 +272,51 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 
     let spireDeployments = [];
 
+    if (_filteredDeploymentParentId!=undefined) 
+    {
+        console.log("spireDeployments search:");
+        _searchParam = _filteredDeploymentParentId;
+    }
     return helper.Manager.doGet('/deployments', {
         params: {
-            _include: 'id,labels,blueprint_id',
-            //_search:_searchParam
+            _include: 'id,labels,blueprint_id,tenant_name,environment_type',
+            _search:_searchParam
         },
         ...commonManagerRequestOptions
     })
         .then(data => {
             console.log('get_vm_deployments results:');
-            //OK cconsole.log("data:");
-            //OK cconsole.log(data);
+            console.log("data:");
+            console.log(data);
             //spireDeployments = data.items;
             //OK console.log(data.metadata.pagination.total);
+
+
+            //[{"key":"csys-obj-type","value":"environment", 
 
             data.items.forEach(element => {
                 //console.log(element);
                 spireDeployments.push(element);
             });
 
-            if (_filteredDeploymentParentId!=undefined) {
-                console.log("spireDeployments search:");
+            //odfiltrovani podle id:
+            // if (_filteredDeploymentParentId!=undefined) {
+            //     console.log("spireDeployments search:");
                 
-                //spireDeployments = spireDeployments[1];
-                let spireDeploymentsFiltered = [];
+            //     //spireDeployments = spireDeployments[1];
+            //     let spireDeploymentsFiltered = [];
 
-                data.items.forEach(element => {
-                    //console.log(element);
-                    if (element.id==_filteredDeploymentParentId) {
-                        spireDeploymentsFiltered.push(element);
-                    }
-                });
+            //     data.items.forEach(element => {
+            //         //console.log(element);
+            //         if (element.id==_filteredDeploymentParentId) {
+            //             spireDeploymentsFiltered.push(element);
+            //         }
+            //     });
 
-                return Promise.all(spireDeploymentsFiltered);
+            //     return Promise.all(spireDeploymentsFiltered);
 
-            }
+            // }
+
             //console.log(spireDeployments);
             return Promise.all(spireDeployments);
         })
