@@ -26,27 +26,29 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     fetchGridData = fetchParams => {
-        console.log("fetchGridData:"+JSON.stringify(fetchParams));
+        console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
+        //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
         const { toolbox } = this.props;
+        // fetchParams._search="pokus";
+        // fetchParams.pageSize =20;
+        // fetchParams.ii = "pica";
+        // console.log("fetchGridData changed:"+JSON.stringify(fetchParams)); 
         return toolbox.refresh(fetchParams);
     };
-
-    refreshData() {
-        const { toolbox } = this.props;
-        toolbox.refresh();
-    }
+    // fetchParams=(widget, toolbox)=> {
+    //     console.log("VirtualMachinesTable fetchParams...");
+    //     let deploymentId = "777";
+    //     return {deployment_id: deploymentId};
+    // };
 
     //melo by odfiltrovat a zobrazit jen jeden radek:
-    getParrent=(filteredId:any)=> {
+    getParrent=(filteredDeploymentParentId:any)=> {
         const { toolbox } = this.props;
-        console.log("GetParrent for:"+filteredId);
-        const params = {deployment_id: filteredId };
-
-
-
-        var res = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
-        console.log("GetParrent resuts:"+JSON.stringify(res));
-        //this.props.data = res;
+        const { widget } = this.props;
+        console.log("GetParrent for:"+filteredDeploymentParentId);
+        //const params = {deploymentId: filteredId };
+        //this.fetchGridData(params);
+        toolbox.getContext().setValue('filteredDeploymentParentId', filteredDeploymentParentId);
     }
 
     render() {
@@ -67,8 +69,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     fetchData={this.fetchGridData}
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
+                    deploymentId
                     searchable
                 >
+
                     <DataTable.Column label="Id" name="id" width="10%" />
                     <DataTable.Column label="Labels" name="labels" width="25%" />
                     <DataTable.Column label="Blueprint name" name="blueprint_id" name="class" width="10%" />

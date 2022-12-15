@@ -22,10 +22,21 @@ Stage.defineWidget({
     //     Stage.GenericConfig.SORT_ASCENDING_CONFIG(false),
     // ],
     fetchData(widget, toolbox,params) {
+        console.log("fetchData");
+
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
+        
         params.tenant = tenantName;
+        console.log("params");
+        console.log(params);
         return toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+    },
+
+    fetchParams: function(widget, toolbox) {
+        console.log("widget fetchParams...");
+        let _filteredDeploymentParentId= toolbox.getContext().getValue('filteredDeploymentParentId');
+        return {filteredDeploymentParentId:_filteredDeploymentParentId};
     },
 
     render(widget, data, error, toolbox) {

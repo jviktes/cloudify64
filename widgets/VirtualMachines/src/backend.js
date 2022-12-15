@@ -268,6 +268,8 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     const params = { ...req.query };
     console.log(params);
     let _searchParam = params._search;
+    let _filteredDeploymentParentId = params.filteredDeploymentParentId;
+
     let spireDeployments = [];
 
     return helper.Manager.doGet('/deployments', {
@@ -289,13 +291,19 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
                 spireDeployments.push(element);
             });
 
-            if (_searchParam!=undefined) {
+            if (_filteredDeploymentParentId!=undefined) {
                 console.log("spireDeployments search:");
-                console.log(spireDeployments[1]);
                 
                 //spireDeployments = spireDeployments[1];
                 let spireDeploymentsFiltered = [];
-                spireDeploymentsFiltered.push(spireDeployments[1]);
+
+                data.items.forEach(element => {
+                    //console.log(element);
+                    if (element.id==_filteredDeploymentParentId) {
+                        spireDeploymentsFiltered.push(element);
+                    }
+                });
+
                 return Promise.all(spireDeploymentsFiltered);
 
             }
