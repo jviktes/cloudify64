@@ -1,5 +1,5 @@
 // @ts-nocheck File not migrated fully to TS
-import PropTypes from 'prop-types';
+import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
 import TestsPropType from './props/TestsPropType';
 import { Button } from 'semantic-ui-react';
@@ -29,10 +29,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
         //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
         const { toolbox } = this.props;
-        // fetchParams._search="pokus";
-        // fetchParams.pageSize =20;
-        // fetchParams.ii = "pica";
-        // console.log("fetchGridData changed:"+JSON.stringify(fetchParams)); 
         return toolbox.refresh(fetchParams);
     };
     // fetchParams=(widget, toolbox)=> {
@@ -49,6 +45,57 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //const params = {deploymentId: filteredId };
         //this.fetchGridData(params);
         toolbox.getContext().setValue('filteredDeploymentParentId', filteredDeploymentParentId);
+    }
+
+    isItForParrentButton=(item:any)=> {
+
+        if (item.labels==undefined || item.labels==null  || item.labels==[]) {
+            return 0;
+        }
+        //{"key":"csys-obj-type","value":"environment"
+        for (const key in item.labels) {
+            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
+                const _label = item.labels[key];
+                if (_label.key == "csys-obj-parent") {
+                    return _label.value;
+                }
+            }
+        }
+        return 0;
+    }
+
+    renderHtmlParrentButton=(item:any)=> {
+        //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
+        
+        let parrentId = this.isItForParrentButton(item);
+        
+
+        if (parrentId!=0) {
+
+            return (<Button
+                icon="wizard"
+                content="Get parrent"
+                basic
+                labelPosition="left"
+                title="Get parrent"
+                        onClick={(event: Event) => {
+                            event.stopPropagation();
+                            this.getParrent(parrentId);
+                 } } />)
+        }
+        else {
+            return (<Button
+                icon="wizard"
+                content="No parrent"
+                basic
+                labelPosition="left"
+                title="No parrent"
+                        onClick={(event: Event) => {
+                            event.stopPropagation();
+                            this.getParrent(item.id);
+                 }}/>)
+        }
+
     }
 
     render() {
@@ -90,16 +137,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
                                 <DataTable.Data style={{ width: '10%' }}>
 
-                                    <Button
-                                        icon="wizard"
-                                        content="Get parrent"
-                                        basic
-                                        labelPosition="left"
-                                        title="Get parrent"
-                                                onClick={(event: Event) => {
-                                                    event.stopPropagation();
-                                                    this.getParrent(item.id);
-                                         } } />
+                                    {this.renderHtmlParrentButton(item)}
+
 
                                 </DataTable.Data>
                             </DataTable.Row>
