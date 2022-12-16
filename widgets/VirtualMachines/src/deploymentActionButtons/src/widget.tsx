@@ -74,7 +74,6 @@ Stage.defineWidget<WidgetParams, WidgetData, WidgetConfiguration>({
 });
 
 const getDeploymentIdFromContext = (toolbox: Stage.Types.Toolbox) => {
-    //VIK: zde se nacte deploymentid
     const deploymentId = toolbox.getContext().getValue('deploymentId');
     // Deployment Actions Buttons widget does not support multiple actions, thus picking only one deploymentId
     const firstDeploymentId = castArray(deploymentId)[0] as WidgetParams['id'];

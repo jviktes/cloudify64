@@ -24,6 +24,7 @@ export const isTopLevelPage = (drilldownContext: Stage.Types.ReduxState['drilldo
     drilldownContext.length < 2;
 export const getParentPageContext = (drilldownContext: Stage.Types.ReduxState['drilldownContext']) =>
     drilldownContext[drilldownContext.length - 2].context;
-
+    
+//VIK - pri kliknuti na radek s deploymentem se nastavi hodnota takto a komponenta s detaily s tim pak pracuje ...
 export const selectDeployment = (toolbox: Stage.Types.Toolbox, deploymentId: string) =>
     toolbox.getContext().setValue('deploymentId', deploymentId);

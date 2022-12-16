@@ -1,10 +1,10 @@
 // @ts-nocheck File not migrated fully to TS
 import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
-import TestsPropType from './props/TestsPropType';
 import { Button } from 'semantic-ui-react';
 import { identity } from 'lodash';
-//import TestDetails from './TestDetails';
+import { castArray } from 'lodash';
+import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -64,6 +64,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return 0;
     }
 
+    getDeploymentIdFromContext = (toolbox: Stage.Types.Toolbox) => {
+        //VIK: zde se nacte deploymentid
+        const deploymentId = toolbox.getContext().getValue('deploymentId');
+        // Deployment Actions Buttons widget does not support multiple actions, thus picking only one deploymentId
+        const firstDeploymentId = castArray(deploymentId)[0] as WidgetParams['id'];
+    
+        return firstDeploymentId;
+    };
+
     renderHtmlParrentButton=(item:any)=> {
         //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
         
@@ -105,6 +114,16 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
+
+        const fetchedDeploymentState: ComponentProps<
+        typeof DeploymentActionButtons
+        // eslint-disable-next-line no-nested-ternary
+        >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
+        ? { status: 'loading' }
+        : data instanceof Error
+        ? { status: 'error', error: data }
+        : { status: 'success', data };
+
         //console.log(data);
 
         return (
@@ -138,7 +157,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data style={{ width: '10%' }}>
 
                                     {this.renderHtmlParrentButton(item)}
-
+                                    <DeploymentActionButtons
+                                        deploymentId={this.getDeploymentIdFromContext(toolbox)}
+                                        fetchedDeploymentState={fetchedDeploymentState}
+                                        toolbox={toolbox}
+                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                    />
 
                                 </DataTable.Data>
                             </DataTable.Row>
@@ -148,6 +172,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         );
     }
 }
+
+
 
 VirtualMachinesTable.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
