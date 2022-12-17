@@ -53,14 +53,23 @@ Stage.defineWidget<WidgetParams, WidgetData, WidgetConfiguration>({
     },
 
     render(widget, data, _error, toolbox) {
+        // const fetchedDeploymentState: ComponentProps<
+        //     typeof DeploymentActionButtons
+        //     // eslint-disable-next-line no-nested-ternary
+        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
+        //     ? { status: 'loading' }
+        //     : data instanceof Error
+        //     ? { status: 'error', error: data }
+        //     : { status: 'success', data };
+
         const fetchedDeploymentState: ComponentProps<
-            typeof DeploymentActionButtons
-            // eslint-disable-next-line no-nested-ternary
+        typeof DeploymentActionButtons
+        // eslint-disable-next-line no-nested-ternary
         >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
-            ? { status: 'loading' }
-            : data instanceof Error
-            ? { status: 'error', error: data }
-            : { status: 'success', data };
+        ? { status: 'loading' }
+        : data instanceof Error
+        ? { status: 'error', error: data }
+        : { status: 'success', data };
 
         return (
             <DeploymentActionButtons

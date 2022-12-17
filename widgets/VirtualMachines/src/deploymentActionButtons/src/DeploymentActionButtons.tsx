@@ -44,7 +44,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
     const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
-
+    console.log(fetchedDeploymentState);
     return (
         <div>
             <WorkflowsMenu

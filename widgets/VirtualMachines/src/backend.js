@@ -279,7 +279,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     }
     return helper.Manager.doGet('/deployments', {
         params: {
-            _include: 'id,labels,blueprint_id,tenant_name,environment_type',
+            _include: 'id,labels,blueprint_id,tenant_name,environment_type,workflows',
             _search:_searchParam
         },
         ...commonManagerRequestOptions

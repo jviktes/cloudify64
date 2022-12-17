@@ -5,6 +5,7 @@ import { Button } from 'semantic-ui-react';
 import { identity } from 'lodash';
 import { castArray } from 'lodash';
 import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
+import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -26,22 +27,17 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     fetchGridData = fetchParams => {
-        console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
+        //console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
         //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
         const { toolbox } = this.props;
         return toolbox.refresh(fetchParams);
     };
-    // fetchParams=(widget, toolbox)=> {
-    //     console.log("VirtualMachinesTable fetchParams...");
-    //     let deploymentId = "777";
-    //     return {deployment_id: deploymentId};
-    // };
 
     //melo by odfiltrovat a zobrazit jen jeden radek:
     getParrent=(filteredDeploymentParentId:any)=> {
         const { toolbox } = this.props;
         const { widget } = this.props;
-        console.log("GetParrent for:"+filteredDeploymentParentId);
+        //console.log("GetParrent for:"+filteredDeploymentParentId);
         //const params = {deploymentId: filteredId };
         //this.fetchGridData(params);
         toolbox.getContext().setValue('filteredDeploymentParentId', filteredDeploymentParentId);
@@ -73,6 +69,39 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return firstDeploymentId;
     };
 
+    getDataForDeploymentId = (item:any) => {
+
+        
+        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
+        // // eslint-disable-next-line no-nested-ternary
+        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
+        // ? { status: 'loading' }
+        // : data instanceof Error
+        // ? { status: 'error', error: data }
+        // : { status: 'success', data };
+
+        return (
+            {
+                status: 'success',
+                data: {
+                        display_name: item.display_name,
+                        workflows: item.workflows,
+                    },
+                }
+        )
+
+        // (parameter) fetchedDeploymentState: {
+        //     status: 'success';
+        //     data: {
+        //         display_name: string;
+        //         workflows: Workflow[];
+        //     };
+        // } & {
+        //     status: 'success';
+        // }
+
+
+    };
     renderHtmlParrentButton=(item:any)=> {
         //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
         
@@ -114,15 +143,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
+        
 
-        const fetchedDeploymentState: ComponentProps<
-        typeof DeploymentActionButtons
-        // eslint-disable-next-line no-nested-ternary
-        >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
-        ? { status: 'loading' }
-        : data instanceof Error
-        ? { status: 'error', error: data }
-        : { status: 'success', data };
+        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
+        // // eslint-disable-next-line no-nested-ternary
+        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
+        // ? { status: 'loading' }
+        // : data instanceof Error
+        // ? { status: 'error', error: data }
+        // : { status: 'success', data };
 
         //console.log(data);
 
@@ -158,8 +187,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                                     {this.renderHtmlParrentButton(item)}
                                     <DeploymentActionButtons
-                                        deploymentId={this.getDeploymentIdFromContext(toolbox)}
-                                        fetchedDeploymentState={fetchedDeploymentState}
+                                        deploymentId={item.id}
+                                        fetchedDeploymentState={this.getDataForDeploymentId(item)}
                                         toolbox={toolbox}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
