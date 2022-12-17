@@ -44,11 +44,50 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
     const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
+
+    // const actions = Object.freeze({
+    //     delete: 'delete',
+    //     forceDelete: 'forceDelete',
+    //     install: 'install',
+    //     manageLabels: 'manageLabels',
+    //     setSite: 'setSite',
+    //     uninstall: 'uninstall',
+    //     update: 'update'
+    // });
+
+    //const actions = Object();
+
+    //vyber polozek --> TODO: doplnit konfiguraci...
+    const workFlowsDHL=(workflows :Workflow[] )=> {
+
+        //
+        console.log(workflows);
+        let outWorks = [];
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="validate_agents")
+                outWorks.push(_workFlowItem);
+
+            }
+        }
+        ;
+        let _workFlowItem = { name: "toolbox.getContext().setValue('filteredDeploymentParentId', '12497956')", plugin:"", parameters:{},is_available:true};
+        
+        outWorks.push(_workFlowItem);
+        return outWorks;
+    };
+
     console.log(fetchedDeploymentState);
+
     return (
         <div>
+
+            {/* workflows musim už tady přetřídit, co chci zobrazit atd. */}
+            {/* TODO: jak tam pridat delete, musim se modlit, aby to bylo v seznamu a nemusel to nejak davat z  DeploymentActionsMenu*/}
+            {/* TODO: jak sem pridat tlacitko pro get parrent?*/}
             <WorkflowsMenu
-                workflows={workflows}
+                workflows={workFlowsDHL(workflows)}
                 trigger={
                     <Button
                         className="executeWorkflowButton labeled icon"
@@ -60,7 +99,18 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 }
                 onClick={setWorkflow}
             />
-            {/* VIK toto je menu pod kterym je menu pro deploymnety (instal, update atd.) */}
+
+            {/* VIK toto je menu pod kterym je menu pro deploymnety (instal, update atd.) 
+            seznamy položek jsou natvrdo definované v common/src/deployments/DeploymentsActionMenu:
+                    { name: actions.install, icon: 'play', permission: executeWorkflowPermission },
+                    { name: actions.update, icon: 'edit', permission: 'deployment_update_create' },
+                    { name: actions.setSite, icon: 'building', permission: 'deployment_set_site' },
+                    { name: actions.manageLabels, icon: 'tags', permission: 'deployment_create' },
+                    { name: actions.uninstall, icon: 'recycle', permission: executeWorkflowPermission },
+                    { name: actions.delete, icon: 'trash alternate', permission: 'deployment_delete' },
+                    { name: actions.forceDelete, icon: 'trash', permission: 'deployment_delete' }
+            */}
+            
             <DeploymentActionsMenu
                 onActionClick={setActiveAction}
                 toolbox={toolbox}

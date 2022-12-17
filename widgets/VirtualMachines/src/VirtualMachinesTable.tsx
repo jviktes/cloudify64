@@ -80,6 +80,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         // ? { status: 'error', error: data }
         // : { status: 'success', data };
 
+        //TODO - nyni jsou vsechny success --> pozor na errory atd.
+
+        
+
         return (
             {
                 status: 'success',
@@ -153,7 +157,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         // ? { status: 'error', error: data }
         // : { status: 'success', data };
 
-        //console.log(data);
+        console.log(data);
 
         return (
             <div>
@@ -186,6 +190,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data style={{ width: '10%' }}>
 
                                     {this.renderHtmlParrentButton(item)}
+                                    
                                     <DeploymentActionButtons
                                         deploymentId={item.id}
                                         fetchedDeploymentState={this.getDataForDeploymentId(item)}
