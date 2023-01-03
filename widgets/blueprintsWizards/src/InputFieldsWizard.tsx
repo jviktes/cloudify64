@@ -600,6 +600,8 @@ function DataDiskTable({
 
     }
 
+
+
     return (
             <div>
                 <DataTable className="agentsGsnCountries table-scroll-gsn">
@@ -759,6 +761,76 @@ export default function InputFields({
             }
         }
         return _parameterName;
+    }
+
+    
+    const returnHtmlInput = (_item: any, inputStates:any) => {
+
+        // const DataDiskOptions = [
+        //     { text: 'Standard HDD', name: 'Standard HDD', value: 'Standard HDD' },
+        //     { text: 'Standard SSD', name: 'Standard SSD', value: 'Standard SSD' },
+        //     { text: 'Premium SSD', name: 'Premium SSD', value: 'Premium SSD' },]
+
+            if (_item.input_type == "text_box") {
+                return (<Form.Input
+                    type="text"
+                    //name={formField.name}
+                    //label={formField.label}
+                    value={_item.default}
+                    onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
+                    required={_item.required}
+                />)
+            }    
+            if (_item.input_type == "drop_down_list") {
+                const dropDownValues = [];
+                var _paramName = getParameterName(_item);
+                //priprava options:
+                let valls = _item[_paramName];
+                for (const key in valls[0]) {
+                    dropDownValues.push({text:key,name:key,value:key});
+                }
+
+                return (<Form.Dropdown
+                    name="parameter_value"
+                    selection
+                    options={dropDownValues}
+                    value={_item.default}
+                    onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
+                />
+                )
+            }  
+            return (<Form.Input
+                type="text"
+                //name={formField.name}
+                //label={formField.label}
+                value={_item.default}
+                onChange={onChange}
+                required={_item.required}
+            />)
+    }
+
+    const onItemChangeSW = (e: any, _item:any, _typeProperty:any, _value:any, inputStates:any)=> {
+        console.log("onItemChangeSW:" + _item);
+        console.log("onItemChangeSW e.target:" + e);
+        console.log("onItemChangeSW value:" + _value);
+
+        var  _par= getParameterName(_item);
+
+        console.log("onItemChangeSW value:" + _par);
+
+        for (let index = 0; index < inputStates.length; index++) {
+            const element = inputStates[index];
+
+            if (element.hasOwnProperty(_par)) {
+                element.default = _value;
+                break;
+            }
+
+        }
+
+        toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(inputStates));
+        
+
     }
 
     const inputFields = _(inputs)
@@ -1023,11 +1095,13 @@ export default function InputFields({
                     <DataTable.Column label="read_only" name="read_only" width='10%' />
                     <DataTable.Column label="parameter_name" name="parameter_name" width='10%' />
 
+                    //inputStates={}
+
                     {_.map(JSON.parse(inputsState[input.name]), item => (
                             <DataTable.Row key={JSON.stringify(item.default)} >
                                 <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
                                 </DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{item.input_type}
+                                <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,JSON.parse(inputsState[input.name]))}
                                 </DataTable.Data>
                                 <DataTable.Data style={{ width: '10%' }}>{item.default}
                                 </DataTable.Data>
