@@ -3,7 +3,7 @@ import InputField from './InputFieldWizard';
 //import getInputFieldInitialValue from '../../common/src/inputs/utils/getInputFieldInitialValue'; //'./utils/getInputFieldInitialValue';
 import type { DataType, Input, OnChange } from '../../common/src/inputs/types'; //'./types';
 import { DataTable, Form } from 'cloudify-ui-components';
-import {Icon } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import { getInputsOrderByCategories } from './wizardUtils';
 //TODO - tranlations: import LocationLabels from './LocationLabels';
 
@@ -738,6 +738,28 @@ export default function InputFields({
             return null;
         }
     }
+    const getParameterName = (_item:any) => {
+        //tady vybrat to co je navic mimo pole required, input_type: text_box, service_name: wlsvc, defaultX: wlsvc, read_only: true},
+        //for cyclus pro cely radek:
+        var _parameterName = "";
+        for (const key in _item) {
+            if (Object.prototype.hasOwnProperty.call(_item, key)) {
+                var _key = key.toString();
+                //TODO: tady mi to hazi divnou chybu pro !==
+                if (_key=='required' || _key=='default' || _key=='input_type' || _key=='default'  || _key=='read_only')
+                { 
+                    //const element = _item[key];
+                    //console.log(element);
+                }
+                else {
+                    console.log(_item[key]);
+                    _parameterName = key;
+                     break;
+                }
+            }
+        }
+        return _parameterName;
+    }
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -995,16 +1017,25 @@ export default function InputFields({
             if (input.name=="service_names") {
                 return (<div>
                     <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
-                    <DataTable.Column label="Service name" name="service_name" width='10%'  />
-                    <DataTable.Column label="Service" name="service" width='10%' />
-                    <DataTable.Column label="Installed" name="installed" width='10%' />
+                    <DataTable.Column label="required" name="required" width='10%'  />
+                    <DataTable.Column label="input_type" name="input_type" width='10%' />
+                    <DataTable.Column label="default" name="default" width='10%' />
+                    <DataTable.Column label="read_only" name="read_only" width='10%' />
+                    <DataTable.Column label="parameter_name" name="parameter_name" width='10%' />
 
                     {_.map(JSON.parse(inputsState[input.name]), item => (
-                            <DataTable.Row key={JSON.stringify(item.key)} >
-                                <DataTable.Data style={{ width: '10%' }}>{item.service_name}
+                            <DataTable.Row key={JSON.stringify(item.default)} >
+                                <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
                                 </DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{item.service}
+                                <DataTable.Data style={{ width: '10%' }}>{item.input_type}
                                 </DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{item.default}
+                                </DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.read_only)}
+                                </DataTable.Data>
+                                <DataTable.Data style={{ width: '10%' }}>{getParameterName(item)}
+                                </DataTable.Data>
+{/*                                 
                                 <DataTable.Data style={{ width: '10%' }}>
                                     
                                     <Form.Field> 
@@ -1014,7 +1045,7 @@ export default function InputFields({
                                         />
                                     </Form.Field> 
 
-                                </DataTable.Data>
+                                </DataTable.Data> */}
                             </DataTable.Row>
                     ))}
                     </DataTable>
