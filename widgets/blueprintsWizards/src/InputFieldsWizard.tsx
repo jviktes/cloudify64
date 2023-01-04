@@ -574,7 +574,7 @@ function DataDiskTable({
     }
 
     const getOperationtype = () => {
-        console.log(osInfo);
+        //console.log(osInfo);
 
         if (osInfo==undefined ||  osInfo.default==undefined) {return null;}
 
@@ -595,14 +595,29 @@ function DataDiskTable({
             return false;
         }
     }
+    const prepareDiskLetterOptions = (item:any) => {
+
+        let _letters=LetterDiskWindows;
+        if (getOperationtype()=="windows") {
+            let dataDisks = inputStates;
+            dataDisks.forEach((_disk: {mountpoint:any}) => {
+                let _usedLetter = getDiskMountingPointValue(_disk.mountpoint);
+                _letters = _letters.filter(e => e.value !== _usedLetter);
+            });
+        }
+        let _currentLetter = getDiskMountingPointValue(item.mountpoint);
+        _letters.push({ text: _currentLetter, name: _currentLetter, value: _currentLetter});
+
+        return _letters;
+
+    }
 
     const htmlRenderMountPoint=(item:any)=> {
         if (getOperationtype()=="windows") {
-
             return (<Form.Dropdown
                 name="mount_point"
                 selection
-                options={LetterDiskWindows}
+                options={prepareDiskLetterOptions(item)}
                 value={getDiskMountingPointValue(item.mountpoint)}
                 disabled={isRequiredDisk(item)}
                 onChange={(e, { value}) => onItemChange(e.target,item,"mountpoint",getDiskMountpointValueToBlueprintFormatAny(value?.toString()))}
