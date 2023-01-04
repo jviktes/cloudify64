@@ -1089,37 +1089,35 @@ export default function InputFields({
             if (input.name=="service_names") {
                 return (<div>
                     <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
-                    <DataTable.Column label="required" name="required" width='10%'  />
-                    <DataTable.Column label="input_type" name="input_type" width='10%' />
-                    <DataTable.Column label="default" name="default" width='10%' />
-                    <DataTable.Column label="read_only" name="read_only" width='10%' />
-                    <DataTable.Column label="parameter_name" name="parameter_name" width='10%' />
+                    <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
+                    {/* <DataTable.Column label="required" name="required" width='10%'  /> */}
+                    <DataTable.Column label="Value" name="input_value" width='10%' />
+                    {/* <DataTable.Column label="default" name="default" width='10%' /> */}
+                    {/* <DataTable.Column label="read_only" name="read_only" width='10%' /> */}
+                    
 
                     //inputStates={}
 
                     {_.map(JSON.parse(inputsState[input.name]), item => (
                             <DataTable.Row key={JSON.stringify(item.default)} >
-                                <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
-                                </DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,JSON.parse(inputsState[input.name]))}
-                                </DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{item.default}
-                                </DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.read_only)}
-                                </DataTable.Data>
+
+                                {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
+                                </DataTable.Data> */}
+
                                 <DataTable.Data style={{ width: '10%' }}>{getParameterName(item)}
                                 </DataTable.Data>
-{/*                                 
-                                <DataTable.Data style={{ width: '10%' }}>
-                                    
-                                    <Form.Field> 
-                                    <Form.Input
-                                        type="Checkbox"
-                                        checked
-                                        />
-                                    </Form.Field> 
 
+                                <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,JSON.parse(inputsState[input.name]))}
+                                </DataTable.Data>
+
+                                {/* <DataTable.Data style={{ width: '10%' }}>{item.default}
                                 </DataTable.Data> */}
+
+                                {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.read_only)}
+                                </DataTable.Data> */}
+
+
+
                             </DataTable.Row>
                     ))}
                     </DataTable>
