@@ -312,12 +312,14 @@ function DataDiskTable({
     //diskData,
     vmInfo,
     osInfo,
+    swInfo,
     toolbox,
     inputStates,
 }: {
     diskData: any;
     vmInfo:any;
     osInfo:any;
+    swInfo:any;
     toolbox: Stage.Types.Toolbox;
     inputStates:any;
 }) {
@@ -456,11 +458,26 @@ function DataDiskTable({
     ]
 
     const getDiskLabelValue = (_valueLabel: any) => {
+
+        //disk label muze byt zadavan podle nazvu sluzby:
+        try {
+            if (_valueLabel[0].hasOwnProperty("get_input")) {
+                if (swInfo!=null) {
+                    console.log(swInfo);
+                    let _swInfoParsed = JSON.parse(swInfo);
+                    return _swInfoParsed[0].service;
+                }
+            }
+        } catch (error) {
+            return "";
+        }
+
         try {
             return _valueLabel[0];
         } catch (error) {
             return "";
         }
+
     }
 
     const getDiskMountingPointValue = (_valueMountingPoint: any) => {
@@ -993,7 +1010,7 @@ export default function InputFields({
                 //console.log("data_disks");
                 return <div className="field">
                     <label style={{ display: "inline-block" }}>{input.display_label}</label>
-                        <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])}></DataDiskTable>
+                        <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]}></DataDiskTable>
                 </div>
             }
             
