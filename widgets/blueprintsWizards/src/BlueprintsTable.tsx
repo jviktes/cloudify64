@@ -10,7 +10,7 @@ export default function BlueprintsTable({
     //onCreateDeployment,
     onCreateDeploymentWizard,
     //onDeleteBlueprint,
-    onSelectBlueprint,
+    //onSelectBlueprint,
     //onSetVisibility,
     toolbox,
     widget
@@ -42,7 +42,7 @@ export default function BlueprintsTable({
                     id={`${tableName}_${item.id}`}
                     key={item.id}
                     selected={item.isSelected}
-                    onClick={Blueprints.Actions.isUploaded(item) ? () => onSelectBlueprint(item) : null}
+                    //onClick={Blueprints.Actions.isUploaded(item) ? () => onSelectBlueprint(item) : null}
                 >
                     <DataTable.Data>
                         {Blueprints.Actions.isUploaded(item) && (
@@ -52,9 +52,10 @@ export default function BlueprintsTable({
                                 width={30}
                             />
                         )}{' '}
-                        <a className="blueprintName" href="#!">
-                            {item.id}
-                        </a>
+                        
+                    {item.id}
+                        
+
                     </DataTable.Data>
 
                     <DataTable.Data className="center aligned rowActions">
