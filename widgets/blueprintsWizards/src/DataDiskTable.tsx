@@ -228,24 +228,7 @@ export function DataDiskTable({
 
     };
 
-    const htmlRenderErrorState = (_error: any, _element:any) => {
 
-        if (_error == "" || _error == null) {
-            return null;
-        }
-        else {
-
-            // if (_error.element==null  || _error.element == "" || _error.element!=undefined) {
-            //     _error.element = "label";
-            // }
-            if (_error.element == _element && (_error.text!=null || _error.text!=undefined)) {
-                return <p style={{ color: 'red'}}>{_error.text}</p>;
-            }
-            else {
-                return null;
-            }
-        }
-    };
 
     const getOperationtype = () => {
         //console.log(osInfo);
@@ -315,45 +298,58 @@ export function DataDiskTable({
 
     };
 
+    const htmlRenderErrorState = (_errors: any, _element:any) => {
+        let _htmlResult = null;
+
+        if (_errors == "" || _errors == null) {
+            _htmlResult = null;
+        }
+        else {
+
+            var newArray = _errors.filter(function (el: { element: any; text: any; })
+            {
+              return el.element==_element && (el.text!=null || el.text!=undefined);
+            }
+            );
+
+            newArray.forEach((_err: { element: any; text:any}) => {
+                    _htmlResult = <p style={{ color: 'red'}}>{_err.text}</p>;
+            });
+        }
+        return _htmlResult ;
+    };
 
     const ValidateDataAllDisks = (_dataDisks:any) => {
 
-        // if (_changedDataDisk[0].label == null || _changedDataDisk[0].label == ""){
-        //     _changedDataDisk[0].error = {text:"Label may not be blank.", element:"label"};
-        // }
-        // else if (_changedDataDisk[0].mountpoint == null || getDiskMountingPointValue(_changedDataDisk[0].mountpoint) == "") {
-        //     _changedDataDisk[0].error = {text:"Mounting point may not be blank.", element:"mountpoint"};
-        // }
-        // else {
-        //     _changedDataDisk[0].error = {};
-        // }
 
         console.log("ValidateDataAllDisks...");
 
         //hledani stejnych mountpoint:
         _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
             _disk.error={};
+            let errors = [];
             if (_disk.mountpoint == null || getDiskMountingPointValue(_disk.mountpoint) == "") {
-                _disk.error = {text:"Mounting point may not be blank.", element:"mountpoint"};
+                errors.push({text:"Mounting point may not be blank.", element:"mountpoint"});
             }
             if (_disk.label == null || _disk.label == ""){
-                _disk.error = {text:"Label may not be blank.", element:"label"};
+                errors.push({text:"Label may not be blank.", element:"label"});
             }
 
             //hledani stejnych mountpoint:
             _dataDisks.forEach((_diskA: { mountpoint: any; key:any}) => {
                 if (getDiskMountingPointValue(_disk.mountpoint)==getDiskMountingPointValue(_diskA.mountpoint) && _diskA.key!=_disk.key) {
-                    _disk.error= {text:"Mount point must be unique across all disks.", element:"mountpoint"};
+                    errors.push({text:"Mount point must be unique across all disks.", element:"mountpoint"});
                 }
             });
 
             const toFindDuplicates = (_dataDisks: any[]) => _dataDisks.filter((item: any, index: any) => _dataDisks.indexOf(item) !== index)
             const duplicateElements = toFindDuplicates(_dataDisks);
             console.log(duplicateElements);
-
+            _disk.error=  errors;
         });
         
     };
+
     //funkce enable/disabluje Next button, ale jsou problemy:
     //pri nactani blueprintu nelze nastavit disabled rovnou, protoze to neni 1. krok
     //pri volani az pri renderovani to taky nejde, protoze se triggeruje state cele komponenty a to vede k nekonecnemu nacitani
