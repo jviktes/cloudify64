@@ -27,33 +27,17 @@ export function DataDiskTable({
                 });
                 if (changedDataDisk[0] != null) {
                     changedDataDisk[0][_typeProperty] = _value;
-                    ValidateDataDisk(changedDataDisk);
+                    //ValidateDataDisk(changedDataDisk,inputStates);
                     toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'data_disks', JSON.stringify(dataDisks));
                 }
             }
         }
-        let isErrorInDisk = false;
-        //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
-        dataDisks.forEach((obj: { error: any; key: any; }) => {
-            if (obj.error != "") {
-                console.log("label is empty for key" + obj.key);
-                toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
-                isErrorInDisk = true;
-            }
-        });
-        if (!isErrorInDisk) {
-            toolbox.getEventBus().trigger('blueprint:dataDiskValidateOK');
-        }
+        
+        ValidateDataAllDisks(dataDisks);
+        //enableDisableNextButton(dataDisks);
     };
 
-    const ValidateDataDisk = (_changedDataDisk: any) => {
-        if (_changedDataDisk[0].label == null || _changedDataDisk[0].label == "" || _changedDataDisk[0].mountpoint == null || getDiskMountingPointValue(_changedDataDisk[0].mountpoint) == "") {
-            _changedDataDisk[0].error = "Label and Mount point may not be blank.";
-        }
-        else {
-            _changedDataDisk[0].error = "";
-        }
-    };
+
 
     const RemoveDisk = (_item: any) => {
         console.log("RemoveDisk:" + _item.key);
@@ -244,21 +228,22 @@ export function DataDiskTable({
 
     };
 
-    const htmlRenderErrorState = (_error: any) => {
-        if (_error == "" || _error == null) {
-            return null;
-        }
-        else {
-            return <p style={{ color: 'red' }}>{_error}</p>;
-        }
-    };
+    const htmlRenderErrorState = (_error: any, _element:any) => {
 
-    const htmlRenderEmptyErrorState = (_error: any, margin: string) => {
         if (_error == "" || _error == null) {
             return null;
         }
         else {
-            return <p style={{ color: 'red', height: margin }}></p>;
+
+            // if (_error.element==null  || _error.element == "" || _error.element!=undefined) {
+            //     _error.element = "label";
+            // }
+            if (_error.element == _element && (_error.text!=null || _error.text!=undefined)) {
+                return <p style={{ color: 'red'}}>{_error.text}</p>;
+            }
+            else {
+                return null;
+            }
         }
     };
 
@@ -331,7 +316,66 @@ export function DataDiskTable({
     };
 
 
+    const ValidateDataAllDisks = (_dataDisks:any) => {
 
+        // if (_changedDataDisk[0].label == null || _changedDataDisk[0].label == ""){
+        //     _changedDataDisk[0].error = {text:"Label may not be blank.", element:"label"};
+        // }
+        // else if (_changedDataDisk[0].mountpoint == null || getDiskMountingPointValue(_changedDataDisk[0].mountpoint) == "") {
+        //     _changedDataDisk[0].error = {text:"Mounting point may not be blank.", element:"mountpoint"};
+        // }
+        // else {
+        //     _changedDataDisk[0].error = {};
+        // }
+
+        console.log("ValidateDataAllDisks...");
+
+        //hledani stejnych mountpoint:
+        _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
+            _disk.error={};
+            if (_disk.mountpoint == null || getDiskMountingPointValue(_disk.mountpoint) == "") {
+                _disk.error = {text:"Mounting point may not be blank.", element:"mountpoint"};
+            }
+            if (_disk.label == null || _disk.label == ""){
+                _disk.error = {text:"Label may not be blank.", element:"label"};
+            }
+
+            //hledani stejnych mountpoint:
+            _dataDisks.forEach((_diskA: { mountpoint: any; key:any}) => {
+                if (getDiskMountingPointValue(_disk.mountpoint)==getDiskMountingPointValue(_diskA.mountpoint) && _diskA.key!=_disk.key) {
+                    _disk.error= {text:"Mount point must be unique across all disks.", element:"mountpoint"};
+                }
+            });
+
+            const toFindDuplicates = (_dataDisks: any[]) => _dataDisks.filter((item: any, index: any) => _dataDisks.indexOf(item) !== index)
+            const duplicateElements = toFindDuplicates(_dataDisks);
+            console.log(duplicateElements);
+
+        });
+        
+    };
+    //funkce enable/disabluje Next button, ale jsou problemy:
+    //pri nactani blueprintu nelze nastavit disabled rovnou, protoze to neni 1. krok
+    //pri volani az pri renderovani to taky nejde, protoze se triggeruje state cele komponenty a to vede k nekonecnemu nacitani
+    // (pri setState se prerenderuje cela komponenta)
+    
+    // const enableDisableNextButton=(dataDisks: any)=>{
+    //     let isErrorInDisk = false;
+    //     //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
+    //     dataDisks.forEach((obj: { error: any; key: any; }) => {
+    //         if (obj.error != null && obj.error.text != undefined) {
+    //             //console.log("label is empty for key" + obj.key);
+    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
+    //             isErrorInDisk = true;
+    //         }
+    //     });
+    //     if (!isErrorInDisk) {
+    //         toolbox.getEventBus().trigger('blueprint:dataDiskValidateOK');
+    //     }
+    // }
+
+    ValidateDataAllDisks(inputStates);
+    //enableDisableNextButton(inputStates);
     return (
         <div>
             <DataTable className="agentsGsnCountries table-scroll-gsn">
@@ -341,50 +385,52 @@ export function DataDiskTable({
                 <DataTable.Column label={getTableLabelForMountPoint()} name="mount_point" width='30%' />
                 <DataTable.Column label="Disk label" name="disk_label" width='35%' />
                 <DataTable.Column label="" name="" width='5%' />
+                
                 {_.map(inputStates, item => (
+                    
                     <DataTable.Row key={JSON.stringify(item.key)}>
-                        <DataTable.Data style={{ width: '10%' }}>
+                        <DataTable.Data style={{ width: '10%', verticalAlign: 'baseline'}}>
                             <Form.Dropdown
                                 name="disk_type"
                                 selection
                                 options={DataDiskOptions}
                                 value={item.disk_type}
                                 onChange={(e, { value }) => onItemChange(e.target, item, "disk_type", value)} />
-                            {htmlRenderEmptyErrorState(item.error, '51px')}
+                            
                         </DataTable.Data>
-                        <DataTable.Data style={{ width: '10%' }}>
+                        <DataTable.Data style={{ width: '10%', verticalAlign: 'baseline' }}>
                             <Form.Dropdown
                                 name="disk_size"
                                 selection
                                 options={DiskSizeOptions}
                                 value={item.disk_size}
                                 onChange={(e, { value }) => onItemChange(e.target, item, "disk_size", value)} />
-                            {htmlRenderEmptyErrorState(item.error, '51px')}
+                          
                         </DataTable.Data>
-                        <DataTable.Data style={{ width: '10%' }}>
+                        <DataTable.Data style={{ width: '10%', verticalAlign: 'baseline' }}>
                             <Form.Dropdown
                                 name="host_caching"
                                 selection
                                 options={DataDiskHostingCashOptions}
                                 value={item.host_caching}
                                 onChange={(e, { value }) => onItemChange(e.target, item, "host_caching", value)} />
-                            {htmlRenderEmptyErrorState(item.error, '51px')}
+
                         </DataTable.Data>
-                        <DataTable.Data style={{ width: '30%' }}>
+                        <DataTable.Data style={{ width: '30%', verticalAlign: 'baseline' }}>
                             {htmlRenderMountPoint(item)}
-                            {htmlRenderEmptyErrorState(item.error, '40px')}
+                            {htmlRenderErrorState(item.error,"mountpoint")}
                         </DataTable.Data>
-                        <DataTable.Data style={{ width: '30%' }}>
+                        <DataTable.Data style={{ width: '30%', verticalAlign: 'baseline' }}>
                             <Form.Input
                                 name="label"
                                 placeholder={'Disk label'}
                                 disabled={isRequiredDisk(item)}
                                 value={getDiskLabelValue(item.label)}
                                 onChange={(e, { value }) => onItemChange(e.target, item, "label", getDiskLabelValueToBlueprintFormat(value))} />
-                            {htmlRenderErrorState(item.error)}
+                            {htmlRenderErrorState(item.error,"label")}
                         </DataTable.Data>
 
-                        <DataTable.Data style={{ width: '5%' }}>
+                        <DataTable.Data style={{ width: '5%', verticalAlign: 'baseline' }}>
                             <Icon
                                 name="remove"
                                 link
@@ -405,4 +451,5 @@ export function DataDiskTable({
             <div>Max data disks: {GetDiskCountLimit()}</div>
         </div>
     );
+
 }

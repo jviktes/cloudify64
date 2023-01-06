@@ -863,48 +863,48 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         var uniqueID = function () {
                             return '_' + Math.random().toString(36).slice(2, 11);
                         };
-                        var isLabelValid = function(_item:any) {
+                        // var isLabelValid = function(_item:any) {
 
-                            if (_item.error!=undefined && _item.error!="" ) {
-                                return _item.error;
-                            }
+                        //     if (_item.error!=undefined && _item.error!="" ) {
+                        //         return _item.error;
+                        //     }
 
-                            if (_item.label=="" || _item.label==null) {
-                                return "Label and Mount point may not be blank.";
-                            } 
-                            else {
-                                return "";
-                            }
-                        }
+                        //     if (_item.label=="" || _item.label==null) {
+                        //         return {text:"Label may not be blank.", element:"label"};
+                        //     } 
+                        //     else {
+                        //         return {};
+                        //     }
+                        // }
 
-                        var getDiskMountingPointValue = (_item: any) => {
-                            try {
-                                //_valueMountingPoint[0].path;
-                                if (_item.error!=undefined && _item.error!="" ) {
-                                    return _item.error;
-                                }
-                                if (_item.mountpoint==null || _item.mountpoint.length==0 || _item.mountpoint[0].path=="") {
-                                    return "Label and Mount point may not be blank.";
-                                }
-                                else {
-                                    return "";
-                                }
-                            } catch (error) {
-                                return "";
-                            }
-                        }
+                        // var getDiskMountingPointValue = (_item: any) => {
+                        //     try {
+                        //         //_valueMountingPoint[0].path;
+                        //         if (_item.error!=undefined && _item.error.length>0) {
+                        //             return _item.error;
+                        //         }
+                        //         if (_item.mountpoint==null || _item.mountpoint.length==0 || _item.mountpoint[0].path=="") {
+                        //             return {text:"Mounting point may not be blank.", element:"mountpoint"};
+                        //         }
+                        //         else {
+                        //             return {};
+                        //         }
+                        //     } catch (error) {
+                        //         return {};
+                        //     }
+                        // }
 
                         let dataDiskData = JSON.parse(deploymentInputs.data_disks);
                         _.map(dataDiskData, item => (
                             item.key = uniqueID())
                         )
                         //validace na vstupu disku
-                        _.map(dataDiskData, item => (
-                            item.error = isLabelValid(item))
-                        )
-                        _.map(dataDiskData, item => (
-                            item.error = getDiskMountingPointValue(item))
-                        )       
+                        // _.map(dataDiskData, item => (
+                        //     item.error = isLabelValid(item))
+                        // )
+                        // _.map(dataDiskData, item => (
+                        //     item.error = getDiskMountingPointValue(item))
+                        // )       
                         deploymentInputs.data_disks = JSON.stringify(dataDiskData);
                     }    
 

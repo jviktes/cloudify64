@@ -447,12 +447,12 @@ export default function InputFields({
             if (input.name=="business_unit") {
                 return (<div style={{width: "20%", marginTop:"5px", float:"left"}}>
                     <FormField
-                    input={input}
-                    value={value}
-                    onChange={onChange}
-                    error={errorsState[input.name]}
-                    toolbox={toolbox}
-                    dataType={dataType}
+                        input={input}
+                        value={value}
+                        onChange={onChange}
+                        error={errorsState[input.name]}
+                        toolbox={toolbox}
+                        dataType={dataType}
                     />
                 </div>
 
