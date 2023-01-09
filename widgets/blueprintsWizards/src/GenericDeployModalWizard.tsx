@@ -908,6 +908,20 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         deploymentInputs.data_disks = JSON.stringify(dataDiskData);
                     }    
 
+                    //check key in soft config:
+                    if (deploymentInputs.service_names) {
+                        
+                        var uniqueID = function () {
+                            return '_' + Math.random().toString(36).slice(2, 11);
+                        };
+
+                        let dataDiskData = JSON.parse(deploymentInputs.service_names);
+                        _.map(dataDiskData, item => (
+                            item.key = uniqueID())
+                        )     
+                        deploymentInputs.service_names = JSON.stringify(dataDiskData);
+                    }  
+
                     this.setState({
                         deploymentInputs,
                         blueprint,
