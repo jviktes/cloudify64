@@ -105,8 +105,8 @@ export function SoftwareConfigurationTable({
         
     }
     const getItemLabel = (_item: any) => {
-        if (_item.display_label != undefined) {
-            return _item.display_label;
+        if (_item.display_name != undefined) {
+            return _item.display_name;
         }
         else {
             return getParameterName(_item)
