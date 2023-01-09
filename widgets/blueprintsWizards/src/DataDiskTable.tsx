@@ -344,10 +344,6 @@ export function DataDiskTable({
                     errors.push({text:"Mount point must be unique across all disks.", element:"mountpoint"});
                 }
             });
-            //TODO, toto se vola zbytecne?
-            const toFindDuplicates = (_dataDisks: any[]) => _dataDisks.filter((item: any, index: any) => _dataDisks.indexOf(item) !== index)
-            const duplicateElements = toFindDuplicates(_dataDisks);
-            console.log(duplicateElements);
             _disk.error=  errors;
         });
         
