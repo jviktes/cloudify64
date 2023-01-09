@@ -14,9 +14,10 @@ interface DeploymentsInfoProps {
     activeSection: any ,
     onYamlFileChange:any,
     onDeploymentInputChange:any,
+    nextButtonState:any,
 }
 
-export default function VMConfigStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange}: DeploymentsInfoProps) {
+export default function VMConfigStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState}: DeploymentsInfoProps) {
 
     console.log("VMConfigStep:"+index+","+title+","+activeSection);
     //console.log(deploymentInputs);
@@ -36,6 +37,7 @@ export default function VMConfigStep(this: any, { toolbox, blueprint, index,titl
                 gsnData = {{}}
                 gsnCountries = {{}}
                 gsnRegions= {{}}
+                nextButtonState={nextButtonState}
             />
         </div>        
     );

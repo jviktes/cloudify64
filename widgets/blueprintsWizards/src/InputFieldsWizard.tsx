@@ -182,6 +182,7 @@ export default function InputFields({
     gsnData,
     gsnCountries,
     gsnRegions,
+    nextButtonState
     
 }: {
     inputs: Record<string, any>;
@@ -194,6 +195,7 @@ export default function InputFields({
     gsnData:any;
     gsnCountries:any;
     gsnRegions:any;
+    nextButtonState:boolean
 }) {
     //inputs je nutne srovnat podle poradi, nyni je poradi podle nacteni z blueprint souboru:
 
@@ -366,7 +368,7 @@ export default function InputFields({
                 //console.log("data_disks");
                 return <div className="field">
                             <label style={{ display: "inline-block" }}>{input.display_label}</label>
-                            <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]}></DataDiskTable>
+                            <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]} nextButtonState={nextButtonState}></DataDiskTable>
                         </div>
             }
             

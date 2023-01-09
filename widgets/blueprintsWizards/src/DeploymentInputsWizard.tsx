@@ -20,6 +20,7 @@ interface Props {
     gsnData:{};
     gsnCountries:{};
     gsnRegions:{};
+    nextButtonState:boolean
 }
 
 const DeploymentInputs: FunctionComponent<Props> = ({
@@ -34,6 +35,7 @@ const DeploymentInputs: FunctionComponent<Props> = ({
     gsnData,
     gsnCountries,
     gsnRegions,
+    nextButtonState,
 }) => {
     //const { Message } = Stage.Basic;
     //const deploymentHasInputs = !_.isEmpty(blueprint.plan.inputs);
@@ -55,6 +57,7 @@ const DeploymentInputs: FunctionComponent<Props> = ({
                 gsnData = {gsnData}
                 gsnCountries = {gsnCountries}
                 gsnRegions={gsnRegions}
+                nextButtonState={nextButtonState}
             />
         </>
     );

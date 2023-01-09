@@ -3,7 +3,7 @@ import { Icon } from 'semantic-ui-react';
 
 export function DataDiskTable({
     //diskData,
-    vmInfo, osInfo, swInfo, toolbox, inputStates,
+    vmInfo, osInfo, swInfo, toolbox, inputStates,nextButtonState
 }: {
     diskData: any;
     vmInfo: any;
@@ -11,6 +11,7 @@ export function DataDiskTable({
     swInfo: any;
     toolbox: Stage.Types.Toolbox;
     inputStates: any;
+    nextButtonState:any;
 }) {
 
     const { Form } = Stage.Basic;
@@ -325,7 +326,7 @@ export function DataDiskTable({
 
 
         console.log("ValidateDataAllDisks...");
-
+        console.log(nextButtonState);
         //hledani stejnych mountpoint:
         _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
             _disk.error={};
@@ -343,7 +344,7 @@ export function DataDiskTable({
                     errors.push({text:"Mount point must be unique across all disks.", element:"mountpoint"});
                 }
             });
-
+            //TODO, toto se vola zbytecne?
             const toFindDuplicates = (_dataDisks: any[]) => _dataDisks.filter((item: any, index: any) => _dataDisks.indexOf(item) !== index)
             const duplicateElements = toFindDuplicates(_dataDisks);
             console.log(duplicateElements);
@@ -356,20 +357,38 @@ export function DataDiskTable({
     //pri nactani blueprintu nelze nastavit disabled rovnou, protoze to neni 1. krok
     //pri volani az pri renderovani to taky nejde, protoze se triggeruje state cele komponenty a to vede k nekonecnemu nacitani
     // (pri setState se prerenderuje cela komponenta)
-    
+    //volat pouze když je změna?
     // const enableDisableNextButton=(dataDisks: any)=>{
     //     let isErrorInDisk = false;
     //     //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
+
+    //     let _nextButtonState = nextButtonState;
+        
+    //     //pokud trigeruju: dataDiskValidateError -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
+    //     //pokud trigeruju dataDiskValidateOK -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
+    //     //nextButtonState = {this.state.disableNextButton}
+
     //     dataDisks.forEach((obj: { error: any; key: any; }) => {
-    //         if (obj.error != null && obj.error.text != undefined) {
-    //             //console.log("label is empty for key" + obj.key);
-    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
+    //         if (obj.error != null && obj.error.length>0) {               
+    //             //toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
     //             isErrorInDisk = true;
     //         }
     //     });
-    //     if (!isErrorInDisk) {
-    //         toolbox.getEventBus().trigger('blueprint:dataDiskValidateOK');
+
+    //     if (isErrorInDisk) {
+    //         if (_nextButtonState==false) {
+    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
+    //         }
+            
+
     //     }
+    //     else {
+    //         if (_nextButtonState==true) {
+    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateOK');
+    //         }
+            
+    //     }
+
     // }
 
     ValidateDataAllDisks(inputStates);

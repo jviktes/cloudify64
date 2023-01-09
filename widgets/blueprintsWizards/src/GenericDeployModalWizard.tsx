@@ -1071,6 +1071,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 onDeploymentInputChange={this.handleDeploymentInputChange}
                 deploymentInputs={deploymentInputs}
                 errors={errors}
+                nextButtonState = {this.state.disableNextButton}
             ></VMConfigStep>
         }
 
