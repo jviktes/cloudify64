@@ -28,7 +28,7 @@ export function SoftwareConfigurationTable({
             const element = swConfigs[index];
 
             if (element.hasOwnProperty(_par)) {
-                element.default = _value;
+                element[_par] = _value;
                 break;
             }
 
@@ -64,11 +64,12 @@ export function SoftwareConfigurationTable({
     const returnHtmlInput = (_item: any) => {
 
             if (_item.input_type == "text_box") {
+                var _paramName = getParameterName(_item);
                 return (<Form.Input
                     name={_item.key}
                     key={_item.key}
                     id={_item.key}
-                    value={_item.default}
+                    value={_item[_paramName]}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
                 />)
@@ -88,7 +89,7 @@ export function SoftwareConfigurationTable({
                     id={_item.key}
                     selection
                     options={dropDownValues}
-                    value={_item.default}
+                    value={_item[_paramName]}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
                 />
@@ -114,10 +115,6 @@ export function SoftwareConfigurationTable({
         }
     } 
 
-    // var uniqueID = function () {
-    //     return '_' + Math.random().toString(36).slice(2, 11);
-    // };
-    console.log("rendering");
     if (inputStates==null || inputStates==undefined || inputStates.length==0) {
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
