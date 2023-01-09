@@ -14,9 +14,10 @@ interface DeploymentsInfoProps {
     activeSection: any ,
     onYamlFileChange:any,
     onDeploymentInputChange:any,
+    nextButtonState:any,
 }
 
-export default  function GeneralStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange}: DeploymentsInfoProps) {
+export default  function GeneralStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState}: DeploymentsInfoProps) {
     
 
     
@@ -56,6 +57,7 @@ export default  function GeneralStep(this: any, { toolbox, blueprint, index,titl
                 gsnData = {{}}
                 gsnCountries = {{}}
                 gsnRegions= {{}}
+                nextButtonState={nextButtonState}
             />
 
             {/* <button onClick={fetchOnline}>Load example data from external source</button>

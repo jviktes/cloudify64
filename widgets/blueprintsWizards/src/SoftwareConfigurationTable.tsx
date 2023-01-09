@@ -101,44 +101,49 @@ export function SoftwareConfigurationTable({
 
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(inputStates));
         
-
     }
-    //returnHtmlInput(null,null);
-    return (
-        <div>
-                    <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
-                    <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
-                    {/* <DataTable.Column label="required" name="required" width='10%'  /> */}
-                    <DataTable.Column label="Value" name="input_value" width='10%' />
-                    {/* <DataTable.Column label="default" name="default" width='10%' /> */}
-                    {/* <DataTable.Column label="read_only" name="read_only" width='10%' /> */}
-                    
 
-                    {_.map(inputStates, item => (
-                            <DataTable.Row key={JSON.stringify(item.default)} >
+    if (inputStates==null) {
+         return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
+    }
+    else {
+        return (
 
-                                {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
-                                </DataTable.Data> */}
+            <div>
+    
+                        <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
+                        <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
+                        {/* <DataTable.Column label="required" name="required" width='10%'  /> */}
+                        <DataTable.Column label="Value" name="input_value" width='10%' />
+                        {/* <DataTable.Column label="default" name="default" width='10%' /> */}
+                        {/* <DataTable.Column label="read_only" name="read_only" width='10%' /> */}
+                        
+    
+                        {_.map(inputStates, item => (
+                                <DataTable.Row key={JSON.stringify(item.default)} >
+    
+                                    {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
+                                    </DataTable.Data> */}
+    
+                                    <DataTable.Data style={{ width: '10%' }}>{getParameterName(item)}
+                                    </DataTable.Data>
+    
+                                    <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,inputStates)}
+                                    </DataTable.Data>
+    
+                                    {/* <DataTable.Data style={{ width: '10%' }}>{item.default}
+                                    </DataTable.Data> */}
+    
+                                    {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.read_only)}
+                                    </DataTable.Data> */}
+    
+                                </DataTable.Row>
+                        ))}
+                        </DataTable>
+            </div>
+        );
+    }
 
-                                <DataTable.Data style={{ width: '10%' }}>{getParameterName(item)}
-                                </DataTable.Data>
-
-                                <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,inputStates)}
-                                </DataTable.Data>
-
-                                {/* <DataTable.Data style={{ width: '10%' }}>{item.default}
-                                </DataTable.Data> */}
-
-                                {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.read_only)}
-                                </DataTable.Data> */}
-
-
-
-                            </DataTable.Row>
-                    ))}
-                    </DataTable>
-        </div>
-    );
 }
 
 // original table for IIS blueprint:

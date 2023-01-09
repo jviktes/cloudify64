@@ -1008,6 +1008,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             onDeploymentInputChange={this.handleDeploymentInputChange}
             deploymentInputs={deploymentInputs}
             errors={errors}
+            nextButtonState = {this.state.disableNextButton}
             ></GeneralStep>
         }
 
@@ -1023,6 +1024,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 onDeploymentInputChange={this.handleDeploymentInputChange}
                 deploymentInputs={deploymentInputs}
                 errors={errors}
+                nextButtonState = {this.state.disableNextButton}
             ></ClusteringStep>
           }
 
@@ -1041,6 +1043,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 gsnCountries = {this.state.gsnCountries}
                 gsnRegions={this.state.gsnRegions}
                 errors={errors}
+                nextButtonState = {this.state.disableNextButton}
             ></GSNStep>
         }
 
@@ -1056,6 +1059,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 onDeploymentInputChange={this.handleDeploymentInputChange}
                 deploymentInputs={deploymentInputs}
                 errors={errors}
+                nextButtonState = {this.state.disableNextButton}
             ></SWConfigStep>
         }
 
