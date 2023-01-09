@@ -38,17 +38,18 @@ export function SoftwareConfigurationTable({
         return _parameterName;
     }
 
-    
     const returnHtmlInput = (_item: any, inputStates:any) => {
 
             if (_item.input_type == "text_box") {
                 return (<Form.Input
-                    type="text"
+                    //type="text"
+                    name={_item.default}
                     //name={formField.name}
                     //label={formField.label}
                     value={_item.default}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
-                    required={_item.required}
+                    //required={_item.required}
+                    disabled={_item.read_only}
                 />)
             }    
             if (_item.input_type == "drop_down_list") {
@@ -66,6 +67,7 @@ export function SoftwareConfigurationTable({
                     options={dropDownValues}
                     value={_item.default}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
+                    disabled={_item.read_only}
                 />
                 )
             }  
@@ -76,7 +78,7 @@ export function SoftwareConfigurationTable({
                 value={_item.default}
                 //onChange={onChange}
                 onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
-                required={_item.required}
+                disabled={_item.read_only}
             />)
     }
 
@@ -98,7 +100,7 @@ export function SoftwareConfigurationTable({
             }
 
         }
-
+        
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(inputStates));
         
     }
