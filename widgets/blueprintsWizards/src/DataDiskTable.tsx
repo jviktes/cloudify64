@@ -267,7 +267,7 @@ export function DataDiskTable({
         return _letters;
 
     };
-
+    
     const htmlRenderMountPoint = (item: any) => {
         if (getOperationtype() == "windows") {
             return (<Form.Dropdown
@@ -276,7 +276,9 @@ export function DataDiskTable({
                 options={prepareDiskLetterOptions(item)}
                 value={getDiskMountingPointValue(item.mountpoint)}
                 disabled={isRequiredDisk(item)}
-                onChange={(e, { value }) => onItemChange(e.target, item, "mountpoint", getDiskMountpointValueToBlueprintFormatAny(value?.toString()))} />);
+                onChange={(e, { value }) => onItemChange(e.target, item, "mountpoint", getDiskMountpointValueToBlueprintFormatAny(value?.toString()))} 
+                className="DropDownVerticalAlign"
+                />);
         }
         else {
             return (<Form.Input

@@ -155,3 +155,8 @@
     display: flex;
     justify-content: space-between;
   }
+
+.DropDownVerticalAlign {
+  vertical-align: middle;
+
+}
