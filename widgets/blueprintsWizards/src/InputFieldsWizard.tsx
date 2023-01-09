@@ -464,6 +464,7 @@ export default function InputFields({
             if (input.name=="service_names") {
                 
                 return (<div>
+                            <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label></div>
                             <SoftwareConfigurationTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]}></SoftwareConfigurationTable>
                         </div>
                         )
