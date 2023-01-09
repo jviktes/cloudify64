@@ -45,7 +45,7 @@ export function SoftwareConfigurationTable({
                     //type="text"
                     name={_item.default}
                     //name={formField.name}
-                    //label={formField.label}
+
                     value={_item.default}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,"sw_drop_down",value,inputStates)}
                     //required={_item.required}
@@ -104,7 +104,14 @@ export function SoftwareConfigurationTable({
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(inputStates));
         
     }
-
+    const getItemLabel = (_item: any) => {
+        if (_item.display_label != undefined) {
+            return _item.display_label;
+        }
+        else {
+            return getParameterName(_item)
+        }
+    } 
     if (inputStates==null) {
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
@@ -112,7 +119,7 @@ export function SoftwareConfigurationTable({
         return (
 
             <div>
-    
+                        
                         <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
                         <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
                         {/* <DataTable.Column label="required" name="required" width='10%'  /> */}
@@ -127,7 +134,8 @@ export function SoftwareConfigurationTable({
                                     {/* <DataTable.Data style={{ width: '10%' }}>{JSON.stringify(item.required)}
                                     </DataTable.Data> */}
     
-                                    <DataTable.Data style={{ width: '10%' }}>{getParameterName(item)}
+                                   
+                                    <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
                                     </DataTable.Data>
     
                                     <DataTable.Data style={{ width: '10%' }}>{returnHtmlInput(item,inputStates)}
