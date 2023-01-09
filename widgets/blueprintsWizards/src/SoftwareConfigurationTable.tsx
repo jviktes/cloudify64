@@ -39,14 +39,14 @@ export function SoftwareConfigurationTable({
     }
 
     const getParameterName = (_item:any) => {
-    //tady vybrat to co je navic mimo pole required, input_type: text_box, service_name: wlsvc, defaultX: wlsvc, read_only: true},
+    //tady vybrat to co je navic mimo pole required, input_type: text_box, service_name: wlsvc, default: wlsvc, read_only: true},
     //for cyclus pro cely radek:
     var _parameterName = "";
     for (const key in _item) {
         if (Object.prototype.hasOwnProperty.call(_item, key)) {
             var _key = key.toString();
             //TODO: tady mi to hazi divnou chybu pro !==
-            if (_key=='required' || _key=='default' || _key=='input_type' || _key=='default'  || _key=='read_only')
+            if (_key=='required' || _key=='default' || _key=='input_type' || _key=='default'  || _key=='read_only' || _key=='key')
             { 
                 //const element = _item[key];
                 //console.log(element);
@@ -65,8 +65,9 @@ export function SoftwareConfigurationTable({
 
             if (_item.input_type == "text_box") {
                 return (<Form.Input
-                    name={uniqueID()}
-                    key={uniqueID()}
+                    name={_item.key}
+                    key={_item.key}
+                    id={_item.key}
                     value={_item.default}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
@@ -82,7 +83,9 @@ export function SoftwareConfigurationTable({
                 }
 
                 return (<Form.Dropdown
-                    name="parameter_value"
+                    name={_item.key}
+                    key={_item.key}
+                    id={_item.key}
                     selection
                     options={dropDownValues}
                     value={_item.default}
@@ -93,6 +96,9 @@ export function SoftwareConfigurationTable({
             }  
             return (<Form.Input
                 type="text"
+                name={_item.key}
+                key={_item.key}
+                id={_item.key}
                 value={_item.default}
                 onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                 disabled={_item.read_only}
@@ -108,17 +114,16 @@ export function SoftwareConfigurationTable({
         }
     } 
 
-    var uniqueID = function () {
-        return '_' + Math.random().toString(36).slice(2, 11);
-    };
-
-
+    // var uniqueID = function () {
+    //     return '_' + Math.random().toString(36).slice(2, 11);
+    // };
+    console.log("rendering");
     if (inputStates==null || inputStates==undefined || inputStates.length==0) {
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
     else {
         return (
-
+            
             <div>
                         
                         <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
@@ -126,7 +131,7 @@ export function SoftwareConfigurationTable({
                         <DataTable.Column label="Value" name="input_value" width='10%' />
 
                         {_.map(inputStates, item => (
-                                <DataTable.Row key={uniqueID()} >
+                                <DataTable.Row key={item.key+item.key} >
     
                                     <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
                                     </DataTable.Data>
