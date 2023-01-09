@@ -35,7 +35,7 @@ export function SoftwareConfigurationTable({
         }
         
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(swConfigs));
-        
+
     }
 
     const getParameterName = (_item:any) => {
@@ -112,7 +112,8 @@ export function SoftwareConfigurationTable({
         return '_' + Math.random().toString(36).slice(2, 11);
     };
 
-    if (inputStates==null) {
+
+    if (inputStates==null || inputStates==undefined || inputStates.length==0) {
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
     else {
