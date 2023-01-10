@@ -131,6 +131,21 @@ export function DataDiskTable({
         { text: 'Z', name: 'Z', value: 'Z' },
     ];
 
+    //return value of service_name from service_names
+    const getParameterName = (_items:any) => {
+        var _parameterValue = "";
+        for (const key in _items) {
+
+            var _row = _items[key];
+
+                if (_row["service_name"]!=null) {
+                    _parameterValue = _row["service_name"];
+                    break;
+                }
+        }
+        return _parameterValue;
+    }
+
     const getDiskLabelValue = (_valueLabel: any) => {
 
         //disk label muze byt zadavan podle nazvu sluzby:
@@ -139,7 +154,8 @@ export function DataDiskTable({
                 if (swInfo != null) {
                     console.log(swInfo);
                     let _swInfoParsed = JSON.parse(swInfo);
-                    return _swInfoParsed[0].service;
+                    let _parNameValue=getParameterName(_swInfoParsed);
+                    return _parNameValue;
                 }
             }
         } catch (error) {
@@ -149,7 +165,8 @@ export function DataDiskTable({
                     if (swInfo != null) {
                         console.log(swInfo);
                         let _swInfoParsed = JSON.parse(swInfo);
-                        return _swInfoParsed[0].service;
+                        let _parNameValue=getParameterName(_swInfoParsed);
+                        return _parNameValue;
                     }
                 }
             } catch (error) {
@@ -168,11 +185,27 @@ export function DataDiskTable({
 
     const getDiskMountingPointValue = (_valueMountingPoint: any) => {
         try {
-            return _valueMountingPoint[0].path;
+
+            //[{"path":{"concat":["/appl/",{"get_input":["service_names",0,"service_name"]}]}}]
+            if (_valueMountingPoint[0].path.hasOwnProperty("concat")) {
+                let _fullPath = "";
+                //_valueMountingPoint[0].path.concat.forEach(element => {
+                    //_fullPath.concat(_valueMountingPoint[0].path.concat);
+
+                    _fullPath=_fullPath+_valueMountingPoint[0].path.concat[0];
+                    _fullPath=_fullPath+getDiskLabelValue(_valueMountingPoint[0].path.concat[1]);
+                    
+                    //_fullPath = _valueMountingPoint[0].path.concat.join("");
+                //});
+                return _fullPath;
+            } 
+            else {
+                return _valueMountingPoint[0].path;
+            }
+
         } catch (error) {
             return "";
         }
-
     };
 
     const getDiskLabelValueToBlueprintFormat = (_value: string) => {
