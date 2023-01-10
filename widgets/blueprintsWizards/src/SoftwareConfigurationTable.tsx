@@ -39,14 +39,14 @@ export function SoftwareConfigurationTable({
     }
 
     const getParameterName = (_item:any) => {
-    //tady vybrat to co je navic mimo pole required, input_type: text_box, service_name: wlsvc, default: wlsvc, read_only: true},
+    //tady vybrat to co je navic mimo pole required, type: text_box, service_name: wlsvc, default: wlsvc, read_only: true},
     //for cyclus pro cely radek:
     var _parameterName = "";
     for (const key in _item) {
         if (Object.prototype.hasOwnProperty.call(_item, key)) {
             var _key = key.toString();
             //TODO: tady mi to hazi divnou chybu pro !==
-            if (_key=='required' || _key=='default' || _key=='input_type' || _key=='default'  || _key=='read_only' || _key=='key')
+            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key')
             { 
                 //const element = _item[key];
                 //console.log(element);
@@ -63,7 +63,7 @@ export function SoftwareConfigurationTable({
 
     const returnHtmlInput = (_item: any) => {
 
-            if (_item.input_type == "text_box") {
+            if (_item.type == "text_box") {
                 var _paramName = getParameterName(_item);
                 return (<Form.Input
                     name={_item.key}
@@ -74,7 +74,7 @@ export function SoftwareConfigurationTable({
                     disabled={_item.read_only}
                 />)
             }    
-            if (_item.input_type == "drop_down_list") {
+            if (_item.type == "drop_down_list") {
                 const dropDownValues = [];
                 var _paramName = getParameterName(_item);
                 //priprava options:

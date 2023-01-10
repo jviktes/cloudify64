@@ -132,14 +132,14 @@ export function DataDiskTable({
     ];
 
     //return value of service_name from service_names
-    const getParameterName = (_items:any) => {
+    const getParameterName = (_items:any, parameterName: any) => {
         var _parameterValue = "";
         for (const key in _items) {
 
             var _row = _items[key];
 
-                if (_row["service_name"]!=null) {
-                    _parameterValue = _row["service_name"];
+                if (_row[parameterName]!=null) {
+                    _parameterValue = _row[parameterName];
                     break;
                 }
         }
@@ -154,7 +154,8 @@ export function DataDiskTable({
                 if (swInfo != null) {
                     console.log(swInfo);
                     let _swInfoParsed = JSON.parse(swInfo);
-                    let _parNameValue=getParameterName(_swInfoParsed);
+                    
+                    let _parNameValue=getParameterName(_swInfoParsed,_valueLabel[0].get_input[2]);
                     return _parNameValue;
                 }
             }
@@ -165,7 +166,7 @@ export function DataDiskTable({
                     if (swInfo != null) {
                         console.log(swInfo);
                         let _swInfoParsed = JSON.parse(swInfo);
-                        let _parNameValue=getParameterName(_swInfoParsed);
+                        let _parNameValue=getParameterName(_swInfoParsed,_valueLabel.get_input[2]);
                         return _parNameValue;
                     }
                 }
@@ -189,14 +190,18 @@ export function DataDiskTable({
             //[{"path":{"concat":["/appl/",{"get_input":["service_names",0,"service_name"]}]}}]
             if (_valueMountingPoint[0].path.hasOwnProperty("concat")) {
                 let _fullPath = "";
-                //_valueMountingPoint[0].path.concat.forEach(element => {
-                    //_fullPath.concat(_valueMountingPoint[0].path.concat);
 
-                    _fullPath=_fullPath+_valueMountingPoint[0].path.concat[0];
-                    _fullPath=_fullPath+getDiskLabelValue(_valueMountingPoint[0].path.concat[1]);
+                for (let index = 0; index < _valueMountingPoint[0].path.concat.length; index++) {
+                    const elementValue = _valueMountingPoint[0].path.concat[index];
+                    if (elementValue.get_input!=null) {
+                        _fullPath=_fullPath+getDiskLabelValue(elementValue);
+                    }
+                    else {
+                        _fullPath=_fullPath+elementValue;
+                    }
                     
-                    //_fullPath = _valueMountingPoint[0].path.concat.join("");
-                //});
+                }
+
                 return _fullPath;
             } 
             else {
@@ -261,8 +266,6 @@ export function DataDiskTable({
         }
 
     };
-
-
 
     const getOperationtype = () => {
         //console.log(osInfo);
