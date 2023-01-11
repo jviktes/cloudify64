@@ -1203,8 +1203,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             }
             else {
                 return (steps[0].key === activeStep.key)
-            }
-            
+            }           
         }
 
         return (

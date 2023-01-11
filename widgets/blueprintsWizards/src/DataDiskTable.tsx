@@ -35,10 +35,8 @@ export function DataDiskTable({
         }
         
         ValidateDataAllDisks(dataDisks);
-        //enableDisableNextButton(dataDisks);
+        enableDisableNextButton(dataDisks);
     };
-
-
 
     const RemoveDisk = (_item: any) => {
         console.log("RemoveDisk:" + _item.key);
@@ -390,41 +388,42 @@ export function DataDiskTable({
     //pri volani az pri renderovani to taky nejde, protoze se triggeruje state cele komponenty a to vede k nekonecnemu nacitani
     // (pri setState se prerenderuje cela komponenta)
     //volat pouze když je změna?
-    // const enableDisableNextButton=(dataDisks: any)=>{
-    //     let isErrorInDisk = false;
-    //     //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
+    const enableDisableNextButton=(dataDisks: any)=>{
+        let isErrorInDisk = false;
+        //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
 
-    //     let _nextButtonState = nextButtonState;
+        let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
         
-    //     //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
-    //     //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
-    //     //nextButtonState = {this.state.disableNextButton}
+        //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
+        //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
+        //nextButtonState = {this.state.disableNextButton}
 
-    //     dataDisks.forEach((obj: { error: any; key: any; }) => {
-    //         if (obj.error != null && obj.error.length>0) {               
-    //             //toolbox.getEventBus().trigger('blueprint:disableNextButton');
-    //             isErrorInDisk = true;
-    //         }
-    //     });
+        //je v datadisku nekde chyba?
+        dataDisks.forEach((obj: { error: any; key: any; }) => {
+            if (obj.error != null && obj.error.length>0) {               
+                //toolbox.getEventBus().trigger('blueprint:disableNextButton');
+                isErrorInDisk = true;
+            }
+        });
 
-    //     if (isErrorInDisk) {
-    //         if (_nextButtonState==false) {
-    //             toolbox.getEventBus().trigger('blueprint:disableNextButton');
-    //         }
-            
-
-    //     }
-    //     else {
-    //         if (_nextButtonState==true) {
-    //             toolbox.getEventBus().trigger('blueprint:enableNextButton');
-    //         }
-            
-    //     }
-
-    // }
+        if (isErrorInDisk) {
+            //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
+            if (_nextButtonState==false) {
+                toolbox.getEventBus().trigger('blueprint:disableNextButton');
+            }
+        }
+        else {
+            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+            if (_nextButtonState==true) {
+                toolbox.getEventBus().trigger('blueprint:enableNextButton');
+            }
+        }
+    }
 
     ValidateDataAllDisks(inputStates);
-    //enableDisableNextButton(inputStates);
+    
+    enableDisableNextButton(inputStates);
+
     return (
         <div>
             <DataTable className="agentsGsnCountries table-scroll-gsn">

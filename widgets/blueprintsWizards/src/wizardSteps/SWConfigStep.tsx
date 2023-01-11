@@ -29,6 +29,11 @@ export default function SWConfigStep(this: any, { toolbox, blueprint, index,titl
     const orderedInputsWithoutValues=getDeploymentInputsByCategories(deploymentInputs,category);
     //console.log(orderedInputsWithoutValues);
 
+    //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+    if (nextButtonState==true) {
+        toolbox.getEventBus().trigger('blueprint:enableNextButton');
+    }
+    
     //only for demo!
     try {
         if (orderedInputsWithoutValues.service_names!=undefined) {
