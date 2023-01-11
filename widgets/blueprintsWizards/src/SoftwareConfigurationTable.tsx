@@ -31,7 +31,6 @@ export function SoftwareConfigurationTable({
                 element[_par] = _value;
                 break;
             }
-
         }
         
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(swConfigs));
@@ -46,7 +45,7 @@ export function SoftwareConfigurationTable({
         if (Object.prototype.hasOwnProperty.call(_item, key)) {
             var _key = key.toString();
             //TODO: tady mi to hazi divnou chybu pro !==
-            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key' || _key== 'posible_values')
+            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key' || _key== 'limitations')
             { 
                 //const element = _item[key];
                 //console.log(element);
@@ -77,10 +76,18 @@ export function SoftwareConfigurationTable({
             if (_item.type == "drop_down_list") {
                 const dropDownValues = [];
                 var _paramName = getParameterName(_item);
-                //priprava options:
-                let _possible_valles = _item["posible_values"];
-                for (const key in _possible_valles[0]) {
-                    dropDownValues.push({text:key,name:key,value:key});
+                try {
+                    
+                    //priprava options:
+                    let _limitation_valles = _item["limitations"];
+    
+                    if (_limitation_valles[0]!=null) {
+                        for (const key in _limitation_valles[0].possible_values) {
+                            dropDownValues.push({text:key,name:key,value:key});
+                        }
+                    }
+                } catch (error) {
+                    
                 }
 
                 return (<Form.Dropdown
