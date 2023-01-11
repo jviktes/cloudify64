@@ -182,8 +182,8 @@ export default function InputFields({
     gsnData,
     gsnCountries,
     gsnRegions,
-    nextButtonState
-    
+    nextButtonState,
+    backButtonState,
 }: {
     inputs: Record<string, any>;
     onChange: OnChange;
@@ -196,18 +196,11 @@ export default function InputFields({
     gsnCountries:any;
     gsnRegions:any;
     nextButtonState:boolean
+    backButtonState:boolean
 }) {
-    //inputs je nutne srovnat podle poradi, nyni je poradi podle nacteni z blueprint souboru:
-
-    // const cssValidateDisks=()=>{
-    //     console.log("cssValidateDisks");
-    //     toolbox.refresh();
-        
-    // };
-
-    //toolbox.getEventBus().on('blueprint:dataDiskValidateError',cssValidateDisks());
 
     inputs = getInputsOrderByCategories(inputs);
+    console.log(backButtonState);
     const getQuantity = ()=> {
         let _quantity  = allDeploymentInputs["quantity"];
         //console.log(_quantity);

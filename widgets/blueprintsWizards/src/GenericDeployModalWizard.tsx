@@ -220,6 +220,7 @@ type GenericDeployModalState = {
     activeStep: WizardState,
     showDeployModalActions: boolean,
     disableNextButton: boolean,
+    disableBackButton: boolean,
 };
 
 // type ContryData = {
@@ -290,6 +291,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         //activeStep: { key: 'VMConfigStep', label: 'VM configuration', isDone: false, component: EmptyComponent },
         showDeployModalActions: false,
         disableNextButton: false,
+        disableBackButton:false,
     };
 
     constructor(props: GenericDeployModalProps) {
@@ -327,9 +329,12 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         });
         const { toolbox } = this.props;
         toolbox.getEventBus().on('blueprint:setDeploymentIputs', this.setDeploymentIputs, this);
-        toolbox.getEventBus().on('blueprint:dataDiskValidateError', this.DisableNextButtonFunc, this);
-        toolbox.getEventBus().on('blueprint:dataDiskValidateOK', this.EnableNextButtonFunc,this);
+        toolbox.getEventBus().on('blueprint:disableNextButton', this.DisableNextButtonFunc, this);
+        toolbox.getEventBus().on('blueprint:enableNextButton', this.EnableNextButtonFunc,this);
+        toolbox.getEventBus().on('blueprint:disableBackButton', this.DisableBackButtonFunc, this);
+        toolbox.getEventBus().on('blueprint:enableBackButton', this.EnableBackButtonFunc,this);
         this.setState({disableNextButton:false});
+        this.setState({disableBackButton:false}); //TODO?
     }
 
     DisableNextButtonFunc() {
@@ -340,6 +345,16 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
     EnableNextButtonFunc() {
         console.log("EnableNextButtonFunc...");
         this.setState({ disableNextButton: false });
+    }
+
+    DisableBackButtonFunc() {
+        console.log("DisableBackButtonFunc...");
+        this.setState({ disableBackButton: true });
+    }
+
+    EnableBackButtonFunc() {
+        console.log("EnableBackButtonFunc...");
+        this.setState({ disableBackButton: false });
     }
 
     setDeploymentIputs(fieldName: string,fieldNameValue: string) {
@@ -1022,6 +1037,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             deploymentInputs={deploymentInputs}
             errors={errors}
             nextButtonState = {this.state.disableNextButton}
+            backButtonState = {this.state.disableBackButton}
             ></GeneralStep>
         }
 
@@ -1038,6 +1054,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 deploymentInputs={deploymentInputs}
                 errors={errors}
                 nextButtonState = {this.state.disableNextButton}
+                backButtonState = {this.state.disableBackButton}
             ></ClusteringStep>
           }
 
@@ -1057,6 +1074,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 gsnRegions={this.state.gsnRegions}
                 errors={errors}
                 nextButtonState = {this.state.disableNextButton}
+                backButtonState = {this.state.disableBackButton}
             ></GSNStep>
         }
 
@@ -1073,6 +1091,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 deploymentInputs={deploymentInputs}
                 errors={errors}
                 nextButtonState = {this.state.disableNextButton}
+                backButtonState = {this.state.disableBackButton}
             ></SWConfigStep>
         }
 
@@ -1089,6 +1108,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 deploymentInputs={deploymentInputs}
                 errors={errors}
                 nextButtonState = {this.state.disableNextButton}
+                backButtonState = {this.state.disableBackButton}
             ></VMConfigStep>
         }
 
@@ -1132,7 +1152,8 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             steps,
             activeStep,
             showDeployModalActions,
-            disableNextButton
+            disableNextButton,
+            disableBackButton
         } = this.state;
         
         const { DEPLOYMENT_SECTIONS } = GenericDeployModal;
@@ -1176,7 +1197,14 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         }
 
         const isBackButtonEnabled = () => {
-            return (steps[0].key === activeStep.key)
+            this.setState({ disableNextButton: false });
+            if (disableBackButton == true) {
+                return false;
+            }
+            else {
+                return (steps[0].key === activeStep.key)
+            }
+            
         }
 
         return (

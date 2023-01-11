@@ -396,27 +396,27 @@ export function DataDiskTable({
 
     //     let _nextButtonState = nextButtonState;
         
-    //     //pokud trigeruju: dataDiskValidateError -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
-    //     //pokud trigeruju dataDiskValidateOK -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
+    //     //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
+    //     //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
     //     //nextButtonState = {this.state.disableNextButton}
 
     //     dataDisks.forEach((obj: { error: any; key: any; }) => {
     //         if (obj.error != null && obj.error.length>0) {               
-    //             //toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
+    //             //toolbox.getEventBus().trigger('blueprint:disableNextButton');
     //             isErrorInDisk = true;
     //         }
     //     });
 
     //     if (isErrorInDisk) {
     //         if (_nextButtonState==false) {
-    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateError');
+    //             toolbox.getEventBus().trigger('blueprint:disableNextButton');
     //         }
             
 
     //     }
     //     else {
     //         if (_nextButtonState==true) {
-    //             toolbox.getEventBus().trigger('blueprint:dataDiskValidateOK');
+    //             toolbox.getEventBus().trigger('blueprint:enableNextButton');
     //         }
             
     //     }

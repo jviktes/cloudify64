@@ -15,9 +15,10 @@ interface DeploymentsInfoProps {
     onYamlFileChange:any,
     onDeploymentInputChange:any,
     nextButtonState:any,
+    backButtonState:any,
 }
 
-export default function ClusteringStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState}: DeploymentsInfoProps) {
+export default function ClusteringStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
     console.log("ClusteringStep:"+index+","+title+","+activeSection);
     //console.log(deploymentInputs);
@@ -40,6 +41,7 @@ export default function ClusteringStep(this: any, { toolbox, blueprint, index,ti
                 gsnCountries = {{}}
                 gsnRegions= {{}}
                 nextButtonState={nextButtonState}
+                backButtonState={backButtonState}
             />
         </div>
     );
