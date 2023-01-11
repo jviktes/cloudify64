@@ -46,7 +46,7 @@ export function SoftwareConfigurationTable({
         if (Object.prototype.hasOwnProperty.call(_item, key)) {
             var _key = key.toString();
             //TODO: tady mi to hazi divnou chybu pro !==
-            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key')
+            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key' || _key== 'posible_values')
             { 
                 //const element = _item[key];
                 //console.log(element);
@@ -78,8 +78,8 @@ export function SoftwareConfigurationTable({
                 const dropDownValues = [];
                 var _paramName = getParameterName(_item);
                 //priprava options:
-                let valls = _item[_paramName];
-                for (const key in valls[0]) {
+                let _possible_valles = _item["posible_values"];
+                for (const key in _possible_valles[0]) {
                     dropDownValues.push({text:key,name:key,value:key});
                 }
 
