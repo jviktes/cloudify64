@@ -33,6 +33,24 @@ export function SoftwareConfigurationTable({
             }
         }
         
+        //validation: if (_valueLabel.hasOwnProperty("get_input")) {
+        if (_item.limitations[0]!=null) {
+            if (_item.limitations[0].hasOwnProperty("regex")) {
+                let _regex = _item.limitations[0].regex;
+                //_regex="^[a-z]{1,8}$";
+                _item.error = null;
+                const myRe = new RegExp(_regex, 'g');
+                const regResults = myRe.exec(_value);
+                console.log(regResults);
+                if (regResults==null) {
+                    var err = {text:"Value have to be according regex: "+ _regex};
+                    _item.error = err;
+                }
+                
+            }
+        }
+
+
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(swConfigs));
 
     }
@@ -122,6 +140,18 @@ export function SoftwareConfigurationTable({
         }
     } 
 
+    const htmlRenderErrorState = (_error: any) => {
+        let _htmlResult = null;
+        if (_error == "" || _error == null) {
+            _htmlResult = null;
+        }
+        else {
+
+            _htmlResult = <p style={{ color: 'red'}}>{_error.text}</p>;
+        }
+        return _htmlResult ;
+    };
+
     if (inputStates==null || inputStates==undefined || inputStates.length==0) {
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
@@ -142,6 +172,7 @@ export function SoftwareConfigurationTable({
     
                                     <DataTable.Data style={{ width: '10%' }}>
                                         {returnHtmlInput(item)}
+                                        {htmlRenderErrorState(item.error)}
                                     </DataTable.Data>
     
                                 </DataTable.Row>
