@@ -335,7 +335,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
     DisableNextButtonFunc() {
         console.log("DisableNextButtonFunc...");
         this.setState({ disableNextButton: true });
-        
     }
 
     EnableNextButtonFunc() {
@@ -1176,6 +1175,10 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             alert(JSON.stringify(this.state.deploymentInputs, null, "  "));
         }
 
+        const isBackButtonEnabled = () => {
+            return (steps[0].key === activeStep.key)
+        }
+
         return (
             <Modal open={open} onClose={onHide} className="deployBlueprintModal">
                 <Modal.Header>
@@ -1240,7 +1243,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         </div>
                         <div className="btn-component">
                             
-                            <input type="button" key={"key_back"}  className='ui button basic cancel' value="Back" onClick={handleBack} disabled={steps[0].key === activeStep.key} />
+                            <input type="button" key={"key_back"}  className='ui button basic cancel' value="Back" onClick={handleBack} disabled={isBackButtonEnabled()} />
 
                             {!showDeployModalActions && (
                                 <div style={{float:"left"}}>
