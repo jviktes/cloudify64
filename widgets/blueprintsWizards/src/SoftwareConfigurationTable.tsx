@@ -1,7 +1,7 @@
 import { DataTable } from 'cloudify-ui-components';
 
 export function SoftwareConfigurationTable({
-    toolbox, inputStates,
+    toolbox, inputStates,nextButtonState
 }: {
     diskData: any;
     vmInfo: any;
@@ -9,6 +9,7 @@ export function SoftwareConfigurationTable({
     swInfo: any;
     toolbox: Stage.Types.Toolbox;
     inputStates: any;
+    nextButtonState:any;
 }) {
 
     const { Form } = Stage.Basic;
@@ -34,7 +35,7 @@ export function SoftwareConfigurationTable({
         }
         
         //validation: if (_valueLabel.hasOwnProperty("get_input")) {
-        if (_item.limitations[0]!=null) {
+        if (_item.limitations!=undefined && _item.limitations[0]!=null) {
             if (_item.limitations[0].hasOwnProperty("regex")) {
                 let _regex = _item.limitations[0].regex;
                 //_regex="^[a-z]{1,8}$";
@@ -49,12 +50,79 @@ export function SoftwareConfigurationTable({
                 
             }
         }
-
-
+        enableDisableNextButton(_item);
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(swConfigs));
 
     }
 
+    const ValidateAllSWConfigs=(_dataSWConfigs:any) => {
+
+        console.log("validateAllSWConfigs...");
+        var _isErrorAnywhere = false;
+        for (let index = 0; index < _dataSWConfigs.length; index++) {
+            const _configItem = _dataSWConfigs[index];
+            if (_configItem.limitations!=undefined && _configItem.limitations[0]!=null) {
+                
+                    if (_configItem.limitations[0].hasOwnProperty("regex")) {
+                        let _regex = _configItem.limitations[0].regex;
+                        //_regex="^[a-z]{1,8}$";
+                        _configItem.error = null;
+                        const myRe = new RegExp(_regex, 'g');
+                        var _paramName = getParameterName(_configItem);
+                        var _paramValue = _configItem[_paramName];
+                        const regResults = myRe.exec(_paramValue);
+                        console.log(regResults);
+                        if (regResults==null) {
+                            var err = {text:"Value have to be according regex: "+ _regex};
+                            _configItem.error = err;
+                            _isErrorAnywhere=true;
+                        }
+                    }
+                
+            }
+        }
+
+        if (_isErrorAnywhere) {
+            //poku je chyba v configu a tlacitko je enabled, pak volam disablovani:
+            if (nextButtonState==false) {
+                toolbox.getEventBus().trigger('blueprint:disableNextButton');
+            }
+        }
+        else {
+            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+            if (nextButtonState==true) {
+                toolbox.getEventBus().trigger('blueprint:enableNextButton');
+            }
+        }
+    }
+
+    const enableDisableNextButton=(_item: any)=>{
+        let isErrorInSWConfig = false;
+        //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
+
+        let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
+        
+        //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
+        //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
+        //nextButtonState = {this.state.disableNextButton}
+
+        if (_item.error!=null) {
+            isErrorInSWConfig = true;
+        }
+
+        if (isErrorInSWConfig) {
+            //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
+            if (_nextButtonState==false) {
+                toolbox.getEventBus().trigger('blueprint:disableNextButton');
+            }
+        }
+        else {
+            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+            if (_nextButtonState==true) {
+                toolbox.getEventBus().trigger('blueprint:enableNextButton');
+            }
+        }
+    }
     const getParameterName = (_item:any) => {
     //tady vybrat to co je navic mimo pole required, type: text_box, service_name: wlsvc, default: wlsvc, read_only: true},
     //for cyclus pro cely radek:
@@ -77,6 +145,8 @@ export function SoftwareConfigurationTable({
     }
     return _parameterName;
 }
+
+    ValidateAllSWConfigs(inputStates);
 
     const returnHtmlInput = (_item: any) => {
 

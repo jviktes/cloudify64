@@ -25,6 +25,11 @@ export default function ClusteringStep(this: any, { toolbox, blueprint, index,ti
     //console.log(title);
     //console.log(blueprint);
     const category = "clustering";
+
+    //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+    if (nextButtonState==true) {
+        toolbox.getEventBus().trigger('blueprint:enableNextButton');
+    }
     return (
         
         <div style={{overflow: "visible",padding:"10px"}}>
