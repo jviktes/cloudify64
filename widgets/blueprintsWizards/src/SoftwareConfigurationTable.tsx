@@ -44,10 +44,13 @@ export function SoftwareConfigurationTable({
                 const regResults = myRe.exec(_value);
                 console.log(regResults);
                 if (regResults==null) {
-                    var err = {text:"Value have to be according regex: "+ _regex};
-                    _item.error = err;
+                    if (_item.limitations[1]!=null && _item.limitations[1].hasOwnProperty("limitation_desciption")) {
+                        _item.error= {text:_item.limitations[1].limitation_desciption};
+                    }
+                    else {
+                        _item.error= {text:"Value have to be according regex: "+ _regex};
+                    }
                 }
-                
             }
         }
         enableDisableNextButton(_item);
@@ -73,8 +76,12 @@ export function SoftwareConfigurationTable({
                         const regResults = myRe.exec(_paramValue);
                         console.log(regResults);
                         if (regResults==null) {
-                            var err = {text:"Value have to be according regex: "+ _regex};
-                            _configItem.error = err;
+                            if (_configItem.limitations[1]!=null && _configItem.limitations[1].hasOwnProperty("limitation_desciption")) {
+                                _configItem.error= {text:_configItem.limitations[1].limitation_desciption};
+                            }
+                            else {
+                                _configItem.error= {text:"Value have to be according regex: "+ _regex};
+                            }
                             _isErrorAnywhere=true;
                         }
                     }
