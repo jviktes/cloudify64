@@ -21,16 +21,9 @@ interface DeploymentsInfoProps {
 export default function SWConfigStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
     console.log("SWConfigStep:"+index+","+title+","+activeSection);;
-    //console.log(deploymentInputs);
-    //console.log(title);
-
     const category = "swconfig";
-
     const orderedInputsWithoutValues=getDeploymentInputsByCategories(deploymentInputs,category);
-    //console.log(orderedInputsWithoutValues);
 
-
-    
     //only for demo!
     try {
         if (orderedInputsWithoutValues.service_names!=undefined) {
