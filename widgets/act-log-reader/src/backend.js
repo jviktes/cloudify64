@@ -43,13 +43,33 @@ module.exports = async function(r) {
             let _fileName = key; //key = file name = <VM-name>-<ACT-class>-<ACT-set>-<timestamp>.log 
             console.log("processedDataToJson:"+_fileName);
             //console.log("processedDataToJson:"+value);
-            //funkce pro splitting:
+
+
+            //funkce pro splitting --> pozor muzou byt 2 verze (4 a 5 parametru v nazvu soubru)
             const _parametresFromFile = _fileName.split("-");
 
-            let _VMFromFileName = _parametresFromFile[0];
-            let _actClassFromFileName = _parametresFromFile[1];
-            let _actSetFromFileName = _parametresFromFile[2];
-            let _actTimeStampFromFileName = _parametresFromFile[3].slice(0, -4); //YYYYMMDDhhmmss 
+            let _VMFromFileName = "";
+            let _actClassFromFileName = "";
+            let _actSetFromFileName = "";
+            let _actTimeStampFromFileName = "";//YYYYMMDDhhmmss 
+
+            //console.log("_parametresFromFile.length:");
+            //console.log(_parametresFromFile.length);
+
+            if (_parametresFromFile.length==4) {
+                _VMFromFileName = _parametresFromFile[0];
+                _actClassFromFileName = _parametresFromFile[1];
+                _actSetFromFileName = _parametresFromFile[2];
+                _actTimeStampFromFileName = _parametresFromFile[3].slice(0, -4); //YYYYMMDDhhmmss 
+            }
+
+            if (_parametresFromFile.length==5) {
+                _VMFromFileName = _parametresFromFile[0];
+                _actClassFromFileName = _parametresFromFile[1]+"-"+_parametresFromFile[2];
+                _actSetFromFileName = _parametresFromFile[3];
+                _actTimeStampFromFileName = _parametresFromFile[4].slice(0, -4); //YYYYMMDDhhmmss 
+            }
+
 
             //searching in VM, skipping if not included:
             if (_searchParam && _VMFromFileName.indexOf(_searchParam)== -1) {
