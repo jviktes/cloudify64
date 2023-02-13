@@ -48,14 +48,18 @@ const LogActionsMenu: FunctionComponent<LogActionsMenuProps> = ({
     // };
 
     const copyToClipboard = () => {
-
-
         navigator.clipboard.writeText(JSON.stringify(data));
     }
     const downloadJSON = () => {
         const widget = toolbox.getWidget();
         console.log(widget.id);
-        alert(JSON.stringify(data));
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+        var downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", data.fileName + ".json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
     const exporttoPdf = () => {
 
