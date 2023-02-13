@@ -91,7 +91,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                     <DataTable.Column label="Warnings" name="warnings" width="6%" />
                     <DataTable.Column label="Failed" name="failed" width="5%" />
                     <DataTable.Column label="File name" name="fileName" width="29%" />
-                    <DataTable.Column label="" name="dropdown" width="29%" />
+                    <DataTable.Column label="" name="dropdown" width="8%" />
                     {_.map(data.items, item => (
                         <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row
@@ -117,7 +117,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                 </DataTable.Data>
                                 <DataTable.Data style={{ width: '29%' }}>{item.fileName}</DataTable.Data>
 
-                                <DataTable.Data style={{ width: '29%' }}>
+                                <DataTable.Data style={{ width: '8%' }}>
                                 <div className="uploadBlueprintButton">
                                         <LogActionsMenu
                                             upward={false}
