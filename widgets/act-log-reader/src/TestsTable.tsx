@@ -4,6 +4,9 @@ import type { Tests } from './types';
 import TestsPropType from './props/TestsPropType';
 import TestDetails from './TestDetails';
 
+import { DataTable, Form } from 'cloudify-ui-components';
+import LogActionsMenu from './LogActionsMenu';
+
 interface TestDataProps {
     data: {
         items: PropTypes.array;
@@ -57,7 +60,9 @@ export default class TestsTable extends React.Component<TestDataProps> {
     refreshData() {
         const { toolbox } = this.props;
         toolbox.refresh();
-    }
+    };
+
+
 
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -67,6 +72,12 @@ export default class TestsTable extends React.Component<TestDataProps> {
         const tenantName = manager.getSelectedTenant();
 
         // console.log(data);
+
+        const locationTranslationOptions = [
+            { text: 'Copy to clip' , name: 'Copy to clip', value: 'Copy to clip' },
+            { text: 'Download JSON', name: 'Download JSON', value: 'Download JSON' },
+            { text: 'Export pdf', name: 'Export pdf', value: 'Export pdf' },
+        ]
 
         return (
             <div>
@@ -86,6 +97,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                     <DataTable.Column label="Warnings" name="warnings" width="6%" />
                     <DataTable.Column label="Failed" name="failed" width="5%" />
                     <DataTable.Column label="File name" name="fileName" width="29%" />
+                    <DataTable.Column label="Dropdown" name="dropdown" width="29%" />
                     {_.map(data.items, item => (
                         <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row
@@ -110,6 +122,17 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                     <span style={{ color: 'red' }}>{item.failedTestsCount}</span>
                                 </DataTable.Data>
                                 <DataTable.Data style={{ width: '29%' }}>{item.fileName}</DataTable.Data>
+
+                                <DataTable.Data style={{ width: '29%' }}>
+                                <div className="uploadBlueprintButton">
+                                        <LogActionsMenu
+                                            upward={false}
+                                            direction="left"
+                                            toolbox={toolbox}
+                                        />
+                                </div>
+                              </DataTable.Data>
+
                             </DataTable.Row>
 
                             <DataTable.Row
