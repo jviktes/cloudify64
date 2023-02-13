@@ -5,7 +5,7 @@ import { map } from 'lodash';
 const { Dropdown } = Stage.Basic;
 const { Menu, Item } = Dropdown;
 
-//TODO:
+//TODO preklady:
 // const translateData = {
 //     "uploadButton": "Upload",
 //     "uploadFromMarketplace": "Upload from Marketplace",
@@ -22,13 +22,20 @@ interface LogActionsMenuProps {
     upward?: boolean;
     toolbox: Stage.Types.Toolbox;
     showGenerateInComposerButton?: boolean;
+    data:any;
 }
+
+// upward={false}
+// direction="left"
+// toolbox={toolbox}
+// data = {item}
 
 const LogActionsMenu: FunctionComponent<LogActionsMenuProps> = ({
     direction,
     upward,
     toolbox,
-    showGenerateInComposerButton = false
+    showGenerateInComposerButton = false,
+    data,
 }) => {
     //const [uploadModalVisible, showUploadModal, hideUploadModal] = useBoolean();
     //const [terraformModalVisible, showTerraformModal, hideTerraformModal] = useBoolean();
@@ -42,13 +49,13 @@ const LogActionsMenu: FunctionComponent<LogActionsMenuProps> = ({
 
     const copyToClipboard = () => {
 
-        const widget = toolbox.getWidget();
-        console.log(widget.id);
-        alert("ola");
+
+        navigator.clipboard.writeText(JSON.stringify(data));
     }
     const downloadJSON = () => {
-
-        alert("ola");
+        const widget = toolbox.getWidget();
+        console.log(widget.id);
+        alert(JSON.stringify(data));
     }
     const exporttoPdf = () => {
 

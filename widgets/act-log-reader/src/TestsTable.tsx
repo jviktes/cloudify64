@@ -129,6 +129,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                             upward={false}
                                             direction="left"
                                             toolbox={toolbox}
+                                            data = {item}
                                         />
                                 </div>
                               </DataTable.Data>
