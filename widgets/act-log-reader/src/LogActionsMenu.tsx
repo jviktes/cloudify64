@@ -59,10 +59,11 @@ const LogActionsMenu: FunctionComponent<LogActionsMenuProps> = ({
         divContents=divContents+"<tr>";
         divContents=divContents+"<td width='50%'>"+dhlImg+"</td>";
         
-        if (data.testResultSummary=="SUCCESS") {
+
+        if (data.testResultSummary.toLowerCase()==("Succeeded").toLowerCase()) {
             divContents=divContents+"<td width='50%' style='font-size: 1.4em;font-weight: bolder;color:green;text-transform: uppercase;text-align: right;padding-right: 100px;'>"+data.testResultSummary+"</td>";
         }
-        if (data.testResultSummary=="Failed") {
+        if (data.testResultSummary.toLowerCase()==("Failed").toLowerCase()) {
             divContents=divContents+"<td width='50%' style='font-size: 1.4em;font-weight: bolder;color:red;text-transform: uppercase;text-align: right;padding-right: 100px;'>"+data.testResultSummary+"</td>";
         }
 
