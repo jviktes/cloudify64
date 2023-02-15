@@ -97,9 +97,9 @@ const LogActionsMenu: FunctionComponent<LogActionsMenuProps> = ({
 
         });
 
-        
+        var docTitle="Automated Configuration Tests - "+data.virtualMachine;
         var printWindow = window.open('', '', 'height=600,width=1000');
-        printWindow?.document.write('<html><head><title>Automated Configuration Tests - "+data.virtualMachine+"</title>');
+        printWindow?.document.write('<html><head><title>'+ docTitle +'</title>');
         printWindow?.document.write('</head><body >');
         printWindow?.document.write("<div>"+divContents+"</div>");
         printWindow?.document.write('</body></html>');
