@@ -21,7 +21,7 @@ export default function BlueprintsTable({
     const manager = toolbox.getManager();
     const tableName = 'blueprintsTable';
     //const { fieldsToShow } = widget.configuration;
-
+    //test
     return (
         <DataTable
             fetchData={fetchData}
