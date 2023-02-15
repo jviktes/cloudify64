@@ -84,14 +84,14 @@ export default class TestsTable extends React.Component<TestDataProps> {
                     searchable
                 >
                     <DataTable.Column label="Test date" name="testDatum" width="10%" />
-                    <DataTable.Column label="Virtual machine" name="virtualMachine" width="25%" />
+                    <DataTable.Column label="Virtual machine" name="virtualMachine" width="20%" />
                     <DataTable.Column label="Test class" name="class" width="10%" />
                     <DataTable.Column label="Result" name="result" width="10%" />
                     <DataTable.Column label="Passed" name="passed" width="5%" />
                     <DataTable.Column label="Warnings" name="warnings" width="6%" />
                     <DataTable.Column label="Failed" name="failed" width="5%" />
                     <DataTable.Column label="File name" name="fileName" width="29%" />
-                    <DataTable.Column label="" name="dropdown" width="8%" />
+                    <DataTable.Column label="" name="dropdown" width="12%" />
                     {_.map(data.items, item => (
                         <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row
@@ -100,7 +100,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                 id={`${item.id}_main`}
                             >
                                 <DataTable.Data style={{ width: '10%' }}>{item.testDatum}</DataTable.Data>
-                                <DataTable.Data style={{ width: '25%' }}>{item.virtualMachine}</DataTable.Data>
+                                <DataTable.Data style={{ width: '20%' }}>{item.virtualMachine}</DataTable.Data>
                                 <DataTable.Data style={{ width: '10%' }}>{item.class}</DataTable.Data>
                                 <DataTable.Data style={{ width: '10%' }}>
                                     {this.renderTestResultSummary(item)}
@@ -117,7 +117,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                 </DataTable.Data>
                                 <DataTable.Data style={{ width: '29%' }}>{item.fileName}</DataTable.Data>
 
-                                <DataTable.Data style={{ width: '8%' }}>
+                                <DataTable.Data style={{ width: '12%' }}>
                                 <div className="uploadBlueprintButton">
                                         <LogActionsMenu
                                             upward={false}
