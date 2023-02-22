@@ -28,26 +28,20 @@ import getInputsInitialValues from '../../common/src/inputs/utils/getInputsIniti
 import { addErrors } from '../../common/src/inputs/utils/errors';
 import getInputsWithoutValues from '../../common/src/inputs/utils/getInputsWithoutValues';
 import type { FilterRule } from '../../common/src/filters/types';
-
-//import { capitalize, chain, filter, lowerCase, map, sortBy, size } from 'lodash';
 import {sortBy} from 'lodash';
-
 import GeneralStep from './wizardSteps/GeneralStep';
 import ClusteringStep from './wizardSteps/ClusteringStep';
 import GSNStep from './wizardSteps/GSNStep';
 import SWConfigStep from './wizardSteps/SWConfigStep';
 import VMConfigStep from './wizardSteps/VMConfigStep';
-//import getDeploymentInputsByCategories from './wizardUtils';
-
 import GSNBusinessServiceProps from './GSNBusinessService';
-
-//import GSNCountries from './GSNCountries';
 
 const { i18n } = Stage;
 const t = Stage.Utils.getT('widgets.common.deployments.deployModal');
 
 const GSN_BUSINESS_SERVICES_CASH = "GSN_BUSINESS_SERVICES_CASH";
 const GSN_COUNTRIES_CASH = "countries";
+const DEFAULT_VALUES = "default";
 const REFRESHING_CASH_PERIOD_MINUTES = 5;
 
 type Blueprint = {
@@ -194,6 +188,7 @@ type GenericDeployModalState = {
     blueprint: any;
     gsnData:any;
     gsnCountries:any;
+    defaultValues:any;
     gsnRegions:any;
     deploymentId: string;
     deploymentInputs: Record<string, unknown>;
@@ -261,6 +256,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         blueprint: GenericDeployModal.EMPTY_BLUEPRINT,
         gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
         gsnCountries:{},
+        defaultValues:{},
         gsnRegions:{},
         deploymentInputs: {},
         deploymentName: '',
@@ -334,7 +330,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         toolbox.getEventBus().on('blueprint:disableBackButton', this.DisableBackButtonFunc, this);
         toolbox.getEventBus().on('blueprint:enableBackButton', this.EnableBackButtonFunc,this);
         this.setState({disableNextButton:false});
-        this.setState({disableBackButton:false}); //TODO?
+        this.setState({disableBackButton:false});
     }
 
     DisableNextButtonFunc() {
@@ -841,6 +837,34 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         }
     }
 
+    fetchDefaultValues = async () => {
+        console.log("calling fetchDefaultValues");
+        
+        const { toolbox } = this.props;
+
+        try {
+            const _secretDataFull = await toolbox.getManager().doGet(`/secrets/${DEFAULT_VALUES}`);
+            console.log(_secretDataFull);
+            var defaultValues =  JSON.parse(_secretDataFull.value); 
+            //let defaultValues = [];
+//TODO
+            //for (let _countrName in _defaultValues) {
+                 ////defaultValues.push({"countryName":_countrName, "countryData":_defaultValues[_countrName]}); 
+                 //defaultValues.push({_countrName}); 
+            //}
+
+            
+            defaultValues=(JSON.parse(JSON.stringify(defaultValues)));
+
+            this.setState({defaultValues});
+
+            return _secretDataFull;
+        } catch (error:any) {
+            console.log(error);
+                throw error;
+        }
+    }
+
     getDeploymentNameByTime  = (blueprint: FullBlueprintData) =>{
         const { Json } = Stage.Utils;
         const stringInputValue = Json.getStringValue(blueprint.plan.inputs["product_name"]).replace(/ /g,'');
@@ -854,7 +878,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         if (!_.isEmpty(id) && typeof id === 'string') {
             this.setState({ loading: true, loadingMessage: t('inputs.deploymentInputs.loading') });
             const { toolbox } = this.props;
-            
+            //const { defaultValues } = this.state;
             const actions = new BlueprintActions(toolbox);
             actions
                 .doGetFullBlueprintData(id)
@@ -936,6 +960,13 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         deploymentInputs.service_names = JSON.stringify(dataDiskData);
                     }  
 
+                    //nasatvenidefautnich hodnot ze secretu:
+                    //TODO
+
+                    console.log(this.state.defaultValues.impacted_region);
+                    //deploymentInputs.impacted_region=JSON.stringify(["EUROPE","AFRICA"]);
+                    deploymentInputs.impacted_region=JSON.stringify(this.state.defaultValues.impacted_region);
+
                     this.setState({
                         deploymentInputs,
                         blueprint,
@@ -952,6 +983,9 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 )
                 .then (
                     await this.fetchImpactedCountriesGSNData()
+                )
+                .then (
+                    await this.fetchDefaultValues()
                 )
                 .catch(err => {
                     this.setState({

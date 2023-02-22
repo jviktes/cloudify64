@@ -25,13 +25,20 @@ export function RegionSelectField({
     const onRegionChange = (e: any, _item: any) => {
         console.log("ConfirmSelectedBusinessService:" + _item);
         console.log("ConfirmSelectedBusinessService e.target:" + e);
+
         //get selected countries:
         //zde do pole impacted_region musi vyplnit vsechny zakrnute regiony
         //zde musim nejak ziskat vsechny vybrane regiony:
-        let selectedRegions = JSON.parse(inputStates);; //["OCEANIA", "AMERICAS"];//JSON.parse(JSON.stringify(inputStates));
+        let selectedRegions = JSON.parse(inputStates); //["OCEANIA", "AMERICAS"];//JSON.parse(JSON.stringify(inputStates));
+
+        console.log("onRegionChange:selectedRegions");
+        console.log(selectedRegions);
 
 
         //pokud je e.checked = checked: false
+
+        //TODO tady to pada: v push operaci:
+        
         if (e.checked == true) {
             //pridat do pole:
             if (inputStates.includes(_item) == false) {
