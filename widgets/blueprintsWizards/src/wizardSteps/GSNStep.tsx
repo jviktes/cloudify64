@@ -23,9 +23,10 @@ interface DeploymentsInfoProps {
 
 export default function GeneralGSNStepStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,gsnData,gsnCountries,gsnRegions,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
-    console.log("GSNStep"+index+","+title+","+activeSection);
-    //console.log(deploymentInputs);
-    //console.log(title);
+    //console.log("GSNStep"+index+","+title+","+activeSection);
+    let _vypis="GSNStep"+index+","+title+","+activeSection;
+    JSON.stringify(_vypis);
+    
     const category = "gsn";
     return (
         
