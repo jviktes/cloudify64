@@ -841,24 +841,23 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         console.log("calling fetchDefaultValues");
         
         const { toolbox } = this.props;
-
+        const { deploymentInputs } = this.state;
         try {
             const _secretDataFull = await toolbox.getManager().doGet(`/secrets/${DEFAULT_VALUES}`);
             console.log(_secretDataFull);
             var defaultValues =  JSON.parse(_secretDataFull.value); 
-            //let defaultValues = [];
-//TODO
-            //for (let _countrName in _defaultValues) {
-                 ////defaultValues.push({"countryName":_countrName, "countryData":_defaultValues[_countrName]}); 
-                 //defaultValues.push({_countrName}); 
-            //}
 
-            
+            deploymentInputs["impacted_region"] = JSON.stringify(defaultValues.impacted_region);
+            deploymentInputs["impacted_country"] = JSON.stringify(defaultValues.impacted_country);
+            deploymentInputs["business_unit"] = defaultValues.business_unit;
+            deploymentInputs["business_service"] = defaultValues.business_service;
+            deploymentInputs["impact"] = defaultValues.impact;
+
             defaultValues=(JSON.parse(JSON.stringify(defaultValues)));
-
             this.setState({defaultValues});
-
+            this.setState({deploymentInputs});
             return _secretDataFull;
+
         } catch (error:any) {
             console.log(error);
                 throw error;
@@ -959,13 +958,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         )     
                         deploymentInputs.service_names = JSON.stringify(dataDiskData);
                     }  
-
-                    //nasatvenidefautnich hodnot ze secretu:
-                    //TODO
-
-                    console.log(this.state.defaultValues.impacted_region);
-                    //deploymentInputs.impacted_region=JSON.stringify(["EUROPE","AFRICA"]);
-                    deploymentInputs.impacted_region=JSON.stringify(this.state.defaultValues.impacted_region);
 
                     this.setState({
                         deploymentInputs,
