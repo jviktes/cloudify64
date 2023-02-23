@@ -20,10 +20,10 @@ interface DeploymentsInfoProps {
 
 export default function VMConfigStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
-    console.log("VMConfigStep:"+index+","+title+","+activeSection);
-    //console.log(deploymentInputs);
-    //console.log(title);
     const category = "vmconfig";
+    let _summary=category+":"+index+","+title+","+activeSection;
+    JSON.stringify(_summary);
+    
     return (
         <div style={{overflow: "visible",padding:"10px"}}>
             <DeploymentInputs

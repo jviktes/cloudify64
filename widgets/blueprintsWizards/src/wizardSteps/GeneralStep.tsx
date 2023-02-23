@@ -20,28 +20,9 @@ interface DeploymentsInfoProps {
 
 export default  function GeneralStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
     
-
-    
-    //const [data, setData] = React.useState({});
-    console.log("GeneralStep"+index+","+title+","+activeSection);
-    //console.log(blueprint); 
-    
-      // const fetchOnline = async () => {
-      //   const response = await fetch("https://jsonplaceholder.typicode.com/users");
-      //   const data = await response.json();
-      //   setData(data);
-      // };
-
-      // const fetchInternalData = async () => {
-      //   const response = await toolbox.getWidgetBackend().doGet('files');
-      //   const data = await response;
-      //   setData(data);
-      // };
-
-    // fetchQuantity();
-    //console.log("data:"+data); 
-
     const category = "general";
+    let _summary=category+":"+index+","+title+","+activeSection;
+    JSON.stringify(_summary);
 
     return (
         
@@ -61,12 +42,6 @@ export default  function GeneralStep(this: any, { toolbox, blueprint, index,titl
                 nextButtonState={nextButtonState}
                 backButtonState={backButtonState}
             />
-
-            {/* <button onClick={fetchOnline}>Load example data from external source</button>
-            <button onClick={fetchInternalData}>Load example data from internal source</button>
-
-            <pre>{JSON.stringify(data, null, "  ")}</pre> */}
             </div>
-
     );
 }

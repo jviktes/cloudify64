@@ -838,13 +838,13 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
     }
 
     fetchDefaultValues = async () => {
-        console.log("calling fetchDefaultValues");
+        //console.log("calling fetchDefaultValues");
         
         const { toolbox } = this.props;
         const { deploymentInputs } = this.state;
         try {
             const _secretDataFull = await toolbox.getManager().doGet(`/secrets/${DEFAULT_VALUES}`);
-            console.log(_secretDataFull);
+            //console.log(_secretDataFull);
             var defaultValues =  JSON.parse(_secretDataFull.value); 
 
             deploymentInputs["impacted_region"] = JSON.stringify(defaultValues.impacted_region);
@@ -892,7 +892,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                     const _deploymentName = this.getDeploymentNameByTime(blueprint);
                     this.setState({deploymentName: _deploymentName});
                     
-                    console.log("check keys in data_disks");
+                    //console.log("check keys in data_disks");
 
                     //check keys in data_disks:
                     if (deploymentInputs.data_disks) {
@@ -1185,7 +1185,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         const { DEPLOYMENT_SECTIONS } = GenericDeployModal;
 
         const handleNext = () => {
-            console.log(activeStep.key);
+            //console.log(activeStep.key);
             if (steps[steps.length - 1].key === activeStep.key) {
               console.log('You have completed all steps.');
               this.setState({showDeployModalActions:true});

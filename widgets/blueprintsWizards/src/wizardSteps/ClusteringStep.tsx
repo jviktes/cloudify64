@@ -20,11 +20,9 @@ interface DeploymentsInfoProps {
 
 export default function ClusteringStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
-    console.log("ClusteringStep:"+index+","+title+","+activeSection);
-    //console.log(deploymentInputs);
-    //console.log(title);
-    //console.log(blueprint);
     const category = "clustering";
+    let _summary=category+":"+index+","+title+","+activeSection;
+    JSON.stringify(_summary);
 
     //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
     if (nextButtonState==true) {

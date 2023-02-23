@@ -74,7 +74,6 @@ export default class BlueprintList extends React.Component<BlueprintListProps, B
     };
 
     createDeploymentWizard: BlueprintsViewProps['onCreateDeploymentWizard'] = item => {
-        console.log("onCreateDeploymentWizard");
         this.setState({ error: null, blueprintId: item.id, showDeploymentWizardModal: true });
     };
 

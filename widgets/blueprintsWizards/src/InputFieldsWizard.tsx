@@ -172,7 +172,6 @@ function FormSearchField({
 
 export default function InputFields({
     inputs,
-
     onChange,
     inputsState,
     allDeploymentInputs,
@@ -200,7 +199,7 @@ export default function InputFields({
 }) {
 
     inputs = getInputsOrderByCategories(inputs);
-    console.log(backButtonState);
+    JSON.stringify(backButtonState);
     const getQuantity = ()=> {
         let _quantity  = allDeploymentInputs["quantity"];
         //console.log(_quantity);
