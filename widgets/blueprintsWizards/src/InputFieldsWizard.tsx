@@ -322,13 +322,14 @@ export default function InputFields({
 //inputsState["impacted_region"],inputsState["impacted_country"]
     const htmlRenderErrorStateArrays = (_inputRegion:any,_inputCountry:any) => {
         let _htmlResult = null;
-
-        if (_inputRegion== null  || _inputRegion== "" || _inputRegion.length==0 || _inputRegion.length==0) {
+        //TODO: udelat nove pravidlo alespon jedno vybrane
+        if (_inputRegion.length<=2 && _inputCountry.length<=2) {
             _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
         }
-        else {
-           
-        }
+
+        // if (_inputRegion== null  || _inputRegion== "" || _inputRegion.length==0 || _inputRegion=="[]") {
+        //     _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
+        // }
         return _htmlResult;
     };
 
@@ -344,10 +345,16 @@ export default function InputFields({
 
     enableDisableNextButton(inputsState);
 
-    const getErrorClassImpcatState=(_input:any)=> {
+    const getErrorClassImpcatState=(_inputRegion:any,_inputCountry:any) => {
 
-        if (_input== null  || _input== "" || _input.length==0 || _input=="[]") {
-            // "agentsBlueprintsGsn table-scroll-gsn"
+        // if (_input== null  || _input== "" || _input.length==0 || _input=="[]") {
+        //     // "agentsBlueprintsGsn table-scroll-gsn"
+        //     return "agentsBlueprintsGsn table-scroll-gsn ErrorCustomStyle";
+        // }
+        // else {
+        //     return "agentsBlueprintsGsn table-scroll-gsn ";
+        // }
+        if (_inputRegion.length<=2 && _inputCountry.length<=2) {
             return "agentsBlueprintsGsn table-scroll-gsn ErrorCustomStyle";
         }
         else {
@@ -444,7 +451,7 @@ export default function InputFields({
                                 <label className='fieldCustomLabel' style={{ display: "inline-block" }}>{input.display_label}</label>
                                 {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
                                 <div className="field" style={{ maxHeight: "150px", width: "20%"}}>
-                                        <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"])} >
+                                        <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"],inputsState["impacted_country"])} >
                                             <DataTable.Column label="check" name="" style={{display:"none"}}/>
                                             <DataTable.Column label="region" name="" style={{display:"none"}}/>
                                             {_.map(gsnRegions, item => (
@@ -462,9 +469,9 @@ export default function InputFields({
                             </div>
                             <div style={{float:'left', marginLeft:"20px"}}>
                                 <label className='fieldCustomLabel'>Impacted countries</label>
-                                {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
+                                {/* {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])} */}
                                 <div className="field" style={{ maxHeight: "195px", overflowY:"scroll"}}>
-                                    <DataTable className={getErrorClassImpcatState(inputsState["impacted_country"])}>
+                                    <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"],inputsState["impacted_country"])} >
                                         <DataTable.Column label="check" name="" style={{display:"none"}}/>
                                         <DataTable.Column label="country" name="" style={{display:"none"}}/>
                                         {_.map(gsnCountries, item => (
@@ -511,7 +518,7 @@ export default function InputFields({
                 }
 
                             return ( 
-                                <div style={{marginTop: "310px"}}>
+                                <div style={{marginTop: "330px"}}>
                                     
                                     <FormSearchField
                                         input={input}
