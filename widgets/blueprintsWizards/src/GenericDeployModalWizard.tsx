@@ -41,7 +41,7 @@ const t = Stage.Utils.getT('widgets.common.deployments.deployModal');
 
 const GSN_BUSINESS_SERVICES_CASH = "GSN_BUSINESS_SERVICES_CASH";
 const GSN_COUNTRIES_CASH = "countries";
-const DEFAULT_VALUES = "default";
+const DEFAULT_VALUES = "defaults";
 const REFRESHING_CASH_PERIOD_MINUTES = 5;
 
 type Blueprint = {
