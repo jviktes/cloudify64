@@ -360,7 +360,7 @@ export function DataDiskTable({
 
 
         console.log("ValidateDataAllDisks...");
-        console.log(nextButtonState);
+        //console.log(nextButtonState);
         //hledani stejnych mountpoint:
         _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
             _disk.error={};

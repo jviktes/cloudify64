@@ -819,29 +819,56 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         //console.log("calling fetchDefaultValues");
         
         const { toolbox } = this.props;
-        const { deploymentInputs } = this.state;
+        //const { deploymentInputs } = this.state;
         try {
             const _secretDataFull = await toolbox.getManager().doGet(`/secrets/${DEFAULT_VALUES}`);
             //console.log(_secretDataFull);
             var defaultValues =  JSON.parse(_secretDataFull.value); 
+            
+            this.assignDefautlValues(defaultValues);
 
-            deploymentInputs["impacted_region"] = JSON.stringify(defaultValues.impacted_region);
-            deploymentInputs["impacted_country"] = JSON.stringify(defaultValues.impacted_country);
-            deploymentInputs["business_unit"] = defaultValues.business_unit;
-            deploymentInputs["business_service"] = defaultValues.business_service;
-            deploymentInputs["impact"] = defaultValues.impact;
+            // deploymentInputs["impacted_region"] = ((defaultValues.impacted_region!=undefined || defaultValues.impacted_region!=null)? JSON.stringify(defaultValues.impacted_region) : "");//JSON.stringify(defaultValues.impacted_region);
+            // deploymentInputs["impacted_country"] = ((defaultValues.impacted_country!=undefined || defaultValues.impacted_country!=null)? JSON.stringify(defaultValues.impacted_country) : "");//JSON.stringify(defaultValues.impacted_country);
+            // deploymentInputs["business_unit"] = ((defaultValues.business_unit!=undefined || defaultValues.business_unit!=null)? defaultValues.business_unit : "");//defaultValues.business_unit
+            // deploymentInputs["business_service"] = ((defaultValues.business_service!=undefined || defaultValues.business_service!=null)? defaultValues.business_service : "");//defaultValues.business_service;
+            // deploymentInputs["impact"] = ((defaultValues.impact!=undefined || defaultValues.impact!=null)? defaultValues.impact : "");//defaultValues.impact;
 
             defaultValues=(JSON.parse(JSON.stringify(defaultValues)));
             this.setState({defaultValues});
-            this.setState({deploymentInputs});
+            
             return _secretDataFull;
 
         } catch (error:any) {
             console.log(error);
-                throw error;
+            this.assignDefautlValues(defaultValues);
+            //throw error;
         }
     }
+    assignDefautlValues = (defaultValues:any) => {
+        try {
+            const { deploymentInputs } = this.state;
 
+            if (defaultValues==undefined) {
+                deploymentInputs["impacted_region"] = "";
+                deploymentInputs["impacted_country"] = "";
+                deploymentInputs["business_unit"] = "";
+                deploymentInputs["business_service"] = "";
+                deploymentInputs["impact"] = "";
+            }
+            else {
+                deploymentInputs["impacted_region"] = ((defaultValues.impacted_region!=undefined || defaultValues.impacted_region!=null)? JSON.stringify(defaultValues.impacted_region) : "");//JSON.stringify(defaultValues.impacted_region);
+                deploymentInputs["impacted_country"] = ((defaultValues.impacted_country!=undefined || defaultValues.impacted_country!=null)? JSON.stringify(defaultValues.impacted_country) : "");//JSON.stringify(defaultValues.impacted_country);
+                deploymentInputs["business_unit"] = ((defaultValues.business_unit!=undefined || defaultValues.business_unit!=null)? defaultValues.business_unit : "");//defaultValues.business_unit
+                deploymentInputs["business_service"] = ((defaultValues.business_service!=undefined || defaultValues.business_service!=null)? defaultValues.business_service : "");//defaultValues.business_service;
+                deploymentInputs["impact"] = ((defaultValues.impact!=undefined || defaultValues.impact!=null)? defaultValues.impact : "");//defaultValues.impact;
+    
+            }
+            this.setState({deploymentInputs});
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    };
     getDeploymentNameByTime  = (blueprint: FullBlueprintData) =>{
         const { Json } = Stage.Utils;
         const stringInputValue = Json.getStringValue(blueprint.plan.inputs["product_name"]).replace(/ /g,'');

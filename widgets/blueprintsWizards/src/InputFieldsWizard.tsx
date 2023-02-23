@@ -224,6 +224,66 @@ export default function InputFields({
         }
     }
  
+    const enableDisableNextButton=(inputsState: any)=>{
+        let isErrorInDisk = false;
+        //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
+
+        //pouze pro vybrane inputs budu validovat:
+
+        let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
+        
+        //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
+        //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
+        //nextButtonState = {this.state.disableNextButton}
+
+        //je v datadisku nekde chyba?
+        // dataDisks.forEach((obj: { error: any; key: any; }) => {
+        //     if (obj.error != null && obj.error.length>0) {               
+        //         //toolbox.getEventBus().trigger('blueprint:disableNextButton');
+        //         isErrorInDisk = true;
+        //     }
+        // });
+
+        console.log(inputsState);
+        if (inputsState!= null) {
+            try {
+                if (inputsState["impact"]!= null && inputsState["impact"].length==0) {
+                    isErrorInDisk = true;
+                }
+                if (inputsState["impacted_region"]!= null && inputsState["impacted_region"].length==0) {
+                    isErrorInDisk = true;
+                }
+                if (inputsState["impacted_country"]!= null && inputsState["impacted_country"].length==0) {
+                    isErrorInDisk = true;
+                }
+                if (inputsState["business_service"]!= null && inputsState["business_service"].length==0) {
+                    isErrorInDisk = true;
+                }
+                if (inputsState["business_unit"]!= null && inputsState["business_unit"].length==0) {
+                    isErrorInDisk = true;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        if (isErrorInDisk) {
+            //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
+            if (_nextButtonState==false) {
+                toolbox.getEventBus().trigger('blueprint:disableNextButton');
+            }
+        }
+        else {
+            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+            if (_nextButtonState==true) {
+                toolbox.getEventBus().trigger('blueprint:enableNextButton');
+            }
+        }
+
+    }
+
+
+    enableDisableNextButton(inputsState);
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -370,11 +430,14 @@ export default function InputFields({
                 //console.log("business_service:"+JSON.stringify(input));
 
                 let _valueCalculated = value;
-                gsnData.result.forEach((element: {name: string; u_number: string; }) => {
-                    if (element.u_number.toLowerCase().includes(value.toLowerCase())) {
-                        _valueCalculated = value+" ("+element.name+")";
-                    }
-                });
+                if (value.length>0) {
+                    gsnData.result.forEach((element: {name: string; u_number: string; }) => {
+                        if (element.u_number.toLowerCase().includes(value.toLowerCase())) {
+                            _valueCalculated = value+" ("+element.name+")";
+                        }
+                    });
+                }
+
 
                 
                             return ( 

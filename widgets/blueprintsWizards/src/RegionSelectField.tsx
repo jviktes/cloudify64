@@ -29,7 +29,13 @@ export function RegionSelectField({
         //get selected countries:
         //zde do pole impacted_region musi vyplnit vsechny zakrnute regiony
         //zde musim nejak ziskat vsechny vybrane regiony:
-        let selectedRegions = JSON.parse(inputStates); //["OCEANIA", "AMERICAS"];//JSON.parse(JSON.stringify(inputStates));
+        let selectedRegions: any[] = []; //["OCEANIA", "AMERICAS"];//JSON.parse(JSON.stringify(inputStates));
+
+        try {
+            selectedRegions=JSON.parse(inputStates);
+        } catch (error) {
+            
+        }
 
         console.log("onRegionChange:selectedRegions");
         console.log(selectedRegions);
@@ -47,7 +53,8 @@ export function RegionSelectField({
         }
         else {
             if (inputStates.includes(_item) == true) {
-                selectedRegions.pop(_item);
+                const index = selectedRegions.indexOf(_item);
+                selectedRegions.splice(index, 1);
             }
         }
 
