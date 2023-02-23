@@ -274,12 +274,14 @@ export default function InputFields({
                 if (inputsState["impact"]!= null && inputsState["impact"].length==0) {
                     isErrorInDisk = true;
                 }
-                if (inputsState["impacted_region"]!= null && inputsState["impacted_region"].length==0) {
+
+                if ((inputsState["impacted_region"]!= null && inputsState["impacted_region"].length==0)) {
                     isErrorInDisk = true;
                 }
                 if (inputsState["impacted_country"]!= null && inputsState["impacted_country"].length==0) {
                     isErrorInDisk = true;
                 }
+
                 if (inputsState["business_service"]!= null && inputsState["business_service"].length==0) {
                     isErrorInDisk = true;
                 }
@@ -317,11 +319,11 @@ export default function InputFields({
         }
         return _htmlResult;
     };
-
-    const htmlRenderErrorStateArrays = (_input:any) => {
+//inputsState["impacted_region"],inputsState["impacted_country"]
+    const htmlRenderErrorStateArrays = (_inputRegion:any,_inputCountry:any) => {
         let _htmlResult = null;
 
-        if (_input== null  || _input== "" || _input.length==0 ) {
+        if (_inputRegion== null  || _inputRegion== "" || _inputRegion.length==0 || _inputRegion.length==0) {
             _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
         }
         else {
@@ -332,7 +334,7 @@ export default function InputFields({
 
     const getErrorImpcatState=(_input:any)=> {
 
-        if (_input== null  || _input== "" || _input.length==0 ) {
+        if (_input== null  || _input== "" || _input.length==0 || _input=="[]") {
             return true;;//{"chyba":"problem"};
         }
         else {
@@ -344,7 +346,7 @@ export default function InputFields({
 
     const getErrorClassImpcatState=(_input:any)=> {
 
-        if (_input== null  || _input== "" || _input.length==0 ) {
+        if (_input== null  || _input== "" || _input.length==0 || _input=="[]") {
             // "agentsBlueprintsGsn table-scroll-gsn"
             return "agentsBlueprintsGsn table-scroll-gsn ErrorCustomStyle";
         }
@@ -440,7 +442,7 @@ export default function InputFields({
                 return <div className="field" style={{marginTop:"80px"}}>
                             <div style={{float:'left'}}>
                                 <label className='fieldCustomLabel' style={{ display: "inline-block" }}>{input.display_label}</label>
-                                {htmlRenderErrorStateArrays(inputsState["impacted_region"])}
+                                {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
                                 <div className="field" style={{ maxHeight: "150px", width: "20%"}}>
                                         <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"])} >
                                             <DataTable.Column label="check" name="" style={{display:"none"}}/>
@@ -460,7 +462,7 @@ export default function InputFields({
                             </div>
                             <div style={{float:'left', marginLeft:"20px"}}>
                                 <label className='fieldCustomLabel'>Impacted countries</label>
-                                {htmlRenderErrorStateArrays(inputsState["impacted_country"])}
+                                {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
                                 <div className="field" style={{ maxHeight: "195px", overflowY:"scroll"}}>
                                     <DataTable className={getErrorClassImpcatState(inputsState["impacted_country"])}>
                                         <DataTable.Column label="check" name="" style={{display:"none"}}/>
