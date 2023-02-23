@@ -105,15 +105,38 @@ function FormSearchField({
         });     
         setData(data);
     }
+    const getErrorClassImpcatState=(_input:any)=> {
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            return "ui fluid icon input ErrorCustomStyle";
+        }
+        else {
+            return "ui fluid icon input";
+        }
+    }
+
+    const htmlRenderErrorState = (_input:any) => {
+        let _htmlResult = null;
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
+        }
+        else {
+           
+        }
+        return _htmlResult;
+    };
 
     return (
 
             <><div className="field">
             <label style={{ display: "inline-block" }}>{input.display_label}</label>
             <div className="field">
-                <div className="ui fluid icon input">
-                    <input style={{backgroundColor:"rgba(0,0,0,.05)"}} value={value} readOnly />
+                <div className={getErrorClassImpcatState(value)}>
+                    <input
+                     style={{backgroundColor:"rgba(0,0,0,.05)"}} value={value} readOnly />
                 </div>
+                {htmlRenderErrorState(value)}
             </div>
             </div><div id="id_search_results">
 
@@ -125,6 +148,7 @@ function FormSearchField({
                         onChange={e => onSearch(e.target.value)}
                         loading={false} />
                 </Form.Field>
+                
                 <div style={{ maxHeight: "150px", overflowY:"scroll"}}>
                     <DataTable
                         className="agentsBlueprintsGsn table-scroll-gsn"
@@ -282,8 +306,52 @@ export default function InputFields({
 
     }
 
+    const htmlRenderErrorState = (_input:any) => {
+        let _htmlResult = null;
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
+        }
+        else {
+           
+        }
+        return _htmlResult;
+    };
+
+    const htmlRenderErrorStateArrays = (_input:any) => {
+        let _htmlResult = null;
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            _htmlResult = <p style={{ color: 'red'}}>{"Required value"}</p>;
+        }
+        else {
+           
+        }
+        return _htmlResult;
+    };
+
+    const getErrorImpcatState=(_input:any)=> {
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            return true;;//{"chyba":"problem"};
+        }
+        else {
+            return false;
+        }
+    }
 
     enableDisableNextButton(inputsState);
+
+    const getErrorClassImpcatState=(_input:any)=> {
+
+        if (_input== null  || _input== "" || _input.length==0 ) {
+            // "agentsBlueprintsGsn table-scroll-gsn"
+            return "agentsBlueprintsGsn table-scroll-gsn ErrorCustomStyle";
+        }
+        else {
+            return "agentsBlueprintsGsn table-scroll-gsn ";
+        }
+    }
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -372,8 +440,9 @@ export default function InputFields({
                 return <div className="field" style={{marginTop:"80px"}}>
                             <div style={{float:'left'}}>
                                 <label className='fieldCustomLabel' style={{ display: "inline-block" }}>{input.display_label}</label>
+                                {htmlRenderErrorStateArrays(inputsState["impacted_region"])}
                                 <div className="field" style={{ maxHeight: "150px", width: "20%"}}>
-                                        <DataTable className="agentsBlueprintsGsn table-scroll-gsn">
+                                        <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"])} >
                                             <DataTable.Column label="check" name="" style={{display:"none"}}/>
                                             <DataTable.Column label="region" name="" style={{display:"none"}}/>
                                             {_.map(gsnRegions, item => (
@@ -391,8 +460,9 @@ export default function InputFields({
                             </div>
                             <div style={{float:'left', marginLeft:"20px"}}>
                                 <label className='fieldCustomLabel'>Impacted countries</label>
+                                {htmlRenderErrorStateArrays(inputsState["impacted_country"])}
                                 <div className="field" style={{ maxHeight: "195px", overflowY:"scroll"}}>
-                                    <DataTable className="agentsGsnCountries table-scroll-gsn">
+                                    <DataTable className={getErrorClassImpcatState(inputsState["impacted_country"])}>
                                         <DataTable.Column label="check" name="" style={{display:"none"}}/>
                                         <DataTable.Column label="country" name="" style={{display:"none"}}/>
                                         {_.map(gsnCountries, item => (
@@ -438,10 +508,9 @@ export default function InputFields({
                     });
                 }
 
-
-                
                             return ( 
                                 <div style={{marginTop: "310px"}}>
+                                    
                                     <FormSearchField
                                         input={input}
                                         value={_valueCalculated}
@@ -451,6 +520,7 @@ export default function InputFields({
                                         dataType={dataType}
                                         gsnData={gsnData}
                                     />
+                                    
                                 </div>
                             )
             }
@@ -461,10 +531,11 @@ export default function InputFields({
                     input={input}
                     value={value}
                     onChange={onChange}
-                    error={errorsState[input.name]}
+                    error={getErrorImpcatState(value)}
                     toolbox={toolbox}
                     dataType={dataType}
                     />
+                    {htmlRenderErrorState(value)}
                 </div>
 
                 )
@@ -507,10 +578,11 @@ export default function InputFields({
                         input={input}
                         value={value}
                         onChange={onChange}
-                        error={errorsState[input.name]}
+                        error={getErrorImpcatState(value)}
                         toolbox={toolbox}
                         dataType={dataType}
                     />
+                    {htmlRenderErrorState(value)}
                 </div>
 
                 )
@@ -531,7 +603,7 @@ export default function InputFields({
                     input={input}
                     value={value}
                     onChange={onChange}
-                    error={errorsState[input.name]}
+                    error={errorsState[input.name]} 
                     toolbox={toolbox}
                     dataType={dataType}
                 />

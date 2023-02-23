@@ -160,3 +160,8 @@
   vertical-align: middle;
 
 }
+
+.ErrorCustomStyle {
+  background: #fff6f6 !important;
+  color: #9f3a38 !important;
+}
