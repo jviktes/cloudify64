@@ -25,7 +25,7 @@ module.exports = async function(r) {
                 console.log("no files");
                 return res.send();
             }
-
+            //TODO - nacitat pouze soubor GSN_real_data.json
             files.forEach(file => {
                 {
                     result="";
@@ -48,6 +48,7 @@ module.exports = async function(r) {
 
             Promise.all(promises).then((_res) => {
                 let preparedData = result;
+                //TODO vybrat unikatni hodnoty a prednost maji ty s mladsi casovou znackou:
                 console.log("Data from file:");
                 //console.log(preparedData);
                 res.send(preparedData);
