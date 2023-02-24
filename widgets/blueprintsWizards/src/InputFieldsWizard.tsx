@@ -88,7 +88,6 @@ function FormSearchField({
 
     // funkce vyplni vybranou business services do pole Input:
     const ConfirmSelectedBusinessService = (_item: any)=> {
-        console.log("ConfirmSelectedBusinessService:" + _item.u_number);
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','business_service',_item.u_number);
     }
 
@@ -260,28 +259,17 @@ export default function InputFields({
         //pokud trigeruju enableNextButton -->  EnableNextButtonFunc() this.setState({ disableNextButton: false });
         //nextButtonState = {this.state.disableNextButton}
 
-        //je v datadisku nekde chyba?
-        // dataDisks.forEach((obj: { error: any; key: any; }) => {
-        //     if (obj.error != null && obj.error.length>0) {               
-        //         //toolbox.getEventBus().trigger('blueprint:disableNextButton');
-        //         isErrorInDisk = true;
-        //     }
-        // });
-
-        console.log(inputsState);
+        //console.log(inputsState);
         if (inputsState!= null) {
             try {
                 if (inputsState["impact"]!= null && inputsState["impact"].length==0) {
                     isErrorInDisk = true;
                 }
 
-                if ((inputsState["impacted_region"]!= null && inputsState["impacted_region"].length==0)) {
+                if (inputsState["impacted_region"]!= null && inputsState["impacted_country"]!= null && inputsState["impacted_region"].length<=2 && inputsState["impacted_country"].length<=2) {
                     isErrorInDisk = true;
                 }
-                if (inputsState["impacted_country"]!= null && inputsState["impacted_country"].length==0) {
-                    isErrorInDisk = true;
-                }
-
+            
                 if (inputsState["business_service"]!= null && inputsState["business_service"].length==0) {
                     isErrorInDisk = true;
                 }
@@ -367,8 +355,7 @@ export default function InputFields({
         .reject('hidden')
         //.sortBy([input => !_.isUndefined(input.default), 'name'])
         .map(input => {
-            //console.log(input.name);   
-            //console.log(inputsState); 
+
             const dataType = !_.isEmpty(dataTypes) && !!input.type ? dataTypes![input.type] : undefined;
             const value = normalizeValue(input, inputsState, dataType);
 
@@ -378,7 +365,7 @@ export default function InputFields({
             }
             //product_name_
             if (input.name=="product_name") {
-                //console.log("form type product_name");
+               
                 //console.log("product_name:"+JSON.stringify(input));
                 return <div className="field">
                         <label style={{display:"inline-block"}}>{input.display_label}</label>
@@ -388,10 +375,6 @@ export default function InputFields({
 
             //ha_concept:
             if (input.name=="availability_zone") {
-                //console.log("availability_zone:"+JSON.stringify(input));
-                //console.log("inputsState_ha_concept");
-                //console.log(inputsState["ha_concept"]);
-
                 if (inputsState["ha_concept"]=="None") {
                     //nebude se renderovat za danych podminek:
                     return;
@@ -409,7 +392,7 @@ export default function InputFields({
                         { text: '2', name: '2', value: '2 ' },
                         { text: '3', name: '2', value: '3 ' },
                     ]
-                    //console.log("quantity");
+
                     let _quantity= getQuantity();
 
                     if (_quantity==1) {
@@ -449,7 +432,7 @@ export default function InputFields({
                 return <div className="field" style={{marginTop:"80px"}}>
                             <div style={{float:'left'}}>
                                 <label className='fieldCustomLabel' style={{ display: "inline-block" }}>{input.display_label}</label>
-                                {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
+                                
                                 <div className="field" style={{ maxHeight: "150px", width: "20%"}}>
                                         <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"],inputsState["impacted_country"])} >
                                             <DataTable.Column label="check" name="" style={{display:"none"}}/>
@@ -469,7 +452,7 @@ export default function InputFields({
                             </div>
                             <div style={{float:'left', marginLeft:"20px"}}>
                                 <label className='fieldCustomLabel'>Impacted countries</label>
-                                {/* {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])} */}
+                                
                                 <div className="field" style={{ maxHeight: "195px", overflowY:"scroll"}}>
                                     <DataTable className= {getErrorClassImpcatState(inputsState["impacted_region"],inputsState["impacted_country"])} >
                                         <DataTable.Column label="check" name="" style={{display:"none"}}/>
@@ -486,7 +469,10 @@ export default function InputFields({
                                         ))}
                                     </DataTable>
                                 </div>
+
+                                {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])}
                             </div>
+                            {/* {htmlRenderErrorStateArrays(inputsState["impacted_region"],inputsState["impacted_country"])} */}
                        </div>
             }
 
@@ -496,7 +482,7 @@ export default function InputFields({
             }
 
             if (input.name=="data_disks") {
-                //console.log("data_disks");
+                
                 return <div className="field">
                             <label style={{ display: "inline-block" }}>{input.display_label}</label>
                             <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]} nextButtonState={nextButtonState}></DataDiskTable>
@@ -505,8 +491,6 @@ export default function InputFields({
             
             //business_service: 
             if (input.name=="business_service") {
-                //console.log("form type business_service");
-                //console.log("business_service:"+JSON.stringify(input));
 
                 let _valueCalculated = value;
                 if (value.length>0) {
@@ -518,7 +502,7 @@ export default function InputFields({
                 }
 
                             return ( 
-                                <div style={{marginTop: "330px"}}>
+                                <div style={{marginTop: "310px"}}>
                                     
                                     <FormSearchField
                                         input={input}
@@ -551,8 +535,6 @@ export default function InputFields({
             }
 
             if (input.name=="location") {
-                //console.log("location");
-                //console.log(input);
 
                 let _locationOptions = [];
 

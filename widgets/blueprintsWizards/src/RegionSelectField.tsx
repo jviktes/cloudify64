@@ -16,16 +16,10 @@ export function RegionSelectField({
     inputStates: any;
 }) {
 
-    //console.log("GSN data:");
-    //console.log(gsnData);
+
     const { Form } = Stage.Basic;
-    //console.log("RegionSelectField inputStates:");
-    //console.log(inputStates);
     // funkce vyplni vybranou business services do pole Input:
     const onRegionChange = (e: any, _item: any) => {
-        console.log("ConfirmSelectedBusinessService:" + _item);
-        console.log("ConfirmSelectedBusinessService e.target:" + e);
-
         //get selected countries:
         //zde do pole impacted_region musi vyplnit vsechny zakrnute regiony
         //zde musim nejak ziskat vsechny vybrane regiony:
@@ -37,14 +31,6 @@ export function RegionSelectField({
             
         }
 
-        console.log("onRegionChange:selectedRegions");
-        console.log(selectedRegions);
-
-
-        //pokud je e.checked = checked: false
-
-        //TODO tady to pada: v push operaci:
-        
         if (e.checked == true) {
             //pridat do pole:
             if (inputStates.includes(_item) == false) {
@@ -57,8 +43,6 @@ export function RegionSelectField({
                 selectedRegions.splice(index, 1);
             }
         }
-
-        console.log(e);
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'impacted_region', JSON.stringify(selectedRegions)); //["OCEANIA", "AMERICAS"]
     };
     //pokud je v seznamu inputStates dany region, pak se zaskrtne:

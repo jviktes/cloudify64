@@ -48,7 +48,7 @@ export function CountrySelectField({
             }
         }
 
-        console.log(e);
+        //console.log(e);
         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'impacted_country', JSON.stringify(selectedCountries));
     };
     //pokud je v seznamu inputStates dany region, pak se zaskrtne:
