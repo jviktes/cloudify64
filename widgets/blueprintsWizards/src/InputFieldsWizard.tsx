@@ -248,9 +248,9 @@ export default function InputFields({
     }
  
     const enableDisableNextButton=(inputsState: any)=>{
-        let isErrorInDisk = false;
+        let isError = false;
+        console.log("impacted_region - enableDisableNextButton");
         //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
-
         //pouze pro vybrane inputs budu validovat:
 
         let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
@@ -263,26 +263,26 @@ export default function InputFields({
         if (inputsState!= null) {
             try {
                 if (inputsState["impact"]!= null && inputsState["impact"].length==0) {
-                    isErrorInDisk = true;
+                    isError = true;
                 }
 
                 if (inputsState["impacted_region"]!= null && inputsState["impacted_country"]!= null && inputsState["impacted_region"].length<=2 && inputsState["impacted_country"].length<=2) {
-                    isErrorInDisk = true;
+                    isError = true;
                 }
             
                 if (inputsState["business_service"]!= null && inputsState["business_service"].length==0) {
-                    isErrorInDisk = true;
+                    isError = true;
                 }
                 if (inputsState["business_unit"]!= null && inputsState["business_unit"].length==0) {
-                    isErrorInDisk = true;
+                    isError = true;
                 }
             } catch (error) {
                 console.log(error);
             }
         }
 
-        if (isErrorInDisk) {
-            //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
+        if (isError) {
+            //pokud je chyba a tlacitko je enabled, pak volam disablovani:
             if (_nextButtonState==false) {
                 toolbox.getEventBus().trigger('blueprint:disableNextButton');
             }
@@ -307,6 +307,7 @@ export default function InputFields({
         }
         return _htmlResult;
     };
+
 //inputsState["impacted_region"],inputsState["impacted_country"]
     const htmlRenderErrorStateArrays = (_inputRegion:any,_inputCountry:any) => {
         let _htmlResult = null;
@@ -330,8 +331,6 @@ export default function InputFields({
             return false;
         }
     }
-
-    enableDisableNextButton(inputsState);
 
     const getErrorClassImpcatState=(_inputRegion:any,_inputCountry:any) => {
 
@@ -429,6 +428,8 @@ export default function InputFields({
             //impacted_region
             if (input.name=="impacted_region") {
                 
+                enableDisableNextButton(inputsState);
+
                 return <div className="field" style={{marginTop:"80px"}}>
                             <div style={{float:'left'}}>
                                 <label className='fieldCustomLabel' style={{ display: "inline-block" }}>{input.display_label}</label>

@@ -28,7 +28,6 @@ export function DataDiskTable({
                 });
                 if (changedDataDisk[0] != null) {
                     changedDataDisk[0][_typeProperty] = _value;
-                    //ValidateDataDisk(changedDataDisk,inputStates);
                     toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'data_disks', JSON.stringify(dataDisks));
                 }
             }
@@ -358,7 +357,6 @@ export function DataDiskTable({
 
     const ValidateDataAllDisks = (_dataDisks:any) => {
 
-
         console.log("ValidateDataAllDisks...");
         //console.log(nextButtonState);
         //hledani stejnych mountpoint:
@@ -389,9 +387,8 @@ export function DataDiskTable({
     // (pri setState se prerenderuje cela komponenta)
     //volat pouze když je změna?
     const enableDisableNextButton=(dataDisks: any)=>{
+        console.log("Datadisk - enableDisableNextButton");
         let isErrorInDisk = false;
-        //enable NextButon - pokud jsou vsechny OK, toto by nejak melo fungovat:
-
         let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
         
         //pokud trigeruju: disableNextButton -->     DisableNextButtonFunc() {this.setState({ disableNextButton: true });
@@ -421,7 +418,6 @@ export function DataDiskTable({
     }
 
     ValidateDataAllDisks(inputStates);
-    
     enableDisableNextButton(inputStates);
 
     return (
