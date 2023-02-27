@@ -375,6 +375,11 @@ export default function InputFields({
             //ha_concept:
             if (input.name=="availability_zone") {
                 if (inputsState["ha_concept"]=="None") {
+                    let _savedValueAvailabilitZoneValue  = allDeploymentInputs["availability_zone"];
+                    //musim vratit 'Equal split' do avail zones:
+                    if (_savedValueAvailabilitZoneValue!='Equal split') {
+                        toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'availability_zone','Equal split');
+                    }
                     //nebude se renderovat za danych podminek:
                     return;
                 }
@@ -395,17 +400,24 @@ export default function InputFields({
                     let _quantity= getQuantity();
 
                     if (_quantity==1) {
-                        //if default value:
-                        let _value = value;
+                        //if default value pro availability zone:
+                        let _valueAZone = value; //avail_zone...
                         if (value=='Equal split') {
-                            _value='1 ';
+                            _valueAZone='1 ';
+                            let _ha_conceptValue  = allDeploymentInputs["ha_concept"];
+                            if (_ha_conceptValue=='Availability zone') {
+                                let _savedValueAvailabilitZoneValue  = allDeploymentInputs["availability_zone"];
+                                if (_savedValueAvailabilitZoneValue!='1 ') {
+                                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'availability_zone',_valueAZone);
+                                }
+                            }
                         }
                         return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
                                     <Form.Dropdown
                                         name="availability_zone"
                                         selection
                                         options={availabilityOptionsForOne}
-                                        value={_value}
+                                        value={_valueAZone}
                                         onChange={onChange}
                                     />
                             </div>
