@@ -1,5 +1,4 @@
 import React from "react";
-// import AccordionSectionWithDivider from "../../../common/src/components/accordion/AccordionSectionWithDivider";
 import DeploymentInputs from "../DeploymentInputsWizard";
 import getDeploymentInputsByCategories from '../../src/wizardUtils';
 
@@ -18,16 +17,12 @@ interface DeploymentsInfoProps {
     backButtonState:any,
 }
 
-export default function ClusteringStep(this: any, { toolbox, blueprint, index,title,deploymentInputs,errors,fileLoading,activeSection,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
+export default function ClusteringStep(this: any, { toolbox, blueprint,deploymentInputs,errors,fileLoading,onYamlFileChange,onDeploymentInputChange,nextButtonState,backButtonState}: DeploymentsInfoProps) {
 
     const category = "clustering";
-    let _summary=category+":"+index+","+title+","+activeSection;
-    JSON.stringify(_summary);
+    //let _summary=category+":"+index+","+title+","+activeSection;
+    //JSON.stringify(_summary);
 
-    //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
-    if (nextButtonState==true) {
-        toolbox.getEventBus().trigger('blueprint:enableNextButton');
-    }
     return (
         
         <div style={{overflow: "visible",padding:"10px"}}>

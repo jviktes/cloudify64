@@ -1219,7 +1219,11 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             });
             this.setState({showDeployModalActions:false});
             this.setState({ activeStep: steps[index - 1] });
-
+            //reset next button if go back:
+            if (this.state.disableNextButton==true) {
+                this.setState({disableNextButton:false});
+            }
+            
         }
 
         const showCurrentSettings = () => {
