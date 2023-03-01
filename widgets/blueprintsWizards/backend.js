@@ -49,9 +49,16 @@ module.exports = async function(r) {
             Promise.all(promises).then((_res) => {
                 let preparedData = result;
                 //TODO vybrat unikatni hodnoty a prednost maji ty s mladsi casovou znackou:
-                console.log("Data from file:");
-                //console.log(preparedData);
-                res.send(preparedData);
+                //console.log("Data from file:");
+                
+                const uniqueItems = preparedData.result.reduce((accumulator, current) => {
+                    if (!accumulator.find((item) => item.u_number === current.u_number)) {
+                      accumulator.push(current);
+                    }
+                    return accumulator;
+                  }, []);
+                let _resData = {result:uniqueItems};  
+                res.send(_resData);
             });
         });
 
