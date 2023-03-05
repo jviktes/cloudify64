@@ -41,11 +41,22 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 
             //[{"key":"csys-obj-type","value":"environment", 
 
-            data.items.forEach(element => {
-                //console.log(element);
+            //mock data:
+
+            let fake_data= {items: []};
+            fake_data.items.push({id:"aaa-bbb-ccc-1",labels:["label1","label2","label3"]});
+            fake_data.items.push({id:"aaa-bbb-ccc-2",labels:["label1","label2","label3"]});
+
+            console.log(fake_data);
+            console.log(fake_data.items);
+
+            fake_data.items.forEach(element => {
+                console.log(element);
                 spireDeployments.push(element);
             });
 
+
+            //TODO nevim co tohle je:
             //odfiltrovani podle id:
             // if (_filteredDeploymentParentId!=undefined) {
             //     console.log("spireDeployments search:");
