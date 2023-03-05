@@ -22,7 +22,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     deploymentId,
     fetchedDeploymentState,
     toolbox,
-    redirectToParentPageAfterDelete
+    //redirectToParentPageAfterDelete
 }) => {
     const {
         Basic: { Button },
@@ -30,10 +30,11 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     } = Stage;
     const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
     const WorkflowsMenu = Stage.Common.Workflows.Menu;
-    const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
-    const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
+    //const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
+    //const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
 
-    const [activeAction, setActiveAction, resetActiveAction] = useResettableState<string | null>(null);
+    //const [activeAction, setActiveAction, resetActiveAction] = useResettableState<string | null>(null);
+    //const [setActiveAction] = useResettableState<string | null>(null);
     const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
     useEffect(() => {
@@ -111,7 +112,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     { name: actions.forceDelete, icon: 'trash', permission: 'deployment_delete' }
             */}
             
-            <DeploymentActionsMenu
+            {/* <DeploymentActionsMenu
                 onActionClick={setActiveAction}
                 toolbox={toolbox}
                 trigger={
@@ -124,7 +125,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     />
                 }
                 workflows={workflows}
-            />
+            /> */}
 
             {isDeploymentFetched(fetchedDeploymentState) && deploymentId && workflow && (
                 <ExecuteWorkflowModal
@@ -137,7 +138,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 />
             )}
 
-            {isDeploymentFetched(fetchedDeploymentState) && deploymentId && activeAction && (
+            {/* {isDeploymentFetched(fetchedDeploymentState) && deploymentId && activeAction && (
                 <DeploymentActionsModals
                     activeAction={activeAction}
                     deploymentId={deploymentId}
@@ -146,7 +147,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     toolbox={toolbox}
                     redirectToParentPageAfterDelete={redirectToParentPageAfterDelete}
                 />
-            )}
+            )} */}
         </div>
     );
 };

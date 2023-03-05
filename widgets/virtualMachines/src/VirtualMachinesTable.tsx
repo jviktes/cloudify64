@@ -26,6 +26,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         super(props);
     }
 
+
+
     fetchGridData = fetchParams => {
         //console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
         //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
@@ -82,8 +84,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         //TODO - nyni jsou vsechny success --> pozor na errory atd.
 
-        
-
         return (
             {
                 status: 'success',
@@ -93,17 +93,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     },
                 }
         )
-
-        // (parameter) fetchedDeploymentState: {
-        //     status: 'success';
-        //     data: {
-        //         display_name: string;
-        //         workflows: Workflow[];
-        //     };
-        // } & {
-        //     status: 'success';
-        // }
-
 
     };
     renderHtmlParrentButton=(item:any)=> {
@@ -138,6 +127,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                  }}/>)
         }
 
+    };
+
+    // eslint-disable-next-line class-methods-use-this
+    onRowClick(_item) {
+        //trigger event a zobrazeni dataTable v tabulce:
+        //trigger event a zobrazeni requests v tabulce:
+        const { toolbox } = this.props;
+        toolbox.getEventBus().trigger('vm:selectVM');
     }
 
     render() {
@@ -147,22 +144,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
-        
-
-        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
-        // // eslint-disable-next-line no-nested-ternary
-        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
-        // ? { status: 'loading' }
-        // : data instanceof Error
-        // ? { status: 'error', error: data }
-        // : { status: 'success', data };
-
         console.log(data);
 
         return (
             <div>
-                <span>Current tenant: {tenantName}</span>
-                <span>Version widget:{widget.definition.version}</span>
+
                 <DataTable
                     className="agentsTable table-scroll"
                     fetchData={this.fetchGridData}
@@ -175,13 +161,13 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Id" name="id" width="10%" />
                     <DataTable.Column label="Labels" name="labels" width="25%" />
                     <DataTable.Column label="Blueprint name" name="blueprint_id" name="class" width="10%" />
-                    {/* <DataTable.Column label="Type" name="type" width="25%" /> */}
-                    
+
                     <DataTable.Column label="Actions" name="actions" name="class" width="10%" />
                     {_.map(data.items, item => (                   
                             <DataTable.Row
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
+                                onClick={() => this.onRowClick(item)}
                             >
                                 <DataTable.Data style={{ width: '10%' }}>{item.id}</DataTable.Data>
                                 <DataTable.Data style={{ width: '25%' }}>{JSON.stringify(item.labels)}</DataTable.Data>
@@ -189,7 +175,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
                                 <DataTable.Data style={{ width: '10%' }}>
 
-                                    {this.renderHtmlParrentButton(item)}
+                                    {/* {this.renderHtmlParrentButton(item)} */}
                                     
                                     <DeploymentActionButtons
                                         deploymentId={item.id}

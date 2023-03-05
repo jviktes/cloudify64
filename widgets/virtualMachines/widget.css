@@ -26,3 +26,8 @@
     /* width: 100%; */
     position: relative;
   }
+
+  .virtualMachineMainLayout {
+    display: flex;
+    gap: 10px;
+  }
