@@ -16,26 +16,28 @@ interface DeploymentActionButtonsProps {
     fetchedDeploymentState: FetchedDeploymentState;
     toolbox: Stage.Types.Toolbox;
     redirectToParentPageAfterDelete: boolean;
+    buttonTitle:string;
 }
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
     deploymentId,
     fetchedDeploymentState,
     toolbox,
-    //redirectToParentPageAfterDelete
+    redirectToParentPageAfterDelete,
+    buttonTitle
 }) => {
     const {
         Basic: { Button },
         Hooks: { useResettableState }
     } = Stage;
-    const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
-    const WorkflowsMenu = Stage.Common.Workflows.Menu;
-    //const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
-    //const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
+    //const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
+    //const WorkflowsMenu = Stage.Common.Workflows.Menu;
+    const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
+    const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
 
-    //const [activeAction, setActiveAction, resetActiveAction] = useResettableState<string | null>(null);
-    //const [setActiveAction] = useResettableState<string | null>(null);
-    const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
+    const [activeAction, setActiveAction, resetActiveAction] = useResettableState<string | null>(null);
+    //const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
+    //const [workflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
     useEffect(() => {
         if (fetchedDeploymentState.status === 'error') {
@@ -59,27 +61,27 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     //const actions = Object();
 
     //vyber polozek --> TODO: doplnit konfiguraci...
-    const workFlowsDHL=(workflows :Workflow[] )=> {
+    // const workFlowsDHL=(workflows :Workflow[] )=> {
 
-        //
-        //console.log(workflows);
-        let outWorks = [];
-        for (const key in workflows) {
-            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-                const _workFlowItem = workflows[key];
-                if (_workFlowItem.name=="validate_agents")
-                outWorks.push(_workFlowItem);
+    //     //
+    //     console.log(workflows);
+    //     let outWorks = [];
+    //     for (const key in workflows) {
+    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+    //             const _workFlowItem = workflows[key];
+    //             if (_workFlowItem.name=="validate_agents")
+    //             outWorks.push(_workFlowItem);
 
-            }
-        }
-        ;
-        let _workFlowItem = { name: "toolbox.getContext().setValue('filteredDeploymentParentId', '12497956')", plugin:"", parameters:{},is_available:true};
+    //         }
+    //     }
+    //     ;
+    //     let _workFlowItem = { name: "toolbox.getContext().setValue('filteredDeploymentParentId', '12497956')", plugin:"", parameters:{},is_available:true};
         
-        outWorks.push(_workFlowItem);
-        return outWorks;
-    };
+    //     outWorks.push(_workFlowItem);
+    //     return outWorks;
+    // };
 
-    //console.log(fetchedDeploymentState);
+    console.log(fetchedDeploymentState);
 
     return (
         <div>
@@ -87,7 +89,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             {/* workflows musim už tady přetřídit, co chci zobrazit atd. */}
             {/* TODO: jak tam pridat delete, musim se modlit, aby to bylo v seznamu a nemusel to nejak davat z  DeploymentActionsMenu*/}
             {/* TODO: jak sem pridat tlacitko pro get parrent?*/}
-            <WorkflowsMenu
+            {/* <WorkflowsMenu
                 workflows={workFlowsDHL(workflows)}
                 trigger={
                     <Button
@@ -99,7 +101,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     />
                 }
                 onClick={setWorkflow}
-            />
+            /> */}
 
             {/* VIK toto je menu pod kterym je menu pro deploymnety (instal, update atd.) 
             seznamy položek jsou natvrdo definované v common/src/deployments/DeploymentsActionMenu:
@@ -112,7 +114,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     { name: actions.forceDelete, icon: 'trash', permission: 'deployment_delete' }
             */}
             
-            {/* <DeploymentActionsMenu
+            <DeploymentActionsMenu
                 onActionClick={setActiveAction}
                 toolbox={toolbox}
                 trigger={
@@ -121,13 +123,13 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                         color="teal"
                         icon="content"
                         disabled={buttonsDisabled}
-                        content="Deployment actions"
+                        content={buttonTitle}
                     />
                 }
                 workflows={workflows}
-            /> */}
+            />
 
-            {isDeploymentFetched(fetchedDeploymentState) && deploymentId && workflow && (
+            {/* {isDeploymentFetched(fetchedDeploymentState) && deploymentId && workflow && (
                 <ExecuteWorkflowModal
                     open
                     deploymentId={deploymentId}
@@ -136,9 +138,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     onHide={resetWorkflow}
                     toolbox={toolbox}
                 />
-            )}
+            )} */}
 
-            {/* {isDeploymentFetched(fetchedDeploymentState) && deploymentId && activeAction && (
+            {isDeploymentFetched(fetchedDeploymentState) && deploymentId && activeAction && (
                 <DeploymentActionsModals
                     activeAction={activeAction}
                     deploymentId={deploymentId}
@@ -147,7 +149,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     toolbox={toolbox}
                     redirectToParentPageAfterDelete={redirectToParentPageAfterDelete}
                 />
-            )} */}
+            )}
         </div>
     );
 };

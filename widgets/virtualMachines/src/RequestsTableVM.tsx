@@ -62,6 +62,32 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         return Math.random().toString(36).slice(2, 11);
     }
 
+
+    getDataForDeploymentId = (item:any) => {
+
+        
+        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
+        // // eslint-disable-next-line no-nested-ternary
+        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
+        // ? { status: 'loading' }
+        // : data instanceof Error
+        // ? { status: 'error', error: data }
+        // : { status: 'success', data };
+
+        //TODO - nyni jsou vsechny success --> pozor na errory atd.
+
+        return (
+            {
+                status: 'success',
+                data: {
+                        display_name: item.display_name,
+                        workflows: item.workflows,
+                    },
+                }
+        )
+
+    };
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -115,12 +141,13 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                 <DataTable.Data>
 
-                                    {/* <DeploymentActionButtons
+                                <DeploymentActionButtons
+                                        buttonTitle='Actions'
                                         deploymentId={item.id}
                                         fetchedDeploymentState={this.getDataForDeploymentId(item)}
                                         toolbox={toolbox}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
-                                    /> */}
+                                    />
 
                                 </DataTable.Data>
 

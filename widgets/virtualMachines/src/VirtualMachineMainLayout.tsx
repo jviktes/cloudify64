@@ -50,8 +50,8 @@ export default class VirtualMachineMainLayout extends React.Component<VirtualMac
                 <div>
                     <div style={{outerWidth:"100%"}}><VirtualMachinesTable widget={widget} data={data} toolbox={toolbox} /></div>
                     <div className='virtualMachineMainLayout'>
-                        <div style={{width:"50%", backgroundColor:"red"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                        <div style={{width:"50%", backgroundColor:"grey"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                        <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
+                        <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                     </div>
                 </div>
             </div>

@@ -169,7 +169,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
                     <DataTable.Column label="Parent deployment" name="parent_deployment" />
-                    <DataTable.Column label="Actions" name="actions" name="class" width="10%" />
+                    <DataTable.Column label="Actions" name="actions" name="class" />
 
                     {_.map(data.items, item => (                   
                             <DataTable.Row
@@ -192,6 +192,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
+                                        buttonTitle='Actions'
                                         deploymentId={item.id}
                                         fetchedDeploymentState={this.getDataForDeploymentId(item)}
                                         toolbox={toolbox}
