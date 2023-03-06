@@ -924,10 +924,10 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
             //mock data:
 
             let fake_data= {diskData: []};
-            fake_data.diskData.push({id:params.id, disk:"C", size:"1TB"});
-            fake_data.diskData.push({id:params.id, disk:"D", size:"4TB"});
-            fake_data.diskData.push({id:params.id, disk:"E", size:"12TB"});
-
+            fake_data.diskData.push({id:params.id, name:"C", disk_type:"SSD", disk_size:"1024",host_caching:"ReadOnly"});
+            fake_data.diskData.push({id:params.id, name:"D", disk_type:"SSD", disk_size:"512",host_caching:"ReadOnly"});
+            fake_data.diskData.push({id:params.id, name:"E", disk_type:"SSD", disk_size:"2048",host_caching:"None"});
+            fake_data.diskData.push({id:params.id, name:"F", disk_type:"SSD", disk_size:"1024",host_caching:"None"});
 
             console.log(fake_data);
             console.log(fake_data.diskData);
@@ -979,11 +979,24 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
             //console.log("data:");
             //console.log(data);
 
+            // Grant waiting for approval
+            // Revocation waiting for approval
+            // Grant approved
+            // Revocation approved
+            // Grant implemented
+
             //mock data:
 
             let fake_data= {requestsData: []};
-            fake_data.requestsData.push({id:"request  A"});
-            fake_data.requestsData.push({id:"request  B"});
+
+            fake_data.requestsData.push({id:params.id, account_name:"vik1@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik2@dhl.com", role:"user", status:"Grant implemented",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik3@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik4@dhl.com", role:"admin", status:"Revocation approved",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik5@dhl.com", role:"admin", status:"Grant approved",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik6@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik7@dhl.com", role:"user", status:"Grant approved",requestor:"vik1@dhl.com"});
+            fake_data.requestsData.push({id:params.id, account_name:"vik8@dhl.com", role:"admin", status:"GGrant implemented",requestor:"vik1@dhl.com"});
 
             //console.log(fake_data);
             //console.log(fake_data.requestsData);

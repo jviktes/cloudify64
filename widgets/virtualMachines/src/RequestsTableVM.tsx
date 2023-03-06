@@ -44,6 +44,8 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         
         let params = {};
         params.tenant = tenantName;
+        params.id = _item.id;
+
         //console.log("params:");
         //console.log(params);
 
@@ -54,6 +56,10 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
         this.setState({requestsData}); //tady je pole hodnot ve value
         return requestsData;
+    }
+
+    getUniqueRowIndex= (item:any) => {
+        return Math.random().toString(36).slice(2, 11);
     }
 
     render() {
@@ -81,7 +87,47 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
         return (
             <div>
-                <div >Request data: {JSON.stringify(this.state.requestsData)}</div>
+                <div >PAM request</div>
+
+                <DataTable
+                    className=""
+                >
+
+                    <DataTable.Column label="Id" name="id"/>
+                    <DataTable.Column label="Account name" name="account_name"/>
+                    <DataTable.Column label="Role" name="role" />
+                    <DataTable.Column label="Status" name="status" />
+                    <DataTable.Column label="Requestor" name="requestor" />
+                    <DataTable.Column label="Actions" name="actions"/>
+
+                    {_.map(this.state.requestsData, item => (      
+                                      
+                            <DataTable.Row
+                                key={this.getUniqueRowIndex(item)}
+                                id={this.getUniqueRowIndex(item)}
+                            >
+
+                                <DataTable.Data>{item.id}</DataTable.Data>
+                                <DataTable.Data>{item.account_name}</DataTable.Data>
+                                <DataTable.Data>{item.role}</DataTable.Data>
+                                <DataTable.Data>{item.status}</DataTable.Data>
+                                <DataTable.Data>{item.requestor}</DataTable.Data>
+
+                                <DataTable.Data>
+
+                                    {/* <DeploymentActionButtons
+                                        deploymentId={item.id}
+                                        fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                        toolbox={toolbox}
+                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                    /> */}
+
+                                </DataTable.Data>
+
+                            </DataTable.Row>
+                    ))}
+                </DataTable>
+
             </div>
         );
     }
