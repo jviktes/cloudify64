@@ -62,7 +62,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     const workFlowsDHL=(workflows :Workflow[] )=> {
 
         //
-        console.log(workflows);
+        //console.log(workflows);
         let outWorks = [];
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
@@ -79,7 +79,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return outWorks;
     };
 
-    console.log(fetchedDeploymentState);
+    //console.log(fetchedDeploymentState);
 
     return (
         <div>

@@ -82,4 +82,117 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
         .catch(error => next(error));
 });
 
+r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
+    const _ = require('lodash');
+    console.log('get_vm_dataDiskData...');
+    const { headers } = req;
+    const commonManagerRequestOptions = {
+        headers: {
+            tenant: headers.tenant,
+            cookie: headers.cookie
+        }
+    };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
+    let _searchParam = params._search;
+    let _filteredDeploymentParentId = params.filteredDeploymentParentId;
+
+    let spireDeployments = [];
+
+    if (_filteredDeploymentParentId!=undefined) 
+    {
+        console.log("spireDeployments search:");
+        _searchParam = _filteredDeploymentParentId;
+    }
+    return helper.Manager.doGet('/deployments', {
+        params: {
+            _include: 'id,labels,blueprint_id,tenant_name,environment_type,workflows',
+            _search:_searchParam
+        },
+        ...commonManagerRequestOptions
+    })
+        .then(data => {
+            console.log('get_vm_deployments results:');
+            console.log("data:");
+            console.log(data);
+
+            //mock data:
+
+            let fake_data= {diskData: []};
+            fake_data.diskData.push({id:"data disk A"});
+            fake_data.diskData.push({id:"data disk B"});
+
+            console.log(fake_data);
+            console.log(fake_data.diskData);
+
+            fake_data.diskData.forEach(element => {
+                console.log(element);
+                spireDeployments.push(element);
+            });
+
+            //console.log(spireDeployments);
+            return Promise.all(spireDeployments);
+        })
+        .then(data => res.send(data))
+        .catch(error => next(error));
+});
+
+r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
+    const _ = require('lodash');
+    console.log('get_vm_requestsData...');
+    const { headers } = req;
+    const commonManagerRequestOptions = {
+        headers: {
+            tenant: headers.tenant,
+            cookie: headers.cookie
+        }
+    };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
+    let _searchParam = params._search;
+    let _filteredDeploymentParentId = params.filteredDeploymentParentId;
+
+    let spireDeployments = [];
+
+    if (_filteredDeploymentParentId!=undefined) 
+    {
+        console.log("spireDeployments search:");
+        _searchParam = _filteredDeploymentParentId;
+    }
+    return helper.Manager.doGet('/deployments', {
+        params: {
+            _include: 'id,labels,blueprint_id,tenant_name,environment_type,workflows',
+            _search:_searchParam
+        },
+        ...commonManagerRequestOptions
+    })
+        .then(data => {
+            console.log('get_vm_requestsData results:');
+            console.log("data:");
+            console.log(data);
+
+            //mock data:
+
+            let fake_data= {requestsData: []};
+            fake_data.requestsData.push({id:"request  A"});
+            fake_data.requestsData.push({id:"request  B"});
+
+            console.log(fake_data);
+            console.log(fake_data.requestsData);
+
+            fake_data.requestsData.forEach(element => {
+                console.log(element);
+                spireDeployments.push(element);
+            });
+
+            //console.log(spireDeployments);
+            return Promise.all(spireDeployments);
+        })
+        .then(data => res.send(data))
+        .catch(error => next(error));
+});
+
+
 }

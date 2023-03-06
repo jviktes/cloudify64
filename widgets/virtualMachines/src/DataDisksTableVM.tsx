@@ -16,14 +16,23 @@ interface DataDisksTableVMProps {
     };
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
+    //dataDisk:any;
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class DataDisksTableVM extends React.Component<DataDisksTableVMProps> {
     // static propTypes: any;
 
+
+
+    static initialState = {
+        //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
+        dataDisk:{},
+    };
+
     constructor(props: DataDisksTableVMProps) {
         super(props);
+        this.state = this.initialState;
     }
 
     componentDidMount() {
@@ -31,8 +40,26 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         toolbox.getEventBus().on('vm:selectVM', this.loadDataDiskData, this);
     }
 
-    loadDataDiskData() {
-        alert("Loading data disk data");
+     loadDataDiskData = async (_item:any) =>{
+        console.log(_item);
+        //alert("Loading data disk data");
+        const { toolbox } = this.props;
+        const manager = toolbox.getManager();
+        const tenantName=manager.getSelectedTenant();
+        
+        let params = {};
+        params.tenant = tenantName;
+        //console.log("params:");
+        //console.log(params);
+
+        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
+
+        const dataDisk =  _dataFromExternalSource;
+        console.log(dataDisk);
+
+        this.setState({dataDisk}); //tady je pole hodnot ve value
+        return dataDisk;
+
     }
 
     render() {
@@ -40,11 +67,27 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         const { data, toolbox, widget } = this.props;
         const { DataTable } = Stage.Basic;
 
-        console.log(data);
+        //console.log(data);
+
+        if (this.state==null) {
+            return (
+                <div>
+                    <div >nic k zobrazeni</div>
+                </div>
+            );
+        }
+
+        if (this.state.dataDisk==null) {
+            return (
+                <div>
+                    <div >nic k zobrazeni</div>
+                </div>
+            );
+        }
 
         return (
             <div>
-                <div >Data disks:</div>
+                <div >Data disks: {JSON.stringify(this.state.dataDisk)}</div>
             </div>
         );
     }

@@ -20,10 +20,14 @@ interface RequestsTableVMProps {
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class RequestsTableVM extends React.Component<RequestsTableVMProps> {
-    // static propTypes: any;
+
+    static initialState = {
+        requestsData:{},
+    };
 
     constructor(props: RequestsTableVMProps) {
         super(props);
+        this.state = this.initialState;
     }
 
     componentDidMount() {
@@ -31,26 +35,53 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         toolbox.getEventBus().on('vm:selectVM', this.loadRequestData, this);
     }
 
-    loadRequestData() {
-        alert("Loading request data");
-    }
-
-    fetchGridData = fetchParams => {
-        //console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
-        //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
+    loadRequestData = async (_item:any) =>{
+        console.log(_item);
+        //alert("Loading data disk data");
         const { toolbox } = this.props;
-        return toolbox.refresh(fetchParams);
-    };
+        const manager = toolbox.getManager();
+        const tenantName=manager.getSelectedTenant();
+        
+        let params = {};
+        params.tenant = tenantName;
+        //console.log("params:");
+        //console.log(params);
 
+        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
+
+        const requestsData =  _dataFromExternalSource;
+        console.log(requestsData);
+
+        this.setState({requestsData}); //tady je pole hodnot ve value
+        return requestsData;
+    }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
-        console.log(data);
+        const { DataTable } = Stage.Basic;
+
+        //console.log(data);
+
+        if (this.state==null) {
+            return (
+                <div>
+                    <div >nic k zobrazeni</div>
+                </div>
+            );
+        }
+
+        if (this.state.requestsData==null) {
+            return (
+                <div>
+                    <div >nic k zobrazeni</div>
+                </div>
+            );
+        }
 
         return (
             <div>
-                <div>List of requests:</div>
+                <div >Request data: {JSON.stringify(this.state.requestsData)}</div>
             </div>
         );
     }

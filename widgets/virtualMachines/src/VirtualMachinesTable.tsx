@@ -134,7 +134,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //trigger event a zobrazeni dataTable v tabulce:
         //trigger event a zobrazeni requests v tabulce:
         const { toolbox } = this.props;
-        toolbox.getEventBus().trigger('vm:selectVM');
+        toolbox.getEventBus().trigger('vm:selectVM',_item);
+        //toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'impacted_region', JSON.stringify(selectedRegions)); 
     }
 
     render() {
