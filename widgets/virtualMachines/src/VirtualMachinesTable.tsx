@@ -159,25 +159,38 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     searchable
                 >
 
-                    <DataTable.Column label="Id" name="id" width="10%" />
-                    <DataTable.Column label="Labels" name="labels" width="25%" />
-                    <DataTable.Column label="Blueprint name" name="blueprint_id" name="class" width="10%" />
-
+                    <DataTable.Column label="Id" name="id"/>
+                    <DataTable.Column label="Name" name="labels"/>
+                    <DataTable.Column label="OS" name="os" />
+                    <DataTable.Column label="IP" name="ip" />
+                    <DataTable.Column label="CPUs" name="cpus" />
+                    <DataTable.Column label="RAM" name="ram" />
+                    <DataTable.Column label="Azure size" name="azure_size" />
+                    <DataTable.Column label="Azure location" name="azure_location" />
+                    <DataTable.Column label="Environment" name="environment" />
+                    <DataTable.Column label="Parent deployment" name="parent_deployment" />
                     <DataTable.Column label="Actions" name="actions" name="class" width="10%" />
+
                     {_.map(data.items, item => (                   
                             <DataTable.Row
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
                                 onClick={() => this.onRowClick(item)}
                             >
-                                <DataTable.Data style={{ width: '10%' }}>{item.id}</DataTable.Data>
-                                <DataTable.Data style={{ width: '25%' }}>{JSON.stringify(item.labels)}</DataTable.Data>
-                                <DataTable.Data style={{ width: '10%' }}>{item.blueprint_id}</DataTable.Data>
-                                {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
-                                <DataTable.Data style={{ width: '10%' }}>
 
-                                    {/* {this.renderHtmlParrentButton(item)} */}
-                                    
+                                <DataTable.Data>{item.id}</DataTable.Data>
+                                <DataTable.Data>{item.name}</DataTable.Data>
+                                <DataTable.Data>{item.os}</DataTable.Data>
+                                <DataTable.Data>{item.ip}</DataTable.Data>
+                                <DataTable.Data>{item.cpus}</DataTable.Data>
+                                <DataTable.Data>{item.ram}</DataTable.Data>
+                                <DataTable.Data>{item.azure_size}</DataTable.Data>
+                                <DataTable.Data>{item.azure_location}</DataTable.Data>
+                                <DataTable.Data>{item.environment}</DataTable.Data>
+                                <DataTable.Data>{item.parent_deployment}</DataTable.Data>
+
+                                <DataTable.Data>
+
                                     <DeploymentActionButtons
                                         deploymentId={item.id}
                                         fetchedDeploymentState={this.getDataForDeploymentId(item)}
@@ -186,6 +199,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     />
 
                                 </DataTable.Data>
+
+                                {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
+                                {/* {this.renderHtmlParrentButton(item)} */}
                             </DataTable.Row>
                     ))}
                 </DataTable>

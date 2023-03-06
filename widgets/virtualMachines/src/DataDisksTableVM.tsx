@@ -49,6 +49,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         
         let params = {};
         params.tenant = tenantName;
+        params.id = _item.id;
         //console.log("params:");
         //console.log(params);
 
