@@ -142,7 +142,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 <DataTable.Data>
 
                                 <DeploymentActionButtons
-                                        buttonTitle='Actions'
+                                        buttonTitle='PAM actions'
                                         deploymentId={item.id}
                                         fetchedDeploymentState={this.getDataForDeploymentId(item)}
                                         toolbox={toolbox}

@@ -6,6 +6,8 @@ import { identity } from 'lodash';
 import { castArray } from 'lodash';
 import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
 import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
+import DataDisksTableVM from './DataDisksTableVM';
+import RequestsTableVM from './RequestsTableVM';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -133,9 +135,21 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     onRowClick(_item) {
         //trigger event a zobrazeni dataTable v tabulce:
         //trigger event a zobrazeni requests v tabulce:
+
+        const el = document.getElementById(`${_item.id}_ext`);
+        const elMain = document.getElementById(`${_item.id}_main`);
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            el.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#e0e0e0';
+        } else {
+            el.style.display = 'none';
+            el.style.backgroundColor = '';
+            elMain.style.backgroundColor = '';
+        }
+
         const { toolbox } = this.props;
         toolbox.getEventBus().trigger('vm:selectVM',_item);
-        //toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'impacted_region', JSON.stringify(selectedRegions)); 
     }
 
     render() {
@@ -169,14 +183,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
                     <DataTable.Column label="Parent deployment" name="parent_deployment" />
+                    <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" name="actions" name="class" />
 
                     {_.map(data.items, item => (                   
-                            <DataTable.Row
+                            <DataTable.RowExpandable key={item.id}>
+                            <DataTable.Row 
                                 key={`${item.id}_main`}
-                                id={`${item.id}_main`}
-                                onClick={() => this.onRowClick(item)}
-                            >
+                                // onClick={() => this.onRowClick(item)}
+                                id={`${item.id}_main`}>
 
                                 <DataTable.Data>{item.id}</DataTable.Data>
                                 <DataTable.Data>{item.name}</DataTable.Data>
@@ -188,7 +203,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
                                 <DataTable.Data>{item.environment}</DataTable.Data>
                                 <DataTable.Data>{item.parent_deployment}</DataTable.Data>
-
+                                <DataTable.Data><Button icon="add" content={'Show details'} onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
@@ -201,9 +216,26 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                                 </DataTable.Data>
 
-                                {/* <DataTable.Data style={{ width: '10%' }}>{item.csys-obj-type}</DataTable.Data> */}
-                                {/* {this.renderHtmlParrentButton(item)} */}
                             </DataTable.Row>
+
+                            <DataTable.Row
+                                // onClick={() => this.onRowClick(item)}
+                                key={`${item.id}_ext`}
+                                style={{ display: 'none' }}
+                                id={`${item.id}_ext`}>
+                                    <DataTable.Data colSpan={11}>
+                                        <div className='virtualMachineMainLayout'>
+                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                                        </div>
+                                        {/* <DataDisksTableVM  style={{width:"50%"}}widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM>
+                                        <RequestsTableVM style={{width:"50%"}} widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM> */}
+                                        {/* <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
+                                        <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div> */}
+                                    </DataTable.Data>
+                            </DataTable.Row>
+
+                            </DataTable.RowExpandable>
                     ))}
                 </DataTable>
             </div>

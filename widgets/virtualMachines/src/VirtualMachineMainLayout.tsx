@@ -8,8 +8,7 @@ import DeploymentActionButtons from '../src/deploymentActionButtons/src/Deployme
 import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
 
 import VirtualMachinesTable from './VirtualMachinesTable';
-import DataDisksTableVM from './DataDisksTableVM';
-import RequestsTableVM from './RequestsTableVM';
+
 
 interface VirtualMachineMainLayoutProps {
     data: {
@@ -49,10 +48,10 @@ export default class VirtualMachineMainLayout extends React.Component<VirtualMac
                 {/* <span>Current tenant: {tenantName}</span> */}
                 <div>
                     <div style={{outerWidth:"100%"}}><VirtualMachinesTable widget={widget} data={data} toolbox={toolbox} /></div>
-                    <div className='virtualMachineMainLayout'>
+                    {/* <div className='virtualMachineMainLayout'>
                         <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
                         <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         );
