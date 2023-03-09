@@ -24,35 +24,52 @@ interface VirtualMachinesDataProps {
 export default class VirtualMachinesTable extends React.Component<VirtualMachinesDataProps> {
     // static propTypes: any;
 
-    static initialState = {
-        //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
-        detailedData:{},
-    };
+    // static initialState = {
+    //     //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
+    //     detailedData:[],
+    //     loading:"nazdar"
+    // };
 
     constructor(props: VirtualMachinesDataProps) {
         super(props);
+        console.log("VirtualMachinesTable ctor:");
+        //this.state = this.initialState;
+        this.state = {
+            detailedData: [],
+            loading:false
+        };
 
     }
 
     componentDidMount() {
         console.log("VirtualMachinesTable componentDidMount..."); 
         const { data, toolbox, widget } = this.props;
+        //TODO vola se tady? nebo a v didUpdatu:
         console.log("componentDidMount:"+JSON.stringify(data)); 
-        {_.map(data, item => (        
+        {_.map(data.items, item => (        
 
             this.loadDetailedData(item)
         ))}
     }
 
-    // fetchGridData = fetchParams => {
-    //     console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
-    //     //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
-    //     const { toolbox } = this.props;
-    //     // {_.map(data.items, item => (                   
-    //     //     this.loadDetailedData(item)
-    //     // ))}
-    //     return toolbox.refresh(fetchParams);
-    // };
+    componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
+        console.log("VirtualMachinesTable componentDidUpdate..."); 
+        const { data, toolbox, widget } = this.props;
+
+        try {
+            //pokud uz konecne dorazily data a state je nenacetly, pak takto updatuju state (=> loadDetails...)
+            if (this.props.data.length!=0 && prevState.detailedData.length==0 && this.state.loading==false) {
+                console.log("componentDidUpdate:"); 
+                //spusteni volani celeho cyklu:
+                    {_.map(this.props.data.items, item => (        
+                        this.loadDetailedData(item)
+                    ))}
+                }
+        } catch (error) {
+            console.log(error);
+        }
+
+    }
 
     //melo by odfiltrovat a zobrazit jen jeden radek:
     getParrent=(filteredDeploymentParentId:any)=> {
@@ -169,20 +186,49 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         toolbox.getEventBus().trigger('vm:selectVM',_item);
     }
     getDOs= (item:any) => {
-    let returnValue = "noting";
-    try {
-        if (this.state.detailedData!=null) {
-            returnValue = this.state.detailedData;
-        }   
+        let returnValue = "init";
+        try {
+            if (this.state.detailedData!=null && this.state.detailedData.length>0) {
+                
+                let _index = -1;//this.state.detailedData.indexOf(item.id);
 
-    } catch (error) {
-        console.log(error);
-    }
+                for (let index = 0; index < this.state.detailedData.length; index++) {
+                    const element = this.state.detailedData[index];
+                    if (element.deployment_id==item.id) {
+                        _index=index;
+                         break;
+                    }
 
-    return returnValue
+                }
 
+                if (_index!=-1) {
+                    try {
+                        returnValue=JSON.stringify(this.state.detailedData[_index]["parameters"]["inputs"]);
+                    } catch (error) {
+                        console.log(error);
+    
+                        try {
+                            returnValue=JSON.stringify(this.state.detailedData[_index]["parameters"]["inputs"]["location"]);
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        returnValue="err";
+    
+                    } 
+                }
+
+            }  
+            
+        } catch (error) {
+            console.log(error);
+        }
+        return returnValue;
     };
     loadDetailedData = async (_item:any) =>{
+
+        if ( this.state.loading==false) {
+            this.setState({ loading: true });
+        }
 
         try {
             console.log("loadDetailedData:");
@@ -196,7 +242,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 return null;
             }
 
-
             let params = {};
             params.tenant = tenantName;
             params.id = _item.id;
@@ -205,53 +250,39 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 return null;
             }
 
-            //console.log("params:");
-            //console.log(params);
-            
+            if (this.state==null) {
+                return;
+            }
+            let detailedData=this.state.detailedData;
+
+            //TODO trapna podminka, abych zbytecne nevolal, ale volani je asi tak dost?
+            // if (detailedData.indexOf(_item.id != -1)) {
+            //     console.log("loadDetailedData:zbytecne volani");
+            //     return;
+            // }
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData', { params });
-            const dataDisk =  _dataFromExternalSource;
-            //console.log("loadDetailedData results:");
-            //console.log(dataDisk);
-             
-            let detailedData=JSON.stringify(dataDisk);
+
+            //zajisteni unikatnosti: deployment_id
+            //TODO 8. element v poli???
+            // if (detailedData.length==0) {
+            //     detailedData.push(_dataFromExternalSource[0]);
+            // }
+
+            detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1 ? detailedData.push(_dataFromExternalSource[0]) : console.log("This item already exists");
+
             this.setState({detailedData});
-            //data._items[_item.id].os=JSON.stringify(dataDisk);
-            return dataDisk;
+
         } catch (error) {
             console.log(error);
         }
 
     };
-    // fetchData(widget, toolbox,params) {
-    //     console.log("VirtualMachinesTable fetchData");
-
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-        
-    //     console.log(this.props.data.items);
-    //     {_.map(this.props.data.items, item => (                   
-    //         this.loadDetailedData(item)
-    //     ))}
-
-    //     //params.tenant = tenantName;
-    //     //console.log("params:");
-    //     //console.log(params);
-    //     //let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
-    //     //return _results;
-    // };
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
         const { DataTable } = Stage.Basic;
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
-
-        //console.log(data);
-
-        //toto ne, nekonecny cyklus..
-        // {_.map(data.items, item => (                   
-        //     this.loadDetailedData(item)
-        // ))}
 
         return (
             <div>
