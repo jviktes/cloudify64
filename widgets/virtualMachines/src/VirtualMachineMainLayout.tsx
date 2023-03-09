@@ -29,11 +29,6 @@ export default class VirtualMachineMainLayout extends React.Component<VirtualMac
         super(props);
     }
 
-    // fetchGridData = fetchParams => {
-    //     const { toolbox } = this.props;
-    //     return toolbox.refresh(fetchParams);
-    // };
-
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -41,17 +36,12 @@ export default class VirtualMachineMainLayout extends React.Component<VirtualMac
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
-        console.log(data);
+        //console.log(data);
 
         return (
             <div>
-                {/* <span>Current tenant: {tenantName}</span> */}
                 <div>
                     <div style={{outerWidth:"100%"}}><VirtualMachinesTable widget={widget} data={data} toolbox={toolbox} /></div>
-                    {/* <div className='virtualMachineMainLayout'>
-                        <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                        <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
-                    </div> */}
                 </div>
             </div>
         );

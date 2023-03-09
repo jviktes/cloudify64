@@ -24,18 +24,35 @@ interface VirtualMachinesDataProps {
 export default class VirtualMachinesTable extends React.Component<VirtualMachinesDataProps> {
     // static propTypes: any;
 
+    static initialState = {
+        //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
+        detailedData:{},
+    };
+
     constructor(props: VirtualMachinesDataProps) {
         super(props);
+
     }
 
+    componentDidMount() {
+        console.log("VirtualMachinesTable componentDidMount..."); 
+        const { data, toolbox, widget } = this.props;
+        console.log("componentDidMount:"+JSON.stringify(data)); 
+        {_.map(data, item => (        
 
+            this.loadDetailedData(item)
+        ))}
+    }
 
-    fetchGridData = fetchParams => {
-        //console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
-        //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
-        const { toolbox } = this.props;
-        return toolbox.refresh(fetchParams);
-    };
+    // fetchGridData = fetchParams => {
+    //     console.log("fetchGridData:"+JSON.stringify(fetchParams)); 
+    //     //fetchGridData:{"gridParams":{"_search":"x","currentPage":1,"pageSize":0,"sortColumn":"","sortAscending":true}}
+    //     const { toolbox } = this.props;
+    //     // {_.map(data.items, item => (                   
+    //     //     this.loadDetailedData(item)
+    //     // ))}
+    //     return toolbox.refresh(fetchParams);
+    // };
 
     //melo by odfiltrovat a zobrazit jen jeden radek:
     getParrent=(filteredDeploymentParentId:any)=> {
@@ -151,7 +168,77 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { toolbox } = this.props;
         toolbox.getEventBus().trigger('vm:selectVM',_item);
     }
+    getDOs= (item:any) => {
+    let returnValue = "noting";
+    try {
+        if (this.state.detailedData!=null) {
+            returnValue = this.state.detailedData;
+        }   
 
+    } catch (error) {
+        console.log(error);
+    }
+
+    return returnValue
+
+    };
+    loadDetailedData = async (_item:any) =>{
+
+        try {
+            console.log("loadDetailedData:");
+            //console.log(_item.id);
+    
+            const { toolbox } = this.props;
+            const manager = toolbox.getManager();
+            const tenantName=manager.getSelectedTenant();
+            
+            if (_item==null) {
+                return null;
+            }
+
+
+            let params = {};
+            params.tenant = tenantName;
+            params.id = _item.id;
+
+            if (params.id==null) {
+                return null;
+            }
+
+            //console.log("params:");
+            //console.log(params);
+            
+            const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData', { params });
+            const dataDisk =  _dataFromExternalSource;
+            //console.log("loadDetailedData results:");
+            //console.log(dataDisk);
+             
+            let detailedData=JSON.stringify(dataDisk);
+            this.setState({detailedData});
+            //data._items[_item.id].os=JSON.stringify(dataDisk);
+            return dataDisk;
+        } catch (error) {
+            console.log(error);
+        }
+
+    };
+    // fetchData(widget, toolbox,params) {
+    //     console.log("VirtualMachinesTable fetchData");
+
+    //     const manager = toolbox.getManager();
+    //     const tenantName=manager.getSelectedTenant();
+        
+    //     console.log(this.props.data.items);
+    //     {_.map(this.props.data.items, item => (                   
+    //         this.loadDetailedData(item)
+    //     ))}
+
+    //     //params.tenant = tenantName;
+    //     //console.log("params:");
+    //     //console.log(params);
+    //     //let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+    //     //return _results;
+    // };
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -159,7 +246,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
-        console.log(data);
+        //console.log(data);
+
+        //toto ne, nekonecny cyklus..
+        // {_.map(data.items, item => (                   
+        //     this.loadDetailedData(item)
+        // ))}
 
         return (
             <div>
@@ -167,6 +259,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 <DataTable
                     className="agentsTable table-scroll"
                     fetchData={this.fetchGridData}
+                    
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
                     deploymentId
@@ -190,19 +283,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row 
                                 key={`${item.id}_main`}
-                                // onClick={() => this.onRowClick(item)}
                                 id={`${item.id}_main`}>
 
                                 <DataTable.Data>{item.id}</DataTable.Data>
-                                <DataTable.Data>{item.name}</DataTable.Data>
-                                <DataTable.Data>{item.os}</DataTable.Data>
+                                <DataTable.Data>{item.display_name}</DataTable.Data>
+
+                                <DataTable.Data>{ this.getDOs(item)}</DataTable.Data>
                                 <DataTable.Data>{item.ip}</DataTable.Data>
                                 <DataTable.Data>{item.cpus}</DataTable.Data>
                                 <DataTable.Data>{item.ram}</DataTable.Data>
                                 <DataTable.Data>{item.azure_size}</DataTable.Data>
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
+
                                 <DataTable.Data>{item.environment}</DataTable.Data>
-                                <DataTable.Data>{item.parent_deployment}</DataTable.Data>
+                                <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data>
                                 <DataTable.Data><Button icon="add" content={'Show details'} onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
 
@@ -219,7 +313,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             </DataTable.Row>
 
                             <DataTable.Row
-                                // onClick={() => this.onRowClick(item)}
                                 key={`${item.id}_ext`}
                                 style={{ display: 'none' }}
                                 id={`${item.id}_ext`}>
@@ -228,11 +321,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
-                                        {/* <DataDisksTableVM  style={{width:"50%"}}widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM>
-                                        <RequestsTableVM style={{width:"50%"}} widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM> */}
-                                        {/* <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                        <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div> */}
                                     </DataTable.Data>
+                                    <DataTable.Data>{JSON.stringify(item)}</DataTable.Data>
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>

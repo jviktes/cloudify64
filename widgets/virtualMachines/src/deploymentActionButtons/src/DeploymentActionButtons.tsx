@@ -81,7 +81,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     //     return outWorks;
     // };
 
-    console.log(fetchedDeploymentState);
+    //console.log(fetchedDeploymentState);
 
     return (
         <div>

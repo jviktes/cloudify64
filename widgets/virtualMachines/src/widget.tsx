@@ -19,21 +19,21 @@ Stage.defineWidget({
 
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
-        console.log("fetchData");
+        //console.log("fetchData");
 
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
         
         params.tenant = tenantName;
-        console.log("params:");
-        console.log(params);
-        return toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+        //console.log("params:");
+        //console.log(params);
+        let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+        return _results;
     },
 
     fetchParams: function(widget, toolbox) {
-        console.log("widget fetchParams...");
+        //console.log("widget fetchParams...");
         let _filteredDeploymentParentId= toolbox.getContext().getValue('filteredDeploymentParentId');
-        //TODO po použít asi resetovat toolbox.getContext().setValue('filteredDeploymentParentId', null); ??
         return {filteredDeploymentParentId:_filteredDeploymentParentId};
     },
 
@@ -41,8 +41,8 @@ Stage.defineWidget({
         const formattedData = {
             items: data
         };
-        console.log(formattedData);
-        
+        //console.log(formattedData);
         return <VirtualMachineMainLayout widget={widget} data={formattedData} toolbox={toolbox} />;
     }
 });
+
