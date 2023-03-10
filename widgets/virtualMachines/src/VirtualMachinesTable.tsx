@@ -498,10 +498,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                                            {/* <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div> */}
                                         </div>
                                     </DataTable.Data>
-                                    <DataTable.Data>{JSON.stringify(item)}</DataTable.Data>
+                                    {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>
@@ -511,8 +511,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         );
     }
 }
-
-
 
 VirtualMachinesTable.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
