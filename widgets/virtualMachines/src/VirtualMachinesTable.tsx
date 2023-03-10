@@ -134,15 +134,34 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     };
     renderHtmlParrentButton=(item:any)=> {
         //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
-        
+        const { data, toolbox, widget } = this.props;
         let parrentId = this.isItForParrentButton(item);
-        
+        let _index = -1;
+        //hledani display_name:
+        if (parrentId!=0){
+            for (let index = 0; index < data.items.length; index++) {
+                const element = data.items[index];
+                if (element.id==parrentId) {
+                    _index=index;
+                     break;
+                }
+            }
+        }
+        let _content="Parent";
+
+        if (_index!=-1) {
+            try {
+                _content = data.items[_index].display_name;  
+            } catch (error) {
+                
+            }
+        }
 
         if (parrentId!=0) {
 
             return (<Button
-                icon="wizard"
-                content="Get parrent"
+                icon="home"
+                content={_content}
                 basic
                 labelPosition="left"
                 title="Get parrent"
@@ -151,18 +170,18 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             this.getParrent(parrentId);
                  } } />)
         }
-        else {
-            return (<Button
-                icon="wizard"
-                content="No parrent"
-                basic
-                labelPosition="left"
-                title="No parrent"
-                        onClick={(event: Event) => {
-                            event.stopPropagation();
-                            this.getParrent(item.id);
-                 }}/>)
-        }
+        // else {
+        //     return (<Button
+        //         icon="home"
+        //         content="No parrent"
+        //         basic
+        //         labelPosition="left"
+        //         title="No parrent"
+        //                 onClick={(event: Event) => {
+        //                     event.stopPropagation();
+        //                     this.getParrent(item.id);
+        //          }}/>)
+        // }
 
     };
 
@@ -186,48 +205,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { toolbox } = this.props;
         toolbox.getEventBus().trigger('vm:selectVM',_item);
     }
-    // getOS= (item:any) => {
-    //     let returnValue = "init";
-    //     try {
-    //         if (this.state.detailedData!=null && this.state.detailedData.length>0) {
-                
-    //             let _index = -1;//this.state.detailedData.indexOf(item.id);
-
-    //             for (let index = 0; index < this.state.detailedData.length; index++) {
-    //                 const element = this.state.detailedData[index];
-    //                 if (element.deployment_id==item.id) {
-    //                     _index=index;
-    //                      break;
-    //                 }
-
-    //             }
-
-    //             if (_index!=-1) {
-    //                 try {
-    //                     returnValue=this.state.detailedData[_index]["parameters"]["inputs"];
-    //                     returnValue = returnValue["os_name"]+"(version:"+ returnValue["os_version"]+ ")";
-    //                     // "os_name": "RHEL",
-    //                     // "os_version": 8,
-    //                 } 
-    //                 catch (error) {
-    //                     console.log(error);
-    //                     returnValue="Uknown";
-    //                 } 
-    //             }
-
-    //         }  
-            
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     return returnValue;
-    // };
 
     getDetails=(item:any) => {
         
         const { DataTable } = Stage.Basic;
-
-        let returnValue = "";
 
         let _ip="";
         let _cpus="";
@@ -255,26 +236,25 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     try {
                         let _inputs=this.state.detailedData[_index]["parameters"]["inputs"];
                        
-                        _ip="";
+                        _ip=this._getIPAdress(_inputs);
                         _cpus=this._getCPU(_inputs);
                         _ram=this._getRAM(_inputs);
                         _azure_size=this._getAzureSize(_inputs); 
-                        _azure_location="";//_inputs["datacenter"];
+                        _azure_location=this._getLocation(_inputs);
                         _environment=this._getEnvironment(_inputs);
                         _os=this._getOS(_inputs);
                         _dataDisks = this._getDataDisks(_inputs);
                     } 
                     catch (error) {
                         console.log(error);
-                        //returnValue="Uknown";
                     } 
                 }
-
             }  
             
         } catch (error) {
             console.log(error);
         }
+
         item.ip=_ip;
         item.cpus=_cpus;
         item.ram=_ram;
@@ -284,7 +264,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         item.os=_os;
         item.dataDisks=_dataDisks;
     };
-
+    _getLocation= (inputJson:any)=> {
+        try {
+            return inputJson["datacenter"];
+        } catch (error) {
+            return "";
+        }
+    }
+    _getIPAdress = (inputJson:any)=> {
+        try {
+            return inputJson["reservation"]["ip"];
+        } catch (error) {
+            return "";
+        }
+    }
     _getCPU = (inputJson:any)=> {
         try {
             return inputJson["size"]["cpu"];
@@ -299,7 +292,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             return "";
         }
     }
-
     _getAzureSize = (inputJson:any)=> {
         try {
             return inputJson["size"]["id"];
@@ -328,7 +320,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             return "";
         }
     }
-
     _getDataDisks= (inputJson:any) => {
 
         // <DataTable.Data>{item.id}</DataTable.Data>
@@ -498,7 +489,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            {/* <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div> */}
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
                                     {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}

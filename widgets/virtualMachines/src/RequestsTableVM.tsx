@@ -98,7 +98,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         if (this.state==null) {
             return (
                 <div>
-                    <div >nic k zobrazeni</div>
+                    <div ></div>
                 </div>
             );
         }
@@ -106,7 +106,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         if (this.state.requestsData==null) {
             return (
                 <div>
-                    <div >nic k zobrazeni</div>
+                    <div ></div>
                 </div>
             );
         }

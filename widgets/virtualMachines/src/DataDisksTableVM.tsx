@@ -88,14 +88,14 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         const { data, toolbox, widget,vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
-        //console.log(data);
-
-
         return (
+            
             <div>
                 <div >Data disks</div>
 
                 <DataTable className="">
+                    <DataTable.Column label="Label" name="label"/>
+                    <DataTable.Column label="Mountpoint" name="mountpoint"/>
                     <DataTable.Column label="Disk type" name="disk_type" />
                     <DataTable.Column label="Disk size (GiB)" name="disk_size" />
                     <DataTable.Column label="Host caching" name="host_caching" />
@@ -106,6 +106,8 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 key={this.getUniqueRowIndex()}
                                 id={this.getUniqueRowIndex()}
                             >
+                                <DataTable.Data>{JSON.stringify(item.label)}</DataTable.Data>
+                                <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
                                 <DataTable.Data>{item.host_caching}</DataTable.Data>
