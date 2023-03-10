@@ -31,7 +31,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     //latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
     return helper.Manager.doGet('/deployments', {
         params: {
-            _include: 'id,display_name,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
+            _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
             _search:_searchParam
         },
         ...commonManagerRequestOptions
@@ -39,37 +39,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
         .then(data => {
             rawData = data.items;
             //console.log(rawData);
-
             return Promise.all(rawData);
-
-            // Promise.all(rawData).then((_res) => {
-                
-            //     let promises = [];
-            //     rawData.forEach(element => {
-            //         let _includesReqestString = "/executions?_size=1&deployment_id="+element.id;
-
-            //         let _promise = new Promise(function(resolve, reject) {
-            //             resolve(fs.readFile(folder+"/"+file));
-            //        });
-            //        promises.push(_promise);
-
-            //         return helper.Manager.doGet(_includesReqestString, {
-            //             ...commonManagerRequestOptions
-            //         })
-            //             .then(data => {
-            //                 console.log('get_vm_detailsData results:');
-            //                 //console.log(data);
-            //                 return Promise.all(data.items);
-            //             })
-            //             .then(data => res.send(data))
-            //             .catch(error => next(error));
-            //     });
-
-            //     let preparedData = processedDataToJson(result);
-
-            //     res.send(preparedData);
-
-            //});
 
         })
         .then(data => res.send(data))

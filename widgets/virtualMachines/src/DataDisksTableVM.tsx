@@ -26,34 +26,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         super(props);
     }
 
-    // componentDidMount() {
-    //     const { toolbox } = this.props;
-    //     toolbox.getEventBus().on('vm:selectVM', this.loadDataDiskData, this);
-    // }
-
-    // loadDataDiskData = async (_item:any) =>{
-    //     console.log(_item);
-    //     //alert("Loading data disk data");
-    //     const { toolbox } = this.props;
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-        
-    //     let params = {};
-    //     params.tenant = tenantName;
-    //     params.id = _item.id;
-    //     //console.log("params:");
-    //     //console.log(params);
-
-    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
-
-    //     const dataDisk =  _dataFromExternalSource;
-    //     console.log(dataDisk);
-
-    //     this.setState({dataDisk}); //tady je pole hodnot ve value
-    //     return dataDisk;
-
-    // }
-
     getDataForDeploymentId = (item:any) => {
 
         
@@ -89,17 +61,18 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         const { DataTable } = Stage.Basic;
 
         return (
-            
+
             <div>
                 <div >Data disks</div>
 
                 <DataTable className="">
                     <DataTable.Column label="Label" name="label"/>
-                    <DataTable.Column label="Mountpoint" name="mountpoint"/>
+                    {/* <DataTable.Column label="Mountpoint" name="mountpoint"/> */}
                     <DataTable.Column label="Disk type" name="disk_type" />
                     <DataTable.Column label="Disk size (GiB)" name="disk_size" />
                     <DataTable.Column label="Host caching" name="host_caching" />
-    
+                    <DataTable.Column label="Actions" name="actions"/>
+
                     {_.map(vmData.dataDisks, item => (      
                                       
                             <DataTable.Row
@@ -107,10 +80,23 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 id={this.getUniqueRowIndex()}
                             >
                                 <DataTable.Data>{JSON.stringify(item.label)}</DataTable.Data>
-                                <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
+                                {/* <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data> */}
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
                                 <DataTable.Data>{item.host_caching}</DataTable.Data>
+
+                                <DataTable.Data>
+
+                                    <DeploymentActionButtons
+                                            buttonTitle='Disk actions'
+                                            deploymentId={vmData.id}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData)}
+                                            toolbox={toolbox}
+                                            redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                        />
+
+                                </DataTable.Data>
+
                             </DataTable.Row>
                     ))}
                 </DataTable>
