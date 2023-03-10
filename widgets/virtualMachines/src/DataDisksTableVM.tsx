@@ -14,54 +14,45 @@ interface DataDisksTableVMProps {
         nodeId: string;
         nodeInstanceId: string;
     };
+    vmData:any
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
-    //dataDisk:any;
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class DataDisksTableVM extends React.Component<DataDisksTableVMProps> {
-    // static propTypes: any;
-
-
-
-    static initialState = {
-        //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
-        dataDisk:{},
-    };
-
+   
     constructor(props: DataDisksTableVMProps) {
         super(props);
-        this.state = this.initialState;
     }
 
-    componentDidMount() {
-        const { toolbox } = this.props;
-        toolbox.getEventBus().on('vm:selectVM', this.loadDataDiskData, this);
-    }
+    // componentDidMount() {
+    //     const { toolbox } = this.props;
+    //     toolbox.getEventBus().on('vm:selectVM', this.loadDataDiskData, this);
+    // }
 
-    loadDataDiskData = async (_item:any) =>{
-        console.log(_item);
-        //alert("Loading data disk data");
-        const { toolbox } = this.props;
-        const manager = toolbox.getManager();
-        const tenantName=manager.getSelectedTenant();
+    // loadDataDiskData = async (_item:any) =>{
+    //     console.log(_item);
+    //     //alert("Loading data disk data");
+    //     const { toolbox } = this.props;
+    //     const manager = toolbox.getManager();
+    //     const tenantName=manager.getSelectedTenant();
         
-        let params = {};
-        params.tenant = tenantName;
-        params.id = _item.id;
-        //console.log("params:");
-        //console.log(params);
+    //     let params = {};
+    //     params.tenant = tenantName;
+    //     params.id = _item.id;
+    //     //console.log("params:");
+    //     //console.log(params);
 
-        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
+    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
 
-        const dataDisk =  _dataFromExternalSource;
-        console.log(dataDisk);
+    //     const dataDisk =  _dataFromExternalSource;
+    //     console.log(dataDisk);
 
-        this.setState({dataDisk}); //tady je pole hodnot ve value
-        return dataDisk;
+    //     this.setState({dataDisk}); //tady je pole hodnot ve value
+    //     return dataDisk;
 
-    }
+    // }
 
     getDataForDeploymentId = (item:any) => {
 
@@ -87,32 +78,18 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         )
 
     };
-    getUniqueRowIndex= (item:any) => {
+
+    getUniqueRowIndex= () => {
         return Math.random().toString(36).slice(2, 11);
     }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { data, toolbox, widget } = this.props;
+        const { data, toolbox, widget,vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
         //console.log(data);
 
-        if (this.state==null) {
-            return (
-                <div>
-                    <div >nic k zobrazeni</div>
-                </div>
-            );
-        }
-
-        if (this.state.dataDisk==null) {
-            return (
-                <div>
-                    <div >nic k zobrazeni</div>
-                </div>
-            );
-        }
 
         return (
             <div>
@@ -122,38 +99,39 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                     className=""
                 >
 
-                    <DataTable.Column label="Id" name="id"/>
-                    <DataTable.Column label="Name" name="name"/>
+                   
+                    <DataTable.Column label="Label" name="label"/>
+                    <DataTable.Column label="Mountpoint" name="mountpoint"/>
                     <DataTable.Column label="Disk type" name="disk_type" />
                     <DataTable.Column label="Disk size (GiB)" name="disk_size" />
                     <DataTable.Column label="Host caching" name="host_caching" />
-                    <DataTable.Column label="Actions" name="actions"/>
+                    {/* <DataTable.Column label="Actions" name="actions"/> */}
 
-                    {_.map(this.state.dataDisk, item => (      
+                    {_.map(vmData.dataDisks, item => (      
                                       
                             <DataTable.Row
-                                key={this.getUniqueRowIndex(item)}
-                                id={this.getUniqueRowIndex(item)}
+                                key={this.getUniqueRowIndex()}
+                                id={this.getUniqueRowIndex()}
                             >
 
-                                <DataTable.Data>{item.id}</DataTable.Data>
-                                <DataTable.Data>{item.name}</DataTable.Data>
+                                <DataTable.Data>{JSON.stringify(item.label)}</DataTable.Data>
+                                <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
                                 <DataTable.Data>{item.host_caching}</DataTable.Data>
 
-                                <DataTable.Data>
+                                {/* <DataTable.Data> */}
 
-                                <DeploymentActionButtons
+                                {/* <DeploymentActionButtons
                                         buttonTitle='Disk actions'
-                                        deploymentId={item.id}
-                                        fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                        deploymentId={vmData.id}
+                                        fetchedDeploymentState={this.getDataForDeploymentId(vmData)}
                                         toolbox={toolbox}
                                         
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
-                                    />
+                                    /> */}
 
-                                </DataTable.Data>
+                                {/* </DataTable.Data> */}
 
                             </DataTable.Row>
                     ))}

@@ -8,6 +8,7 @@ import DeploymentActionButtons from '../src/deploymentActionButtons/src/Deployme
 import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
 import DataDisksTableVM from './DataDisksTableVM';
 import RequestsTableVM from './RequestsTableVM';
+import inputs from '../../common/src/inputs';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -53,7 +54,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        console.log("VirtualMachinesTable componentDidUpdate..."); 
+        //console.log("VirtualMachinesTable componentDidUpdate..."); 
         const { data, toolbox, widget } = this.props;
 
         try {
@@ -185,12 +186,61 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { toolbox } = this.props;
         toolbox.getEventBus().trigger('vm:selectVM',_item);
     }
-    getDOs= (item:any) => {
-        let returnValue = "init";
+    // getOS= (item:any) => {
+    //     let returnValue = "init";
+    //     try {
+    //         if (this.state.detailedData!=null && this.state.detailedData.length>0) {
+                
+    //             let _index = -1;//this.state.detailedData.indexOf(item.id);
+
+    //             for (let index = 0; index < this.state.detailedData.length; index++) {
+    //                 const element = this.state.detailedData[index];
+    //                 if (element.deployment_id==item.id) {
+    //                     _index=index;
+    //                      break;
+    //                 }
+
+    //             }
+
+    //             if (_index!=-1) {
+    //                 try {
+    //                     returnValue=this.state.detailedData[_index]["parameters"]["inputs"];
+    //                     returnValue = returnValue["os_name"]+"(version:"+ returnValue["os_version"]+ ")";
+    //                     // "os_name": "RHEL",
+    //                     // "os_version": 8,
+    //                 } 
+    //                 catch (error) {
+    //                     console.log(error);
+    //                     returnValue="Uknown";
+    //                 } 
+    //             }
+
+    //         }  
+            
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     return returnValue;
+    // };
+
+    getDetails=(item:any) => {
+        
+        const { DataTable } = Stage.Basic;
+
+        let returnValue = "";
+
+        let _ip="";
+        let _cpus="";
+        let _ram="";
+        let _azure_size=""; 
+        let _azure_location="";
+        let _environment="";
+        let _os="";
+        let _dataDisks=[];
         try {
             if (this.state.detailedData!=null && this.state.detailedData.length>0) {
                 
-                let _index = -1;//this.state.detailedData.indexOf(item.id);
+                let _index = -1;
 
                 for (let index = 0; index < this.state.detailedData.length; index++) {
                     const element = this.state.detailedData[index];
@@ -203,17 +253,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                 if (_index!=-1) {
                     try {
-                        returnValue=JSON.stringify(this.state.detailedData[_index]["parameters"]["inputs"]);
-                    } catch (error) {
+                        let _inputs=this.state.detailedData[_index]["parameters"]["inputs"];
+                       
+                        _ip="";
+                        _cpus=this._getCPU(_inputs);
+                        _ram=this._getRAM(_inputs);
+                        _azure_size=this._getAzureSize(_inputs); 
+                        _azure_location="";//_inputs["datacenter"];
+                        _environment=this._getEnvironment(_inputs);
+                        _os=this._getOS(_inputs);
+                        _dataDisks = this._getDataDisks(_inputs);
+                    } 
+                    catch (error) {
                         console.log(error);
-    
-                        try {
-                            returnValue=JSON.stringify(this.state.detailedData[_index]["parameters"]["inputs"]["location"]);
-                        } catch (error) {
-                            console.log(error);
-                        }
-                        returnValue="err";
-    
+                        //returnValue="Uknown";
                     } 
                 }
 
@@ -222,8 +275,111 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         } catch (error) {
             console.log(error);
         }
-        return returnValue;
+        item.ip=_ip;
+        item.cpus=_cpus;
+        item.ram=_ram;
+        item.azure_size=_azure_size;
+        item.azure_location=_azure_location;
+        item.environment=_environment;
+        item.os=_os;
+        item.dataDisks=_dataDisks;
     };
+
+    _getCPU = (inputJson:any)=> {
+        try {
+            return inputJson["size"]["cpu"];
+        } catch (error) {
+            return "";
+        }
+    }
+    _getRAM = (inputJson:any)=> {
+        try {
+            return inputJson["size"]["ram"];
+        } catch (error) {
+            return "";
+        }
+    }
+
+    _getAzureSize = (inputJson:any)=> {
+        try {
+            return inputJson["size"]["id"];
+        } catch (error) {
+            return "";
+        }
+    }
+    _getEnvironment = (inputJson:any)=> {
+        try {
+            return inputJson["environment"];
+        } catch (error) {
+            return "";
+        }
+    }
+    _getOS = (inputJson:any)=> {
+
+        //returnValue=this.state.detailedData[_index]["parameters"]["inputs"];
+        //returnValue = returnValue["os_name"]+"(version:"+ returnValue["os_version"]+ ")";
+
+        try {
+            if (inputJson["os_name"]!=undefined) {
+                return inputJson["os_name"]+"(version:"+ inputJson["os_version"]+ ")";
+            }
+            
+        } catch (error) {
+            return "";
+        }
+    }
+
+    _getDataDisks= (inputJson:any) => {
+
+        // <DataTable.Data>{item.id}</DataTable.Data>
+        // <DataTable.Data>{item.name}</DataTable.Data>
+        // <DataTable.Data>{item.disk_type}</DataTable.Data>
+        // <DataTable.Data>{item.disk_size}</DataTable.Data>
+        // <DataTable.Data>{item.host_caching}</DataTable.Data>
+        // "data_disks": [
+        //     {
+        //         "disk_type": "Standard SSD",
+        //         "disk_size": 16,
+        //         "host_caching": "None",
+        //         "mountpoint": [
+        //             {
+        //                 "path": "/web"
+        //             }
+        //         ],
+        //         "label": [
+        //             "WEB"
+        //         ],
+        //         "required": true,
+        //         "key": "_dgbcgukuv"
+        //     },
+        //     {
+        //         "disk_type": "Standard SSD",
+        //         "disk_size": 16,
+        //         "host_caching": "None",
+        //         "mountpoint": [
+        //             {
+        //                 "path": {
+        //                     "concat": [
+        //                         "/appl/",
+        //                         {
+        //                             "get_input": [
+        //                                 "service_names",
+        //                                 0,
+        //                                 "service_name"
+        //                             ]
+        //                         }
+        //                     ]
+        //                 }
+        //             }
+        //         ],
+
+        try {
+            return inputJson["data_disks"];
+        } catch (error) {
+            return "";
+        }
+    };
+
     loadDetailedData = async (_item:any) =>{
 
         if ( this.state.loading==false) {
@@ -253,20 +409,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             if (this.state==null) {
                 return;
             }
+
             let detailedData=this.state.detailedData;
-
-            //TODO trapna podminka, abych zbytecne nevolal, ale volani je asi tak dost?
-            // if (detailedData.indexOf(_item.id != -1)) {
-            //     console.log("loadDetailedData:zbytecne volani");
-            //     return;
-            // }
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData', { params });
-
-            //zajisteni unikatnosti: deployment_id
-            //TODO 8. element v poli???
-            // if (detailedData.length==0) {
-            //     detailedData.push(_dataFromExternalSource[0]);
-            // }
 
             detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1 ? detailedData.push(_dataFromExternalSource[0]) : console.log("This item already exists");
 
@@ -290,7 +435,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 <DataTable
                     className="agentsTable table-scroll"
                     fetchData={this.fetchGridData}
-                    
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
                     deploymentId
@@ -319,14 +463,18 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.id}</DataTable.Data>
                                 <DataTable.Data>{item.display_name}</DataTable.Data>
 
-                                <DataTable.Data>{ this.getDOs(item)}</DataTable.Data>
+                                {/* <DataTable.Data>{this.getOS(item)}</DataTable.Data> */}
+
+                                {this.getDetails(item)}
+
+                                <DataTable.Data>{item.os}</DataTable.Data>
                                 <DataTable.Data>{item.ip}</DataTable.Data>
                                 <DataTable.Data>{item.cpus}</DataTable.Data>
                                 <DataTable.Data>{item.ram}</DataTable.Data>
                                 <DataTable.Data>{item.azure_size}</DataTable.Data>
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
-
                                 <DataTable.Data>{item.environment}</DataTable.Data>
+
                                 <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data>
                                 <DataTable.Data><Button icon="add" content={'Show details'} onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
@@ -349,7 +497,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
-                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
+                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
