@@ -19,12 +19,13 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     let _filteredDeploymentParentId = params.filteredDeploymentParentId;
 
     let rawData = [];
-
+    
     if (_filteredDeploymentParentId!=undefined) 
     {
         console.log("rawData search:");
         _searchParam = _filteredDeploymentParentId;
     }
+
 
     //https://cloudify-uat.dhl.com/console/sp/executions?_size=2&_offset=0&deployment_id=xa124ls410033&workflow_id=create_deployment_environment&deployment_id=xa124ls201053
     //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,
@@ -37,13 +38,65 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
         ...commonManagerRequestOptions
     })
         .then(data => {
-            rawData = data.items;
+            //rawData = data.items;
+
+            //musim odfiltrovat pouze VM (tj. vse bez labelu...)
+            if (_filteredDeploymentParentId==undefined) {
+
+                data.items.forEach(item => {
+                    if (item.labels==undefined || item.labels==null  || item.labels==[]) {
+                        //rawData.push(item);
+                    }
+                    else {
+                        let _foundParentLabel = false;
+                        let _parrentId = -1;
+
+                        for (const key in item.labels) {
+                            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
+                                const _label = item.labels[key];
+                                if (_label.key == "csys-obj-parent") {
+                                    _foundParentLabel=true;
+                                    _parrentId = _label.value;
+                                    break;
+                                }
+
+                            }
+                        }
+                        if (_foundParentLabel==true) {
+                            let _index=-1
+                            if (_parrentId!=0){
+                                for (let index = 0; index < data.items.length; index++) {
+                                    const element = data.items[index];
+                                    if (element.id==_parrentId) {
+                                        _index=index;
+                                         break;
+                                    }
+                                }
+                            }
+                            if (_index!=-1) {
+                                try {
+                                    item.parent_display_name = data.items[_index].display_name;  
+                                } catch (error) {
+                                    
+                                }
+                            }  
+                            
+                            rawData.push(item);
+                        }
+                    }
+                });
+
+            } 
+            else {
+                rawData = data.items;
+            }
             //console.log(rawData);
             return Promise.all(rawData);
 
         })
         .then(data => res.send(data))
         .catch(error => next(error));
+
 });
 
 r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {

@@ -23,21 +23,14 @@ interface VirtualMachinesDataProps {
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class VirtualMachinesTable extends React.Component<VirtualMachinesDataProps> {
-    // static propTypes: any;
-
-    // static initialState = {
-    //     //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
-    //     detailedData:[],
-    //     loading:"nazdar"
-    // };
 
     constructor(props: VirtualMachinesDataProps) {
         super(props);
         console.log("VirtualMachinesTable ctor:");
-        //this.state = this.initialState;
         this.state = {
             detailedData: [],
-            loading:false
+            loading:false,
+            showBackButton:false,
         };
 
     }
@@ -79,7 +72,17 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //console.log("GetParrent for:"+filteredDeploymentParentId);
         //const params = {deploymentId: filteredId };
         //this.fetchGridData(params);
+        
+        this.setState({ showBackButton: true });
         toolbox.getContext().setValue('filteredDeploymentParentId', filteredDeploymentParentId);
+    }
+    getAllVirtualMachines =()=> {
+        const { toolbox } = this.props;
+        const { widget } = this.props;
+        console.log("getAllVirtualMachines..");
+
+        this.setState({ showBackButton: false });
+        toolbox.getContext().setValue('filteredDeploymentParentId', null);
     }
 
     isItForParrentButton=(item:any)=> {
@@ -136,32 +139,16 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
         const { data, toolbox, widget } = this.props;
         let parrentId = this.isItForParrentButton(item);
-        let _index = -1;
-        //hledani display_name:
-        if (parrentId!=0){
-            for (let index = 0; index < data.items.length; index++) {
-                const element = data.items[index];
-                if (element.id==parrentId) {
-                    _index=index;
-                     break;
-                }
-            }
-        }
-        let _content="Parent";
+        let _content="Go to parent";
 
-        if (_index!=-1) {
-            try {
-                _content = data.items[_index].display_name;  
-            } catch (error) {
-                
-            }
+        if (item.parent_display_name!=undefined){
+            _content = "Go to parent " + item.parent_display_name; 
         }
 
         if (parrentId!=0) {
 
             return (<Button
                 icon="home"
-                // content={_content}
                 title={_content}
                         onClick={(event: Event) => {
                             event.stopPropagation();
@@ -399,6 +386,31 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
 
     };
+
+    fetchGridData = fetchParams => {
+        const { toolbox } = this.props;
+        return toolbox.refresh(fetchParams);
+    };
+
+    refreshData() {
+        const { toolbox } = this.props;
+        toolbox.refresh();
+    };
+
+    renderBackButton = () => {
+        if ( this.state.showBackButton==true) {
+           return (<Button
+            icon="home"
+            floated='right'
+            content="Go back to virtual machines"
+            title="Go back to virtual machines"
+                    onClick={(event: Event) => {
+                        event.stopPropagation();
+                        this.getAllVirtualMachines();
+             } } />)
+        }
+    }
+   
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -408,6 +420,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         return (
             <div>
+
+                {this.renderBackButton()}
 
                 <DataTable
                     className="agentsTable table-scroll"
@@ -479,7 +493,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
-                                    {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
+                                    <DataTable.Data>{JSON.stringify(item)}</DataTable.Data>
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>

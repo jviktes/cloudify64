@@ -19,14 +19,14 @@ Stage.defineWidget({
 
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
-        //console.log("fetchData");
+        console.log("fetchData");
 
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
         
         params.tenant = tenantName;
-        //console.log("params:");
-        //console.log(params);
+        console.log("params:");
+        console.log(params);
         let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
         return _results;
     },
