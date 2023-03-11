@@ -32,8 +32,9 @@ Stage.defineWidget({
     },
 
     fetchParams: function(widget, toolbox) {
-        //console.log("widget fetchParams...");
+        console.log("widget fetchParams...");
         let _filteredDeploymentParentId= toolbox.getContext().getValue('filteredDeploymentParentId');
+        console.log(_filteredDeploymentParentId);
         return {filteredDeploymentParentId:_filteredDeploymentParentId};
     },
 

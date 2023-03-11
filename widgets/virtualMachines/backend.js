@@ -20,13 +20,13 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 
     let rawData = [];
     
-    if (_filteredDeploymentParentId!=undefined) 
+    if (_filteredDeploymentParentId!=undefined  || _filteredDeploymentParentId!=null ) 
     {
         console.log("rawData search:");
         _searchParam = _filteredDeploymentParentId;
     }
 
-
+ 
     //https://cloudify-uat.dhl.com/console/sp/executions?_size=2&_offset=0&deployment_id=xa124ls410033&workflow_id=create_deployment_environment&deployment_id=xa124ls201053
     //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,
     //latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
@@ -88,7 +88,49 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 
             } 
             else {
-                rawData = data.items;
+                //musim vracet pouze 1:
+                data.items.forEach(item => {
+                      if (item.id==_filteredDeploymentParentId) {
+
+
+                        let _foundParentLabel = false;
+                        let _parrentId = -1;
+
+                        for (const key in item.labels) {
+                            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
+                                const _label = item.labels[key];
+                                if (_label.key == "csys-obj-parent") {
+                                    _foundParentLabel=true;
+                                    _parrentId = _label.value;
+                                    break;
+                                }
+
+                            }
+                        }
+                        if (_foundParentLabel==true) {
+                            let _index=-1
+                            if (_parrentId!=0){
+                                for (let index = 0; index < data.items.length; index++) {
+                                    const element = data.items[index];
+                                    if (element.id==_parrentId) {
+                                        _index=index;
+                                         break;
+                                    }
+                                }
+                            }
+                            if (_index!=-1) {
+                                try {
+                                    item.parent_display_name = data.items[_index].display_name;  
+                                } catch (error) {
+                                    
+                                }
+                            }  
+                            
+                        }
+                        rawData.push(item);
+                      } 
+                })
+                //rawData = data.items;
             }
             //console.log(rawData);
             return Promise.all(rawData);
