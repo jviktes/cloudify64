@@ -36,7 +36,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
     }
 
     loadRequestData = async (_item:any) =>{
-        console.log(_item);
+        //console.log(_item);
         //alert("Loading data disk data");
         const { toolbox } = this.props;
         const manager = toolbox.getManager();
@@ -52,7 +52,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
 
         const requestsData =  _dataFromExternalSource;
-        console.log(requestsData);
+        //console.log(requestsData);
 
         this.setState({requestsData}); //tady je pole hodnot ve value
         return requestsData;
