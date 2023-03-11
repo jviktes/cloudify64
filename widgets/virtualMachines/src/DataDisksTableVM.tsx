@@ -63,9 +63,9 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         return (
 
             <div>
-                <div >Data disks</div>
+                <div><span style={{fontWeight:"bold"}}>Data disks</span></div>
 
-                <DataTable className="">
+                <DataTable className="" noDataMessage="There are no data disks">
                     <DataTable.Column label="Label" name="label"/>
                     {/* <DataTable.Column label="Mountpoint" name="mountpoint"/> */}
                     <DataTable.Column label="Disk type" name="disk_type" />

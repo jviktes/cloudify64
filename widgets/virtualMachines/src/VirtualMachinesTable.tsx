@@ -161,27 +161,13 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
             return (<Button
                 icon="home"
-                content={_content}
-                basic
-                labelPosition="left"
-                title="Get parrent"
+                // content={_content}
+                title={_content}
                         onClick={(event: Event) => {
                             event.stopPropagation();
                             this.getParrent(parrentId);
                  } } />)
         }
-        // else {
-        //     return (<Button
-        //         icon="home"
-        //         content="No parrent"
-        //         basic
-        //         labelPosition="left"
-        //         title="No parrent"
-        //                 onClick={(event: Event) => {
-        //                     event.stopPropagation();
-        //                     this.getParrent(item.id);
-        //          }}/>)
-        // }
 
     };
 
@@ -432,7 +418,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     searchable
                 >
 
-                    <DataTable.Column label="Id" name="id"/>
+                    {/* <DataTable.Column label="Id" name="id"/> */}
                     <DataTable.Column label="Name" name="labels"/>
                     <DataTable.Column label="OS" name="os" />
                     <DataTable.Column label="IP" name="ip" />
@@ -441,20 +427,19 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure size" name="azure_size" />
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
-                    <DataTable.Column label="Parent deployment" name="parent_deployment" />
+                    <DataTable.Column label="Parent" name="parent_deployment" />
                     <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" name="actions" name="class" />
 
-                    {_.map(data.items, item => (                   
+                    {_.map(data.items, item => (    
+                                        
                             <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row 
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}>
 
-                                <DataTable.Data>{item.id}</DataTable.Data>
+                                {/* <DataTable.Data>{item.id}</DataTable.Data> */}
                                 <DataTable.Data>{item.display_name}</DataTable.Data>
-
-                                {/* <DataTable.Data>{this.getOS(item)}</DataTable.Data> */}
 
                                 {this.getDetails(item)}
 
@@ -467,7 +452,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
                                 <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data>
-                                <DataTable.Data><Button icon="add" content={'Show details'} onClick={() => this.onRowClick(item)} /></DataTable.Data>
+                                <DataTable.Data><Button icon="add" 
+                                // content={'Show details'} 
+                                onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
