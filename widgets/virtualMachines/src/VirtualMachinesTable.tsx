@@ -408,12 +408,26 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         this.getAllVirtualMachines();
              }} />)
         }
-    }
-   
+    };
+    showCurrentSettings = (item:any) => {
+        let _index = -1;
+        for (let index = 0; index < this.state.detailedData.length; index++) {
+            const element = this.state.detailedData[index];
+            if (element.deployment_id==item.id) {
+                _index=index;
+                 break;
+            }
+
+        }
+        let _dataToShow = this.state.detailedData[_index];
+        console.log(_dataToShow);
+        alert(JSON.stringify(_dataToShow, null, "  "));
+    };
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
-        const { DataTable } = Stage.Basic;
+        const { DataTable,Icon } = Stage.Basic;
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
@@ -442,7 +456,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Parent" name="parent_deployment" />
                     <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" name="actions" name="class" />
-
+                    <DataTable.Column label="" name="config" name="class" />
                     {_.map(data.items, item => (    
                                         
                             <DataTable.RowExpandable key={item.id}>
@@ -476,9 +490,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         toolbox={toolbox}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
-
                                 </DataTable.Data>
 
+                                <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
+                                
                             </DataTable.Row>
 
                             <DataTable.Row
