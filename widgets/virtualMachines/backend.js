@@ -30,108 +30,123 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
     //https://cloudify-uat.dhl.com/console/sp/executions?_size=2&_offset=0&deployment_id=xa124ls410033&workflow_id=create_deployment_environment&deployment_id=xa124ls201053
     //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,
     //latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
-    return helper.Manager.doGet('/deployments', {
+
+//
+//https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&
+//_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
+
+    // fetchPromise = toolbox.getManager().doPost(fetchUrl, {
+    //     params,
+    //     body: { filter_rules: filterRules }
+    // });
+
+    //this.toolbox.getManager().doPost(`/searches/${resourceName}`, { params, body: { filter_rules: filterRules } });
+
+    //{"filter_rules":[{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}]}
+    let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
+    return helper.Manager.doPost('/searches/deployments', {
         params: {
-            _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
+            _include: 'id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
             _search:_searchParam
         },
+        body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
         .then(data => {
-            //rawData = data.items;
+            rawData = data.items;
 
-            //musim odfiltrovat pouze VM (tj. vse bez labelu...)
-            if (_filteredDeploymentParentId==undefined) {
+            // //musim odfiltrovat pouze VM (tj. vse bez labelu...)
+            // if (_filteredDeploymentParentId==undefined) {
 
-                data.items.forEach(item => {
-                    if (item.labels==undefined || item.labels==null  || item.labels==[]) {
-                        //rawData.push(item);
-                    }
-                    else {
-                        let _foundParentLabel = false;
-                        let _parrentId = -1;
+            //     data.items.forEach(item => {
+            //         if (item.labels==undefined || item.labels==null  || item.labels==[]) {
+            //             //rawData.push(item);
+            //         }
+            //         else {
+            //             let _foundParentLabel = false;
+            //             let _parrentId = -1;
 
-                        for (const key in item.labels) {
-                            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
-                                const _label = item.labels[key];
-                                if (_label.key == "csys-obj-parent") {
-                                    _foundParentLabel=true;
-                                    _parrentId = _label.value;
-                                    break;
-                                }
+            //             for (const key in item.labels) {
+            //                 if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
+            //                     const _label = item.labels[key];
+            //                     if (_label.key == "csys-obj-parent") {
+            //                         _foundParentLabel=true;
+            //                         _parrentId = _label.value;
+            //                         break;
+            //                     }
 
-                            }
-                        }
-                        if (_foundParentLabel==true) {
-                            let _index=-1
-                            if (_parrentId!=0){
-                                for (let index = 0; index < data.items.length; index++) {
-                                    const element = data.items[index];
-                                    if (element.id==_parrentId) {
-                                        _index=index;
-                                         break;
-                                    }
-                                }
-                            }
-                            if (_index!=-1) {
-                                try {
-                                    item.parent_display_name = data.items[_index].display_name;  
-                                } catch (error) {
+            //                 }
+            //             }
+            //             if (_foundParentLabel==true) {
+            //                 let _index=-1
+            //                 if (_parrentId!=0){
+            //                     for (let index = 0; index < data.items.length; index++) {
+            //                         const element = data.items[index];
+            //                         if (element.id==_parrentId) {
+            //                             _index=index;
+            //                              break;
+            //                         }
+            //                     }
+            //                 }
+            //                 if (_index!=-1) {
+            //                     try {
+            //                         item.parent_display_name = data.items[_index].display_name;  
+            //                     } catch (error) {
                                     
-                                }
-                            }  
+            //                     }
+            //                 }  
                             
-                            rawData.push(item);
-                        }
-                    }
-                });
+            //                 rawData.push(item);
+            //             }
+            //         }
+            //     });
 
-            } 
-            else {
-                //musim vracet pouze 1:
-                data.items.forEach(item => {
-                      if (item.id==_filteredDeploymentParentId) {
+            // } 
+            // else {
+            //     //musim vracet pouze 1:
+            //     data.items.forEach(item => {
+            //           if (item.id==_filteredDeploymentParentId) {
 
 
-                        let _foundParentLabel = false;
-                        let _parrentId = -1;
+            //             let _foundParentLabel = false;
+            //             let _parrentId = -1;
 
-                        for (const key in item.labels) {
-                            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
-                                const _label = item.labels[key];
-                                if (_label.key == "csys-obj-parent") {
-                                    _foundParentLabel=true;
-                                    _parrentId = _label.value;
-                                    break;
-                                }
+            //             for (const key in item.labels) {
+            //                 if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
+            //                     const _label = item.labels[key];
+            //                     if (_label.key == "csys-obj-parent") {
+            //                         _foundParentLabel=true;
+            //                         _parrentId = _label.value;
+            //                         break;
+            //                     }
 
-                            }
-                        }
-                        if (_foundParentLabel==true) {
-                            let _index=-1
-                            if (_parrentId!=0){
-                                for (let index = 0; index < data.items.length; index++) {
-                                    const element = data.items[index];
-                                    if (element.id==_parrentId) {
-                                        _index=index;
-                                         break;
-                                    }
-                                }
-                            }
-                            if (_index!=-1) {
-                                try {
-                                    item.parent_display_name = data.items[_index].display_name;  
-                                } catch (error) {
+            //                 }
+            //             }
+            //             if (_foundParentLabel==true) {
+            //                 let _index=-1
+            //                 if (_parrentId!=0){
+            //                     for (let index = 0; index < data.items.length; index++) {
+            //                         const element = data.items[index];
+            //                         if (element.id==_parrentId) {
+            //                             _index=index;
+            //                              break;
+            //                         }
+            //                     }
+            //                 }
+            //                 if (_index!=-1) {
+            //                     try {
+            //                         item.parent_display_name = data.items[_index].display_name;  
+            //                     } catch (error) {
                                     
-                                }
-                            }  
+            //                     }
+            //                 }  
                             
-                        }
-                        rawData.push(item);
-                      } 
-                })
-                //rawData = data.items;
-            }
+            //             }
+            //             rawData.push(item);
+            //           } 
+            //     })
+            //     //rawData = data.items;
+            // }
             //console.log(rawData);
             return Promise.all(rawData);
 
