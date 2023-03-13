@@ -338,7 +338,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             let detailedData=this.state.detailedData;
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData', { params });
 
-            detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1 ? detailedData.push(_dataFromExternalSource[0]) : console.log("This item already exists");
+            if (detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1) {
+                detailedData.push(_dataFromExternalSource[0]); 
+            }
+            else {
+                console.log("This item already exists");
+            }
 
             this.setState({detailedData});
 
@@ -410,6 +415,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
     };
     showCurrentSettings = (item:any) => {
+        const { data } = this.props;
         let _index = -1;
         for (let index = 0; index < this.state.detailedData.length; index++) {
             const element = this.state.detailedData[index];
@@ -419,7 +425,18 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             }
 
         }
+
+        let _indexData = -1;
+        for (let index = 0; index < data.items.length; index++) {
+            const element = data.items[index];
+            if (element.id==item.id) {
+                _indexData=index;
+                 break;
+            }
+        }
+
         let _dataToShow = this.state.detailedData[_index];
+        _dataToShow.workflows = data.items[_indexData].workflows;
         console.log(_dataToShow);
         alert(JSON.stringify(_dataToShow, null, "  "));
     };

@@ -26,7 +26,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
         _searchParam = _filteredDeploymentParentId;
     }
 
- 
+
     //https://cloudify-uat.dhl.com/console/sp/executions?_size=2&_offset=0&deployment_id=xa124ls410033&workflow_id=create_deployment_environment&deployment_id=xa124ls201053
     //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,
     //latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
