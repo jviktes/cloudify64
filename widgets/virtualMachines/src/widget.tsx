@@ -2,7 +2,7 @@
 //  fetchUrl: '[manager]/eventsVik[params]',
 /* eslint-disable no-console, no-process-exit */
 import { result } from 'lodash';
-import VirtualMachineMainLayout from './VirtualMachineMainLayout';
+import VirtualMachinesTable from './VirtualMachinesTable';
 
 Stage.defineWidget({
     id: 'virtual-machines',
@@ -25,16 +25,16 @@ Stage.defineWidget({
         const tenantName=manager.getSelectedTenant();
         
         params.tenant = tenantName;
-        console.log("params:");
-        console.log(params);
+        //console.log("params:");
+        //console.log(params);
         let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
         return _results;
     },
 
     fetchParams: function(widget, toolbox) {
-        console.log("widget fetchParams...");
+        //console.log("widget fetchParams...");
         let _filteredDeploymentParentId= toolbox.getContext().getValue('filteredDeploymentParentId');
-        console.log(_filteredDeploymentParentId);
+        //console.log(_filteredDeploymentParentId);
         return {filteredDeploymentParentId:_filteredDeploymentParentId};
     },
 
@@ -43,7 +43,7 @@ Stage.defineWidget({
             items: data
         };
         //console.log(formattedData);
-        return <VirtualMachineMainLayout widget={widget} data={formattedData} toolbox={toolbox} />;
+        return <div style={{outerWidth:"100%"}}><VirtualMachinesTable widget={widget} data={formattedData} toolbox={toolbox} /></div>;
     }
 });
 

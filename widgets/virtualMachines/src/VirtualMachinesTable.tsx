@@ -399,7 +399,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     };
     renderBackButton = () => {
-        console.log("renderBackButton..."+this.state.showBackButton);
+        //console.log("renderBackButton..."+this.state.showBackButton);
         if (this.state.showBackButton==true) {
            return (<Button
             icon="home"
@@ -427,7 +427,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     fetchData={this.fetchGridData}
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
-                    deploymentId
                     searchable
                 >
 
