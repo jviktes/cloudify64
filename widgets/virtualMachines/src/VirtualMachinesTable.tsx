@@ -470,7 +470,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure size" name="azure_size" />
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
-                    <DataTable.Column label="Parent" name="parent_deployment" />
+                    {/* <DataTable.Column label="Parent" name="parent_deployment" /> */}
                     <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" name="actions" name="class" />
                     <DataTable.Column label="" name="config" name="class" />
@@ -494,7 +494,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
-                                <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data>
+                                {/* <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data> */}
                                 <DataTable.Data><Button icon="add" 
                                 // content={'Show details'} 
                                 onClick={() => this.onRowClick(item)} /></DataTable.Data>
@@ -520,7 +520,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                                            {/* <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div> */}
                                         </div>
                                     </DataTable.Data>
                                     {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
