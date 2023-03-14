@@ -30,7 +30,8 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 //_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
 
     let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-    filterRules= [];
+    filterRules= []; //TODO vypnutí filtru pouze pro VM
+
     return helper.Manager.doPost('/searches/deployments', {
         params: {
             _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
@@ -112,46 +113,41 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
     // parsing parametres:
     const params = { ...req.query };
     console.log(params);
-    let _searchParam = params._search;
-    let _filteredDeploymentParentId = params.filteredDeploymentParentId;
 
-    let spireDeployments = [];
+   //TODO nastavit "values" : ["xa12415401047"]:
+    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa12415401047"]}];
 
-    if (_filteredDeploymentParentId!=undefined) 
-    {
-        console.log("spireDeployments search:");
-        _searchParam = _filteredDeploymentParentId;
-    }
-    return helper.Manager.doGet('/deployments', {
+    //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
+
+    filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}];
+
+
+    return helper.Manager.doPost('/searches/deployments', {
         params: {
-            _include: 'id,labels,blueprint_id,tenant_name,environment_type,workflows',
-            _search:_searchParam
+            _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
+            //_search:_searchParam
         },
+        body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
         .then(data => {
-            console.log('get_vm_dataDiskData results:');
-            console.log("data:");
-            console.log(data);
+            rawData = data.items;
 
-            //mock data:
+            // let fake_data= {diskData: []};
+            // fake_data.diskData.push({id:params.id, name:"C", disk_type:"SSD", disk_size:"1024",host_caching:"ReadOnly"});
+            // fake_data.diskData.push({id:params.id, name:"D", disk_type:"SSD", disk_size:"512",host_caching:"ReadOnly"});
+            // fake_data.diskData.push({id:params.id, name:"E", disk_type:"SSD", disk_size:"2048",host_caching:"None"});
+            // fake_data.diskData.push({id:params.id, name:"F", disk_type:"SSD", disk_size:"1024",host_caching:"None"});
 
-            let fake_data= {diskData: []};
-            fake_data.diskData.push({id:params.id, name:"C", disk_type:"SSD", disk_size:"1024",host_caching:"ReadOnly"});
-            fake_data.diskData.push({id:params.id, name:"D", disk_type:"SSD", disk_size:"512",host_caching:"ReadOnly"});
-            fake_data.diskData.push({id:params.id, name:"E", disk_type:"SSD", disk_size:"2048",host_caching:"None"});
-            fake_data.diskData.push({id:params.id, name:"F", disk_type:"SSD", disk_size:"1024",host_caching:"None"});
+            // let spireDeployments = [];
 
-            console.log(fake_data);
-            console.log(fake_data.diskData);
+            // fake_data.diskData.forEach(element => {
+            //     console.log(element);
+            //     spireDeployments.push(element);
+            // });
 
-            fake_data.diskData.forEach(element => {
-                console.log(element);
-                spireDeployments.push(element);
-            });
-
-            //console.log(spireDeployments);
-            return Promise.all(spireDeployments);
+            //return Promise.all(data); toto vraci chybu "object is not iterbale"
+            return Promise.all(rawData);
         })
         .then(data => res.send(data))
         .catch(error => next(error));

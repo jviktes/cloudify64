@@ -152,6 +152,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         let _environment="";
         let _os="";
         let _dataDisks=[];
+        let _pamRequest = [];
         try {
             if (this.state.detailedData!=null && this.state.detailedData.length>0) {
                 
@@ -167,21 +168,34 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 }
 
                 if (_index!=-1) {
-                    try {
-                        let _inputs=this.state.detailedData[_index]["parameters"]["inputs"];
-                       
-                        _ip=this._getIPAdress(_inputs);
-                        _cpus=this._getCPU(_inputs);
-                        _ram=this._getRAM(_inputs);
-                        _azure_size=this._getAzureSize(_inputs); 
-                        _azure_location=this._getLocation(_inputs);
-                        _environment=this._getEnvironment(_inputs);
-                        _os=this._getOS(_inputs);
-                        _dataDisks = this._getDataDisks(_inputs);
-                    } 
-                    catch (error) {
-                        console.log(error);
-                    } 
+
+                    if (item["blueprint_id"].includes("AZURE-Data-Disk")==true) {
+                        _dataDisks = this.state.detailedData[_index]["parameters"]["inputs"];
+                    }
+                    else if (item["blueprint_id"].includes("CyberArk-Account")==true) {
+                        _pamRequest =  this.state.detailedData[_index]["parameters"]["inputs"];;
+                    }
+                    else {
+                        try {
+                            let _inputs=this.state.detailedData[_index]["parameters"]["inputs"];
+                           
+                            _ip=this._getIPAdress(_inputs);
+                            _cpus=this._getCPU(_inputs);
+                            _ram=this._getRAM(_inputs);
+                            _azure_size=this._getAzureSize(_inputs); 
+                            _azure_location=this._getLocation(_inputs);
+                            _environment=this._getEnvironment(_inputs);
+                            _os=this._getOS(_inputs);
+                            _dataDisks = this._getDataDisks(_inputs);
+                            
+                        } 
+                        catch (error) {
+                            console.log(error);
+                        } 
+                    }
+
+
+
                 }
             }  
             
@@ -197,6 +211,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         item.environment=_environment;
         item.os=_os;
         item.dataDisks=_dataDisks;
+        item.pamRequest = _pamRequest;
     };
     _getLocation= (inputJson:any)=> {
         try {
