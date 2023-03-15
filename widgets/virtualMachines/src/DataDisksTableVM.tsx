@@ -1,11 +1,12 @@
 // @ts-nocheck File not migrated fully to TS
 import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon, Item } from 'semantic-ui-react';
 import { identity } from 'lodash';
 import { castArray } from 'lodash';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
+import { Workflow } from '../../common/src/executeWorkflow';
 
 interface DataDisksTableVMProps {
     data: {
@@ -33,9 +34,28 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
     componentDidMount() {
         const { toolbox, vmData } = this.props;
-        let _eventName= 'vm:selectVM' + vmData.id;
+        let _eventName= 'vm:selectVM_data_disks_' + vmData.id;
         toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
     }
+
+    workFlowsDataDisks=(workflows :Workflow[] )=> {
+        let outWorks = [];
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="add_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="resize_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="remove_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
 
     getDataForDeploymentId = (item:any) => {
 
@@ -44,7 +64,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                 status: 'success',
                 data: {
                         display_name: item.display_name,
-                        workflows: item.workflows,
+                        workflows: this.workFlowsDataDisks(item.workflows),
                     },
                 }
         )
@@ -56,7 +76,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
     }
 
     loadDiskData = async (_item:any) =>{
-        //console.log(_item);
+
         const { toolbox } = this.props;
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
@@ -65,14 +85,13 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         params.tenant = tenantName;
         params.id = _item.id;
 
-        //console.log("params:");
-        //console.log(params);
-
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
         const diskData = [] ;
         _dataFromExternalSource.forEach(_disk => {
             try {
-                diskData.push(_disk["inputs"])
+                let diskObject = _disk["inputs"];
+                diskObject.name=_disk.id;
+                diskData.push(diskObject);
             } catch (error) {
                 console.log(error);
             }
@@ -84,7 +103,10 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         this.setState({diskData}); //tady je pole hodnot ve value
         return diskData;
     }
-
+    getExtraDiskInfo = (item:any)=> {
+        let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
+        return _extraData;
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget,vmData } = this.props;
@@ -110,12 +132,14 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                 <div><span style={{fontWeight:"bold"}}>Data disks</span></div>
 
                 <DataTable className="" noDataMessage="There are no data disks">
-                    <DataTable.Column label="Label" name="label"/>
-                    {/* <DataTable.Column label="Mountpoint" name="mountpoint"/> */}
+                    <DataTable.Column label="Name" name="disk_name"/>
+                    <DataTable.Column label="Mountpoint/Disk letter" name="mountpoint"/>
+
+                    <DataTable.Column label="LUN" name="lun"/>
                     <DataTable.Column label="Disk type" name="disk_type" />
                     <DataTable.Column label="Disk size (GiB)" name="disk_size" />
-                    <DataTable.Column label="Host caching" name="host_caching" />
-                    {/* <DataTable.Column label="Actions" name="actions"/> */}
+
+                    <DataTable.Column label="Actions" name="actions"/>
 
                     {_.map(this.state.diskData, item => (      
                                       
@@ -123,13 +147,13 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 key={this.getUniqueRowIndex()}
                                 id={this.getUniqueRowIndex()}
                             >
-                                <DataTable.Data>{JSON.stringify(item.label)}</DataTable.Data>
-                                {/* <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data> */}
+                                <DataTable.Data title={this.getExtraDiskInfo(item)}>{(item.name)} <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon></DataTable.Data>
+                                <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
+                                <DataTable.Data>{item.lun}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
-                                <DataTable.Data>{item.host_caching}</DataTable.Data>
-
-                                {/* <DataTable.Data>
+  
+                                <DataTable.Data>
 
                                     <DeploymentActionButtons
                                             buttonTitle='Disk actions'
@@ -138,7 +162,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
-                                </DataTable.Data> */}
+                                </DataTable.Data>
 
                             </DataTable.Row>
                     ))}

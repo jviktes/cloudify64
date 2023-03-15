@@ -93,6 +93,23 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return firstDeploymentId;
     };
 
+    workFlowsVM=(workflows :Workflow[] )=> {
+                let outWorks = [];
+                for (const key in workflows) {
+                    if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                        const _workFlowItem = workflows[key];
+                        if (_workFlowItem.name=="restart_vm"){
+                            outWorks.push(_workFlowItem);
+                        }
+                        if (_workFlowItem.name=="run_audit"){
+                            outWorks.push(_workFlowItem);
+                        }
+                    }
+                }
+                return outWorks;
+    };
+
+            
     getDataForDeploymentId = (item:any) => {
 
         
@@ -111,7 +128,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 status: 'success',
                 data: {
                         display_name: item.display_name,
-                        workflows: item.workflows,
+                        workflows: this.workFlowsVM(item.workflows),
                     },
                 }
         )
@@ -137,8 +154,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
 
         const { toolbox } = this.props;
-        let _eventName= 'vm:selectVM' + _item.id;
-        toolbox.getEventBus().trigger(_eventName,_item);
+        let _eventNameDataDisks= 'vm:selectVM_data_disks_' + _item.id;
+        toolbox.getEventBus().trigger(_eventNameDataDisks,_item);
+
+        let _eventNamePamRequests= 'vm:selectVM_pam_requests_' + _item.id;
+        toolbox.getEventBus().trigger(_eventNamePamRequests,_item);
+
     }
 
     getDetails=(item:any) => {
@@ -263,7 +284,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         try {
             if (inputJson["os_name"]!=undefined) {
-                return inputJson["os_name"]+"(version:"+ inputJson["os_version"]+ ")";
+                return inputJson["os_name"]+" (version: "+ inputJson["os_version"]+ ")";
             }
             
         } catch (error) {
@@ -271,49 +292,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
     }
     _getDataDisks= (inputJson:any) => {
-
-        // <DataTable.Data>{item.id}</DataTable.Data>
-        // <DataTable.Data>{item.name}</DataTable.Data>
-        // <DataTable.Data>{item.disk_type}</DataTable.Data>
-        // <DataTable.Data>{item.disk_size}</DataTable.Data>
-        // <DataTable.Data>{item.host_caching}</DataTable.Data>
-        // "data_disks": [
-        //     {
-        //         "disk_type": "Standard SSD",
-        //         "disk_size": 16,
-        //         "host_caching": "None",
-        //         "mountpoint": [
-        //             {
-        //                 "path": "/web"
-        //             }
-        //         ],
-        //         "label": [
-        //             "WEB"
-        //         ],
-        //         "required": true,
-        //         "key": "_dgbcgukuv"
-        //     },
-        //     {
-        //         "disk_type": "Standard SSD",
-        //         "disk_size": 16,
-        //         "host_caching": "None",
-        //         "mountpoint": [
-        //             {
-        //                 "path": {
-        //                     "concat": [
-        //                         "/appl/",
-        //                         {
-        //                             "get_input": [
-        //                                 "service_names",
-        //                                 0,
-        //                                 "service_name"
-        //                             ]
-        //                         }
-        //                     ]
-        //                 }
-        //             }
-        //         ],
-
         try {
             return inputJson["data_disks"];
         } catch (error) {
@@ -482,7 +460,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="OS" name="os" />
                     <DataTable.Column label="IP" name="ip" />
                     <DataTable.Column label="CPUs" name="cpus" />
-                    <DataTable.Column label="RAM" name="ram" />
+                    <DataTable.Column label="RAM (GiB)" name="ram" />
                     <DataTable.Column label="Azure size" name="azure_size" />
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
@@ -532,15 +510,13 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             <DataTable.Row
                                 key={`${item.id}_ext`}
                                 style={{ display: 'none' }}
-                                onClick={() => this.onRowClick(item)}
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
-                                    {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>

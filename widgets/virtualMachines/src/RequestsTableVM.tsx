@@ -33,13 +33,11 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     componentDidMount() {
         const { toolbox, vmData } = this.props;
-        let _eventName= 'vm:selectVM' + vmData.id;
-        toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
+        let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
+        toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
     }
 
     loadRequestData = async (_item:any) =>{
-        //console.log(_item);
-        //alert("Loading data disk data");
         const { toolbox } = this.props;
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
@@ -47,9 +45,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         let params = {};
         params.tenant = tenantName;
         params.id = _item.id;
-
-        //console.log("params:");
-        //console.log(params);
 
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
         const requestsData = [];
@@ -62,41 +57,44 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
             }
         });
 
-        //const requestsData =  _dataFromExternalSource;
-        //console.log(requestsData);
-
         this.setState({requestsData}); //tady je pole hodnot ve value
         return requestsData;
     }
+
+    workFlowsPAMRequests=(workflows :Workflow[] )=> {
+        let outWorks = [];
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="add_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="resize_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="remove_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
 
     getUniqueRowIndex= (item:any) => {
         return Math.random().toString(36).slice(2, 11);
     }
 
-
     getDataForDeploymentId = (item:any) => {
-
-        
-        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
-        // // eslint-disable-next-line no-nested-ternary
-        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
-        // ? { status: 'loading' }
-        // : data instanceof Error
-        // ? { status: 'error', error: data }
-        // : { status: 'success', data };
-
-        //TODO - nyni jsou vsechny success --> pozor na errory atd.
 
         return (
             {
                 status: 'success',
                 data: {
                         display_name: item.display_name,
-                        workflows: item.workflows,
+                        workflows: this.workFlowsPAMRequests(item.workflows),
                     },
                 }
         )
-
     };
 
     render() {
@@ -135,7 +133,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     <DataTable.Column label="Role" name="role" />
                     <DataTable.Column label="Status" name="status" />
                     <DataTable.Column label="Requestor" name="requestor" />
-                    {/* <DataTable.Column label="Actions" name="actions"/> */}
+                    <DataTable.Column label="Actions" name="actions"/>
 
                     {_.map(this.state.requestsData, item => (      
                                       
@@ -150,17 +148,17 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 <DataTable.Data>{item.status}</DataTable.Data>
                                 <DataTable.Data>{item.requestor}</DataTable.Data>
 
-                                {/* <DataTable.Data>
+                                <DataTable.Data>
 
-                                <DeploymentActionButtons
-                                        buttonTitle='PAM actions'
-                                        deploymentId={item.id}
-                                        fetchedDeploymentState={this.getDataForDeploymentId(item)}
-                                        toolbox={toolbox}
-                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
-                                    />
+                                    <DeploymentActionButtons
+                                            buttonTitle='PAM actions'
+                                            deploymentId={item.id}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                            toolbox={toolbox}
+                                            redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                        />
 
-                                </DataTable.Data> */}
+                                </DataTable.Data>
 
                             </DataTable.Row>
                     ))}
