@@ -138,9 +138,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     // eslint-disable-next-line class-methods-use-this
     onRowClick(_item) {
-        //trigger event a zobrazeni dataTable v tabulce:
-        //trigger event a zobrazeni requests v tabulce:
 
+
+        //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
         const el = document.getElementById(`${_item.id}_ext`);
         const elMain = document.getElementById(`${_item.id}_main`);
         if (el.style.display === 'none') {
@@ -152,7 +152,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             el.style.backgroundColor = '';
             elMain.style.backgroundColor = '';
         }
-
+        //TODO: volat pouze pri zobrazovani radku, pri skryti nevolat
+        //trigger event a zobrazeni dataTable v tabulce:
+        //trigger event a zobrazeni requests v tabulce:
         const { toolbox } = this.props;
         let _eventNameDataDisks= 'vm:selectVM_data_disks_' + _item.id;
         toolbox.getEventBus().trigger(_eventNameDataDisks,_item);

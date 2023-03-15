@@ -1,7 +1,7 @@
 // @ts-nocheck File not migrated fully to TS
 import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon, Item } from 'semantic-ui-react';
 import { identity } from 'lodash';
 import { castArray } from 'lodash';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
@@ -63,16 +63,15 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     workFlowsPAMRequests=(workflows :Workflow[] )=> {
         let outWorks = [];
+        //    Approve / reject request (applies to * waiting requests)
+        // Revoke (applies to Grant approved / Grant implemented requests)
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                 const _workFlowItem = workflows[key];
-                if (_workFlowItem.name=="add_disk"){
+                if (_workFlowItem.name=="approve_or_reject"){
                     outWorks.push(_workFlowItem);
                 }
-                if (_workFlowItem.name=="resize_disk"){
-                    outWorks.push(_workFlowItem);
-                }
-                if (_workFlowItem.name=="remove_disk"){
+                if (_workFlowItem.name=="revoke_user_account"){
                     outWorks.push(_workFlowItem);
                 }
             }
@@ -96,10 +95,13 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                 }
         )
     };
-
+    getExtraDiskInfo = (item:any)=> {
+        let _extraData = JSON.stringify(item);
+        return _extraData;
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { data, toolbox, widget } = this.props;
+        const { data, toolbox, widget, vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
         //console.log(data);
@@ -115,11 +117,17 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         if (this.state.requestsData==null) {
             return (
                 <div>
-                    <div ></div>
+                    <div></div>
                 </div>
             );
         }
-
+        if (this.state.requestsData==undefined) {
+            return (
+                <div>
+                    <div></div>
+                </div>
+            );
+        }
         return (
             <div>
                 <div><span style={{fontWeight:"bold"}}>PAM requests</span></div>
@@ -128,7 +136,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     noDataMessage="There are no PAM requests"
                 >
 
-                    <DataTable.Column label="Id" name="id"/>
+                    {/* <DataTable.Column label="Id" name="id"/> */}
                     <DataTable.Column label="Account name" name="account_name"/>
                     <DataTable.Column label="Role" name="role" />
                     <DataTable.Column label="Status" name="status" />
@@ -142,22 +150,22 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 id={this.getUniqueRowIndex(item)}
                             >
 
-                                <DataTable.Data>{JSON.stringify(item)}</DataTable.Data>
-                                <DataTable.Data>{item.account_name}</DataTable.Data>
-                                <DataTable.Data>{item.role}</DataTable.Data>
-                                <DataTable.Data>{item.status}</DataTable.Data>
-                                <DataTable.Data>{item.requestor}</DataTable.Data>
+                                {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
+                                <DataTable.Data>{item?.user_id}</DataTable.Data>
+                                <DataTable.Data>{item?.role}</DataTable.Data>
+                                <DataTable.Data>{item?.status}</DataTable.Data>
+                                <DataTable.Data>{item?.requestor}</DataTable.Data>
 
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
-                                            deploymentId={item.id}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                            deploymentId={vmData.id}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(vmdata)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
-
+                                    <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon>
                                 </DataTable.Data>
 
                             </DataTable.Row>

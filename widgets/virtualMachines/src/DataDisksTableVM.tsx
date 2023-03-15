@@ -97,9 +97,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
             }
         });
 
-        //const diskData =  _dataFromExternalSource;
-        //console.log(diskData);
-
         this.setState({diskData}); //tady je pole hodnot ve value
         return diskData;
     }

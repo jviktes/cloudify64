@@ -31,7 +31,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 
     //filter pro pouze VM:
     let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-
+    //filterRules = []; //zobrazi vsechny deploymenty...
     return helper.Manager.doPost('/searches/deployments', {
         params: {
             _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
@@ -3583,15 +3583,15 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
     console.log(params);
 
    //TODO nastavit "values" : ["xa12415401047"]:
-    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
+    //let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
 
     //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
 
     //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
 
     //filterRules = [{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]; //vraci 1 hodnotu pro bleuprint id = azure
-    filterRules = [];
-    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values : []};
+    let filterRules = [];
+    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values:[]};
     obj_filter.values.push(_id);
     filterRules.push(obj_filter);
 
@@ -3606,24 +3606,7 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
         ...commonManagerRequestOptions
     })
         .then(data => {
-            //rawData = data.items;
 
-            // let fake_data= {diskData: []};
-            // fake_data.diskData.push({id:params.id, name:"C", disk_type:"SSD", disk_size:"1024",host_caching:"ReadOnly"});
-            // fake_data.diskData.push({id:params.id, name:"D", disk_type:"SSD", disk_size:"512",host_caching:"ReadOnly"});
-            // fake_data.diskData.push({id:params.id, name:"E", disk_type:"SSD", disk_size:"2048",host_caching:"None"});
-            // fake_data.diskData.push({id:params.id, name:"F", disk_type:"SSD", disk_size:"1024",host_caching:"None"});
-
-            // let spireDeployments = [];
-
-            // fake_data.diskData.forEach(element => {
-            //     console.log(element);
-            //     spireDeployments.push(element);
-            // });
-
-            //return Promise.all(data); toto vraci chybu "object is not iterbale"
-
-            //TODO: tady zafunguje??? filter_rules => vyberu "rucne"
             //filter data disk + bluprint_id STARTSWITH 'AZURE-Data-Disk'
             data.items.forEach(element => {
                 //console.log(element);
@@ -3637,6 +3620,8 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
         .then(data => res.send(data))
         .catch(error => next(error));
 });
+
+
 
 r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     const _ = require('lodash');
@@ -3654,28 +3639,32 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     let _id = params.id;
     console.log(params);
 
-    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
+    //let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
 
     //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
 
     //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
 
     //filterRules = [{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]; //vraci 1 hodnotu pro bleuprint id = azure
-    filterRules = [];
-    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values : []};
+
+    let filterRules = [];
+    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values:[]};
     obj_filter.values.push(_id);
 
     filterRules.push(obj_filter);
 
     let outputData = [];
-    return helper.Manager.doGet('/deployments', {
+
+
+
+    return helper.Manager.doPost('/searches/deployments', {
         // params: {
 
         // },
         body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
-        .then(data => {
+    .then(data => {
             //rawData = data.items;
             //console.log('get_vm_requestsData results:');
             //console.log("data:");
@@ -3703,15 +3692,29 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
             data.items.forEach(element => {
                 //console.log(element);
                 if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
+                    element.filterRules = filterRules;
                     outputData.push(element);
                 }
-                
             });
             return Promise.all(outputData);
 
         })
         .then(data => res.send(data))
         .catch(error => next(error));
+
+    //Executions:
+    // let _includesReqestString = "/executions?_size=1&deployment_id="+_id;
+
+    // return helper.Manager.doGet(_includesReqestString, {
+    //     ...commonManagerRequestOptions
+    // })
+    //     .then(data => {
+    //         rawData = data.items;
+    //         return Promise.all(rawData);
+    //     })
+    //     .then(data => res.send(data))
+    //     .catch(error => next(error));
+
 });
 
 
