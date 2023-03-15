@@ -63,25 +63,31 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     //const actions = Object();
 
     //vyber polozek --> TODO: doplnit konfiguraci...
-    // const workFlowsDHL=(workflows :Workflow[] )=> {
+    const workFlowsDHL=(workflows :Workflow[] )=> {
 
-    //     //
-    //     console.log(workflows);
-    //     let outWorks = [];
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-    //             if (_workFlowItem.name=="validate_agents")
-    //             outWorks.push(_workFlowItem);
-
-    //         }
-    //     }
-    //     ;
-    //     let _workFlowItem = { name: "toolbox.getContext().setValue('filteredDeploymentParentId', '12497956')", plugin:"", parameters:{},is_available:true};
+        //
+        console.log(workflows);
+        let outWorks = [];
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="restart_vm"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="run_audit"){
+                    outWorks.push(_workFlowItem);
+                }
+                // if (_workFlowItem.name=="remove_disk"){
+                //     outWorks.push(_workFlowItem);
+                // }
+            }
+        }
+        ;
+        let _workFlowItem = workflows[4];//{ name: "toolbox.getContext().setValue('filteredDeploymentParentId', '12497956')", plugin:"", parameters:{},is_available:true};
         
-    //     outWorks.push(_workFlowItem);
-    //     return outWorks;
-    // };
+        outWorks.push(_workFlowItem);
+        return outWorks;
+    };
 
     //console.log(fetchedDeploymentState);
 
@@ -92,7 +98,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             {/* TODO: jak tam pridat delete, musim se modlit, aby to bylo v seznamu a nemusel to nejak davat z  DeploymentActionsMenu*/}
             {/* TODO: jak sem pridat tlacitko pro get parrent?*/}
             <WorkflowsMenu
-                workflows={workflows}
+                workflows={workFlowsDHL(workflows)}
                 trigger={
                     <Button
                         className="executeWorkflowButton labeled icon"
