@@ -122,20 +122,20 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
 
     //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
 
-
-
     //filterRules = [{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]; //vraci 1 hodnotu pro bleuprint id = azure
     filterRules = [];
     let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values : []};
     obj_filter.values.push(_id);
 
     filterRules.push(obj_filter);
-    
+
     // filterRules.type = "label";
     // filterRules.key = "csys-obj-parent";
     // filterRules.operator="any_of";
     // filterRules.values = [];
     // filterRules.values.push(_id);
+
+    let outputData = [];
 
     return helper.Manager.doPost('/searches/deployments', {
         // params: {
@@ -146,7 +146,7 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
         ...commonManagerRequestOptions
     })
         .then(data => {
-            rawData = data.items;
+            //rawData = data.items;
 
             // let fake_data= {diskData: []};
             // fake_data.diskData.push({id:params.id, name:"C", disk_type:"SSD", disk_size:"1024",host_caching:"ReadOnly"});
@@ -162,7 +162,17 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
             // });
 
             //return Promise.all(data); toto vraci chybu "object is not iterbale"
-            return Promise.all(rawData);
+
+            //TODO: tady zafunguje??? filter_rules => vyberu "rucne"
+            //filter data disk + bluprint_id STARTSWITH 'AZURE-Data-Disk'
+            data.items.forEach(element => {
+                //console.log(element);
+                if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
+                    outputData.push(element);
+                }
+                
+            });
+            return Promise.all(outputData);
         })
         .then(data => res.send(data))
         .catch(error => next(error));
@@ -181,57 +191,64 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     // parsing parametres:
     const params = { ...req.query };
     //console.log(params);
-    let _searchParam = params._search;
-    let _filteredDeploymentParentId = params.filteredDeploymentParentId;
+    let _id = params.id;
+    console.log(params);
 
-    let spireDeployments = [];
+    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
 
-    if (_filteredDeploymentParentId!=undefined) 
-    {
-        //console.log("spireDeployments search:");
-        _searchParam = _filteredDeploymentParentId;
-    }
+    //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
+
+    //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
+
+    //filterRules = [{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]; //vraci 1 hodnotu pro bleuprint id = azure
+    filterRules = [];
+    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values : []};
+    obj_filter.values.push(_id);
+
+    filterRules.push(obj_filter);
+
+    let outputData = [];
     return helper.Manager.doGet('/deployments', {
-        params: {
-            _include: 'id,labels,blueprint_id,tenant_name,environment_type,workflows',
-            _search:_searchParam
-        },
+        // params: {
+
+        // },
+        body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
         .then(data => {
+            //rawData = data.items;
             //console.log('get_vm_requestsData results:');
             //console.log("data:");
             //console.log(data);
 
-            // Grant waiting for approval
-            // Revocation waiting for approval
-            // Grant approved
-            // Revocation approved
-            // Grant implemented
-
             //mock data:
 
-            let fake_data= {requestsData: []};
+            // let fake_data= {requestsData: []};
 
-            fake_data.requestsData.push({id:params.id, account_name:"vik1@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik2@dhl.com", role:"user", status:"Grant implemented",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik3@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik4@dhl.com", role:"admin", status:"Revocation approved",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik5@dhl.com", role:"admin", status:"Grant approved",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik6@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik7@dhl.com", role:"user", status:"Grant approved",requestor:"vik1@dhl.com"});
-            fake_data.requestsData.push({id:params.id, account_name:"vik8@dhl.com", role:"admin", status:"GGrant implemented",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik1@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik2@dhl.com", role:"user", status:"Grant implemented",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik3@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik4@dhl.com", role:"admin", status:"Revocation approved",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik5@dhl.com", role:"admin", status:"Grant approved",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik6@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik7@dhl.com", role:"user", status:"Grant approved",requestor:"vik1@dhl.com"});
+            // fake_data.requestsData.push({id:params.id, account_name:"vik8@dhl.com", role:"admin", status:"GGrant implemented",requestor:"vik1@dhl.com"});
 
             //console.log(fake_data);
             //console.log(fake_data.requestsData);
 
-            fake_data.requestsData.forEach(element => {
-                console.log(element);
-                spireDeployments.push(element);
-            });
 
             //console.log(spireDeployments);
-            return Promise.all(spireDeployments);
+
+            data.items.forEach(element => {
+                //console.log(element);
+                if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
+                    outputData.push(element);
+                }
+                
+            });
+            return Promise.all(outputData);
+
         })
         .then(data => res.send(data))
         .catch(error => next(error));

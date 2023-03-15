@@ -14,6 +14,7 @@ interface RequestsTableVMProps {
         nodeId: string;
         nodeInstanceId: string;
     };
+    vmData:any
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
 }
@@ -50,8 +51,17 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         //console.log(params);
 
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
+        const requestsData = [];
 
-        const requestsData =  _dataFromExternalSource;
+        _dataFromExternalSource.forEach(_disk => {
+            try {
+                requestsData.push(_disk["inputs"])
+            } catch (error) {
+                console.log(error);
+            }
+        });
+
+        //const requestsData =  _dataFromExternalSource;
         //console.log(requestsData);
 
         this.setState({requestsData}); //tady je pole hodnot ve value
@@ -124,7 +134,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     <DataTable.Column label="Role" name="role" />
                     <DataTable.Column label="Status" name="status" />
                     <DataTable.Column label="Requestor" name="requestor" />
-                    <DataTable.Column label="Actions" name="actions"/>
+                    {/* <DataTable.Column label="Actions" name="actions"/> */}
 
                     {_.map(this.state.requestsData, item => (      
                                       
@@ -133,13 +143,13 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 id={this.getUniqueRowIndex(item)}
                             >
 
-                                <DataTable.Data>{item.id}</DataTable.Data>
+                                <DataTable.Data>{JSON.stringify(item)}</DataTable.Data>
                                 <DataTable.Data>{item.account_name}</DataTable.Data>
                                 <DataTable.Data>{item.role}</DataTable.Data>
                                 <DataTable.Data>{item.status}</DataTable.Data>
                                 <DataTable.Data>{item.requestor}</DataTable.Data>
 
-                                <DataTable.Data>
+                                {/* <DataTable.Data>
 
                                 <DeploymentActionButtons
                                         buttonTitle='PAM actions'
@@ -149,7 +159,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
 
-                                </DataTable.Data>
+                                </DataTable.Data> */}
 
                             </DataTable.Row>
                     ))}
