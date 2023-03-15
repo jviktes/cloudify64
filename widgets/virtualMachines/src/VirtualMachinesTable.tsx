@@ -137,7 +137,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
 
         const { toolbox } = this.props;
-        toolbox.getEventBus().trigger('vm:selectVM',_item);
+        let _eventName= 'vm:selectVM' + _item.id;
+        toolbox.getEventBus().trigger(_eventName,_item);
     }
 
     getDetails=(item:any) => {

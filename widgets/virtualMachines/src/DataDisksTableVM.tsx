@@ -32,8 +32,9 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
     }
 
     componentDidMount() {
-        const { toolbox } = this.props;
-        toolbox.getEventBus().on('vm:selectVM', this.loadDiskData, this);
+        const { toolbox, vmData } = this.props;
+        let _eventName= 'vm:selectVM' + vmData.id;
+        toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
     }
 
     getDataForDeploymentId = (item:any) => {
