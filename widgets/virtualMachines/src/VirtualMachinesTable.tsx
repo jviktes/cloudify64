@@ -486,7 +486,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
                     {/* <DataTable.Column label="Parent" name="parent_deployment" /> */}
-                    <DataTable.Column label="" name="" />
+                    {/* <DataTable.Column label="" name="" /> */}
                     <DataTable.Column label="Actions" name="actions" name="class" />
                     <DataTable.Column label="" name="config" name="class" />
                     {_.map(data.items, item => (    
@@ -494,8 +494,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             <DataTable.RowExpandable key={item.id}>
                             <DataTable.Row 
                                 key={`${item.id}_main`}
-                                id={`${item.id}_main`}>
-
+                                id={`${item.id}_main`}
+                                onClick={() => this.onRowClick(item)}>
                                 {/* <DataTable.Data>{item.id}</DataTable.Data> */}
                                 <DataTable.Data>{item.display_name}</DataTable.Data>
 
@@ -510,9 +510,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
                                 {/* <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data> */}
-                                <DataTable.Data><Button icon="add" 
+                                {/* <DataTable.Data><Button icon="add" 
                                 // content={'Show details'} 
-                                onClick={() => this.onRowClick(item)} /></DataTable.Data>
+                                onClick={() => this.onRowClick(item)} /></DataTable.Data> */}
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons

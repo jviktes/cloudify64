@@ -68,8 +68,16 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         //console.log(params);
 
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
+        const diskData = [] ;
+        _dataFromExternalSource.forEach(_disk => {
+            try {
+                diskData.push(_disk["inputs"])
+            } catch (error) {
+                console.log(error);
+            }
+        });
 
-        const diskData =  _dataFromExternalSource;
+        //const diskData =  _dataFromExternalSource;
         //console.log(diskData);
 
         this.setState({diskData}); //tady je pole hodnot ve value
@@ -92,7 +100,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
             if (this.state.diskData==null) {
                 return (
                     <div>
-                        <div ></div>
+                        <div></div>
                     </div>
                 );
             }
@@ -106,7 +114,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                     <DataTable.Column label="Disk type" name="disk_type" />
                     <DataTable.Column label="Disk size (GiB)" name="disk_size" />
                     <DataTable.Column label="Host caching" name="host_caching" />
-                    <DataTable.Column label="Actions" name="actions"/>
+                    {/* <DataTable.Column label="Actions" name="actions"/> */}
 
                     {_.map(this.state.diskData, item => (      
                                       
@@ -120,7 +128,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
                                 <DataTable.Data>{item.host_caching}</DataTable.Data>
 
-                                <DataTable.Data>
+                                {/* <DataTable.Data>
 
                                     <DeploymentActionButtons
                                             buttonTitle='Disk actions'
@@ -129,8 +137,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
-
-                                </DataTable.Data>
+                                </DataTable.Data> */}
 
                             </DataTable.Row>
                     ))}

@@ -30,7 +30,7 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
 //_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
 
     let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-    filterRules= []; //TODO vypnutí filtru pouze pro VM
+    //filterRules= []; //TODO vypnutí filtru pouze pro VM
 
     return helper.Manager.doPost('/searches/deployments', {
         params: {
@@ -112,21 +112,36 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
     };
     // parsing parametres:
     const params = { ...req.query };
+    let _id = params.id;
     console.log(params);
 
    //TODO nastavit "values" : ["xa12415401047"]:
-    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa12415401047"]}];
+    let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
 
     //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
 
-    filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}];
+    //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
 
+
+
+    //filterRules = [{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]; //vraci 1 hodnotu pro bleuprint id = azure
+    filterRules = [];
+    let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values : []};
+    obj_filter.values.push(_id);
+
+    filterRules.push(obj_filter);
+    
+    // filterRules.type = "label";
+    // filterRules.key = "csys-obj-parent";
+    // filterRules.operator="any_of";
+    // filterRules.values = [];
+    // filterRules.values.push(_id);
 
     return helper.Manager.doPost('/searches/deployments', {
-        params: {
-            _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
-            //_search:_searchParam
-        },
+        // params: {
+        //     //_include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
+        //     //_search:_searchParam
+        // },
         body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
