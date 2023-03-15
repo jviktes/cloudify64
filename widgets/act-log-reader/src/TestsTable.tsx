@@ -118,7 +118,7 @@ export default class TestsTable extends React.Component<TestDataProps> {
                                 <DataTable.Data style={{ width: '29%' }}>{item.fileName}</DataTable.Data>
 
                                 <DataTable.Data style={{ width: '12%' }}>
-                                <div className="uploadBlueprintButton">
+                                <div className="menuButton">
                                         <LogActionsMenu
                                             upward={false}
                                             direction="left"

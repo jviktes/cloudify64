@@ -26,3 +26,9 @@
     /* width: 100%; */
     position: relative;
   }
+
+  .menuButton {
+    z-index: 5;
+    /* position: absolute !important; */
+    right: 12px;
+}
