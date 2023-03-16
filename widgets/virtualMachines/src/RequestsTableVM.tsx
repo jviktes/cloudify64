@@ -139,7 +139,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                         }
                     } 
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                 }
                 try {
                     if (_workFlowItem.name=="revoke_user_account"){
@@ -149,7 +149,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                         }
                     }
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                 }    
 
 
@@ -180,7 +180,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { data, toolbox, widget, vmData } = this.props;
+        const { toolbox, widget, vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
         //console.log(data);
@@ -225,8 +225,8 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     {_.map(this.state.requestsData, item => (      
                                       
                             <DataTable.Row
-                                key={this.getUniqueRowIndex(item)}
-                                id={this.getUniqueRowIndex(item)}
+                                // key={this.getUniqueRowIndex(item)}
+                                // id={this.getUniqueRowIndex(item)}
                             >
 
                                 {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}

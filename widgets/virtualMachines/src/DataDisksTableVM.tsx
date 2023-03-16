@@ -138,8 +138,8 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                     {_.map(this.state.diskData, item => (      
                                       
                             <DataTable.Row
-                                key={this.getUniqueRowIndex()}
-                                id={this.getUniqueRowIndex()}
+                                // key={this.getUniqueRowIndex()}
+                                // id={this.getUniqueRowIndex()}
                             >
                                 <DataTable.Data title={this.getExtraDiskInfo(item)}>{(item.name)} <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon></DataTable.Data>
                                 <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
