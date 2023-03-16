@@ -26,8 +26,8 @@ r.register('get_vm_deployments', 'GET', (req, res, next, helper) => {
         _searchParam = _filteredDeploymentParentId;
     }
 
-//https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&
-//_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
+    //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&
+    //_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
 
     //filter pro pouze VM:
     let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
@@ -3550,13 +3550,9 @@ r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {
     // let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values" : ["environment"]},{"type": "label", "key":"csys-obj-parent", "operator": "any_of", "values" : ["xa12415401047"]}];
     // filterRules = [];
 
-    let _includesReqestString = "/executions?_size=1&deployment_id="+_id;
+    let _includesReqestString = `/executions?_size=1&deployment_id=${_id}`;
 
     return helper.Manager.doGet(_includesReqestString, {
-        // params: {
-        //     _include: 'id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
-        // },
-        //body: { filter_rules: filterRules },
         ...commonManagerRequestOptions
     })
         .then(data => {
@@ -3633,13 +3629,11 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     };
     // parsing parametres:
     const params = { ...req.query };
-    //console.log(params);
     let _id = params.id;
     console.log(params);
 
-    //let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":['xa12415401047']}];
-
-    //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},{"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
+    //{"filter_rules":[{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]},
+   // {"type":"label","key":"csys-obj-parent","operator":"any_of","values":["xa124ls401047"]}]}
 
     //filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values":["environment"]}]; //vraci 2 hodnoty
 
@@ -3652,8 +3646,6 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     filterRules.push(obj_filter);
 
     let outputData = [];
-
-
 
     return helper.Manager.doPost('/searches/deployments', {
         // params: {
@@ -3694,6 +3686,7 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
                     outputData.push(element);
                 }
             });
+
             return Promise.all(outputData);
 
         })
@@ -3730,13 +3723,17 @@ r.register('get_vm_pam_request_executions', 'GET', (req, res, next, helper) => {
     console.log(params);
     let _id = params.id;
 
-    let _includesReqestString = "/executions?_size=1&deployment_id="+_id + "&_include_system_workflows=false";
+    let _includesReqestString = `/executions?deployment_id=${_id}`;
     //https://cloudify-uat.dhl.com/console/sp/executions?_sort=-created_at&_size=5&_offset=0&deployment_id=xa124ls201046-sadminbu-zdenek.suchel&_include_system_workflows=false
     return helper.Manager.doGet(_includesReqestString, {
         ...commonManagerRequestOptions
     })
         .then(data => {
             rawData = data.items;
+
+            //TODO: najit nejmladsi zaznam pro typ zaznamu "create_...envirnoment???" a kdo je creator, ten je pak Requestor pro zobrazeni...
+
+
             return Promise.all(rawData);
         })
         .then(data => res.send(data))
