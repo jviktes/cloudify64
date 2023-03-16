@@ -48,17 +48,77 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
         const requestsData = [];
-
-        _dataFromExternalSource.forEach(_disk => {
+        
+        _dataFromExternalSource.forEach(_pamRequest => {
             try {
-                requestsData.push(_disk["inputs"])
+                let outObj = _pamRequest["inputs"];
+                outObj.id = _pamRequest.id;
+                requestsData.push(outObj)
             } catch (error) {
                 console.log(error);
             }
         });
+        //TODO: toto zatim volat nebudu:
+        //await this.loadDetailsExecution(requestsData);
 
         this.setState({requestsData}); //tady je pole hodnot ve value
         return requestsData;
+    }
+
+    loadDetailsExecution = async (requestsData:any) => {
+        const { toolbox } = this.props;
+        const manager = toolbox.getManager();
+        const tenantName=manager.getSelectedTenant();
+        let promises = [];
+       
+        try {
+            requestsData.forEach(_pamRequest => {
+
+
+
+                let params = {};
+                params.tenant = tenantName;
+                params.id = _pamRequest.id;
+
+                let _dataExecutions="";
+                    
+                let _promise = new Promise(function(resolve, reject) {
+                     resolve(toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }));
+                });
+                promises.push(_promise);
+
+                _promise.then(
+            
+                    (_dataExecutions) => { 
+                        _pamRequest.executionData = _dataExecutions;
+                    }
+                );
+
+                //const _dataExecutions =  toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }); //nactu data,;
+                
+                Promise.all(promises).then((_res) => {
+
+                    return requestsData;
+
+                    // let preparedData = result;
+                    // //TODO vybrat unikatni hodnoty a prednost maji ty s mladsi casovou znackou:
+                    // //console.log("Data from file:");
+                    
+                    // const uniqueItems = preparedData.result.reduce((accumulator, current) => {
+                    //     if (!accumulator.find((item) => item.u_number === current.u_number)) {
+                    //       accumulator.push(current);
+                    //     }
+                    //     return accumulator;
+                    //   }, []);
+                    // let _resData = {result:uniqueItems};  
+                    // res.send(_resData);
+                });
+                
+            });
+        } catch (error) {
+            console.log(error);
+        }
+        //return requestsData;
     }
 
     workFlowsPAMRequests=(workflows :Workflow[] )=> {
@@ -154,14 +214,15 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 <DataTable.Data>{item?.user_id}</DataTable.Data>
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{item?.status}</DataTable.Data>
-                                <DataTable.Data>{item?.requestor}</DataTable.Data>
-
+                                {/* <DataTable.Data>{JSON.stringify(item?.executionData)}</DataTable.Data> */}
+                                <DataTable.Data>{JSON.stringify(item?.requestor)}</DataTable.Data>
+                                
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
                                             deploymentId={vmData.id}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(vmdata)}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />

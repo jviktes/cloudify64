@@ -3621,8 +3621,6 @@ r.register('get_vm_dataDiskData', 'GET', (req, res, next, helper) => {
         .catch(error => next(error));
 });
 
-
-
 r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
     const _ = require('lodash');
     console.log('get_vm_requestsData...');
@@ -3717,5 +3715,32 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
 
 });
 
+r.register('get_vm_pam_request_executions', 'GET', (req, res, next, helper) => {
+    const _ = require('lodash');
+    console.log('get_vm_detailsData...');
+    const { headers } = req;
+    const commonManagerRequestOptions = {
+        headers: {
+            tenant: headers.tenant,
+            cookie: headers.cookie
+        }
+    };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
+    let _id = params.id;
+
+    let _includesReqestString = "/executions?_size=1&deployment_id="+_id + "&_include_system_workflows=false";
+    //https://cloudify-uat.dhl.com/console/sp/executions?_sort=-created_at&_size=5&_offset=0&deployment_id=xa124ls201046-sadminbu-zdenek.suchel&_include_system_workflows=false
+    return helper.Manager.doGet(_includesReqestString, {
+        ...commonManagerRequestOptions
+    })
+        .then(data => {
+            rawData = data.items;
+            return Promise.all(rawData);
+        })
+        .then(data => res.send(data))
+        .catch(error => next(error));
+});
 
 }
