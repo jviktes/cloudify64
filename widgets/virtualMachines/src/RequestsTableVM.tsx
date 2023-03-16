@@ -59,7 +59,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
             }
         });
         //TODO: toto zatim volat nebudu:
-        //await this.loadDetailsExecution(requestsData);
+        await this.loadDetailsExecution(requestsData);
 
         this.setState({requestsData}); //tady je pole hodnot ve value
         return requestsData;
@@ -73,8 +73,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
        
         try {
             requestsData.forEach(_pamRequest => {
-
-
 
                 let params = {};
                 params.tenant = tenantName;
@@ -90,28 +88,18 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                 _promise.then(
             
                     (_dataExecutions) => { 
+
                         _pamRequest.executionData = _dataExecutions;
+                        _dataExecutions.forEach(element => {
+                            if (element.workflow_id=="create_deployment_environment") {
+                                _pamRequest.requestor = element.created_by;
+                            }
+                        });
+                        
                     }
                 );
-
-                //const _dataExecutions =  toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }); //nactu data,;
-                
                 Promise.all(promises).then((_res) => {
-
                     return requestsData;
-
-                    // let preparedData = result;
-                    // //TODO vybrat unikatni hodnoty a prednost maji ty s mladsi casovou znackou:
-                    // //console.log("Data from file:");
-                    
-                    // const uniqueItems = preparedData.result.reduce((accumulator, current) => {
-                    //     if (!accumulator.find((item) => item.u_number === current.u_number)) {
-                    //       accumulator.push(current);
-                    //     }
-                    //     return accumulator;
-                    //   }, []);
-                    // let _resData = {result:uniqueItems};  
-                    // res.send(_resData);
                 });
                 
             });
@@ -215,7 +203,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{item?.status}</DataTable.Data>
                                 {/* <DataTable.Data>{JSON.stringify(item?.executionData)}</DataTable.Data> */}
-                                <DataTable.Data>{JSON.stringify(item?.requestor)}</DataTable.Data>
+                                <DataTable.Data>{item?.requestor}</DataTable.Data>
                                 
                                 <DataTable.Data>
 

@@ -93,6 +93,35 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return firstDeploymentId;
     };
 
+//     Restart VM (Dhl vm -> Restart vm) 
+//     Run OAT (Dhl vm -> Run audit) 
+//     Disks 
+//         Add disk (Dhl vm -> Add disk) 
+//         Add ultra disk (Dhl vm -> Add ultra disk) Note: When the custom action button is available, Add disk & Add ultra disk items should be merged into one item Add disk (user will select disk type in the custom form). 
+
+
+//     Privileged Access 
+
+//     Conditional menu options - dependent on platform / OS of the machine: 
+
+//     Windows virtual machine: 
+
+//         Request Windows user account (Dhl windows vm -> Request user account) 
+
+//         Request Windows service account (Dhl windows vm -> Request service account) 
+
+//     Linux virtual machine: 
+
+//         Request sys admin account (Dhl rhel vm -> Request sys admin account) 
+
+//         Request app admin account (Dhl rhel vm -> Request app admin account) 
+
+  
+
+//     Decommission VM 
+
+// Note: Decommission VM will be implemented when the custom action button is available. The standard Execute workflow button does not contain the option to execute Uninstall workflow. 
+
     workFlowsVM=(workflows :Workflow[] )=> {
                 let outWorks = [];
                 for (const key in workflows) {
@@ -104,6 +133,29 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         if (_workFlowItem.name=="run_audit"){
                             outWorks.push(_workFlowItem);
                         }
+                        if (_workFlowItem.name=="add_disk"){
+                            outWorks.push(_workFlowItem);
+                        }
+                        if (_workFlowItem.name=="add_ultra_disk"){
+                            outWorks.push(_workFlowItem);
+                        }
+                        //TODO pouze pro WIN:
+                        if (_workFlowItem.name=="request_user_account"){
+                            outWorks.push(_workFlowItem);
+                        }
+
+                        if (_workFlowItem.name=="request_service_account"){
+                            outWorks.push(_workFlowItem);
+                        }
+                        //TODO pouze pro Linux:
+                        if (_workFlowItem.name=="request_app_admin_account"){
+                            outWorks.push(_workFlowItem);
+                        }
+
+                        if (_workFlowItem.name=="request_sys_admin_account"){
+                            outWorks.push(_workFlowItem);
+                        }
+
                     }
                 }
                 return outWorks;

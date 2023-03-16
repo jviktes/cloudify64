@@ -3723,7 +3723,7 @@ r.register('get_vm_pam_request_executions', 'GET', (req, res, next, helper) => {
     console.log(params);
     let _id = params.id;
 
-    let _includesReqestString = `/executions?deployment_id=${_id}`;
+    let _includesReqestString = `/executions?deployment_id=${_id}`; //pokus
     //https://cloudify-uat.dhl.com/console/sp/executions?_sort=-created_at&_size=5&_offset=0&deployment_id=xa124ls201046-sadminbu-zdenek.suchel&_include_system_workflows=false
     return helper.Manager.doGet(_includesReqestString, {
         ...commonManagerRequestOptions
