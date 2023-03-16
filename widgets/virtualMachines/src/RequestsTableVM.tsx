@@ -88,7 +88,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                 _promise.then(
             
                     (_dataExecutions) => { 
-
+                        //TODO dodelat podle casu!!! a vzit nejmladsi!!!
                         _pamRequest.executionData = _dataExecutions;
                         _dataExecutions.forEach(element => {
                             if (element.workflow_id=="create_deployment_environment") {
@@ -109,19 +109,50 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         //return requestsData;
     }
 
-    workFlowsPAMRequests=(workflows :Workflow[] )=> {
+    workFlowsPAMRequests=(item:any, vmData:any)=> {
         let outWorks = [];
         //    Approve / reject request (applies to * waiting requests)
         // Revoke (applies to Grant approved / Grant implemented requests)
+
+        let workflows=item.workflows;
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                 const _workFlowItem = workflows[key];
-                if (_workFlowItem.name=="approve_or_reject"){
-                    outWorks.push(_workFlowItem);
+
+                if (_workFlowItem?.name=="revoke_app_admin_account"){
+                    if (vmData?.role=="aadminbu") {
+                        //Revoke app admin account
+                        outWorks.push(_workFlowItem);
+                    }
                 }
-                if (_workFlowItem.name=="revoke_user_account"){
-                    outWorks.push(_workFlowItem);
+                if (_workFlowItem?.name=="revoke_sys_admin_account"){
+                    if (vmData?.role=="sadminbu") {
+                        //Revoke app admin account
+                        outWorks.push(_workFlowItem);
+                    }
                 }
+                try {
+                    if (_workFlowItem.name=="revoke_service_account"){
+                        if (vmData.id_blueprint_id.indexOf("JEA-Service-Account")!=-1) {
+                            //Revoke app admin account
+                            outWorks.push(_workFlowItem);
+                        }
+                    } 
+                } catch (error) {
+                    console.log(error);
+                }
+                try {
+                    if (_workFlowItem.name=="revoke_user_account"){
+                        if (vmData.id_blueprint_id.indexOf("JEA-Account")!=-1) {
+                            //Revoke app admin account
+                            outWorks.push(_workFlowItem);
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                }    
+
+
             }
         }
         return outWorks;
@@ -131,14 +162,14 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         return Math.random().toString(36).slice(2, 11);
     }
 
-    getDataForDeploymentId = (item:any) => {
+    getDataForDeploymentId = (vmData:any,item:any) => {
 
         return (
             {
                 status: 'success',
                 data: {
                         display_name: item.display_name,
-                        workflows: this.workFlowsPAMRequests(item.workflows),
+                        workflows: this.workFlowsPAMRequests(vmData,item),
                     },
                 }
         )
@@ -210,7 +241,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
                                             deploymentId={vmData.id}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData)}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData,item)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />

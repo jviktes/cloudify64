@@ -1,4 +1,4 @@
-import { capitalize, chain, filter, lowerCase, map, sortBy, size } from 'lodash';
+import { capitalize, chain, filter, lowerCase, map, sortBy } from 'lodash';
 import type { AccordionTitleProps } from 'semantic-ui-react';
 import type { ComponentProps, FunctionComponent, ReactNode } from 'react';
 import { useState } from 'react';
@@ -101,11 +101,11 @@ const WorkflowsMenu: FunctionComponent<WorkflowsMenuProps> = ({
 }) => {
     const filteredAndSortedWorkflows = sortBy(filterWorkflows(workflows), 'name');
     const workflowsGroups = chain(filteredAndSortedWorkflows)
-        .groupBy('name')
+        .groupBy('plugin')
         .map((value, key) => ({ name: key, workflows: value }))
         .sortBy('name')
         .value();
-    const showOnlyDefaultWorkflows = size(workflowsGroups) === 1;
+    const showOnlyDefaultWorkflows = true;//size(workflowsGroups) === 1;
     const popupMenuProps: Partial<ComponentProps<typeof PopupMenu>> = !trigger
         ? {
               bordered: true,
@@ -130,7 +130,7 @@ const WorkflowsMenu: FunctionComponent<WorkflowsMenuProps> = ({
             </PopupMenu>
         );
     }
-
+    console.log(filteredAndSortedWorkflows);
     return showOnlyDefaultWorkflows ? (
         <WorkflowsMenuItems workflows={filteredAndSortedWorkflows} onClick={onClick} />
     ) : (

@@ -122,8 +122,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
 // Note: Decommission VM will be implemented when the custom action button is available. The standard Execute workflow button does not contain the option to execute Uninstall workflow. 
 
-    workFlowsVM=(workflows :Workflow[] )=> {
+    workFlowsVM=(item:any)=> {
+
+        
                 let outWorks = [];
+                let workflows=item.workflows
                 for (const key in workflows) {
                     if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                         const _workFlowItem = workflows[key];
@@ -140,22 +143,26 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             outWorks.push(_workFlowItem);
                         }
                         //TODO pouze pro WIN:
-                        if (_workFlowItem.name=="request_user_account"){
-                            outWorks.push(_workFlowItem);
+                        if (item?.os.indexOf("Windows")!=-1) {
+                            if (_workFlowItem.name=="request_user_account"){
+                                outWorks.push(_workFlowItem);
+                            }
+    
+                            if (_workFlowItem.name=="request_service_account"){
+                                outWorks.push(_workFlowItem);
+                            }
                         }
 
-                        if (_workFlowItem.name=="request_service_account"){
-                            outWorks.push(_workFlowItem);
-                        }
                         //TODO pouze pro Linux:
-                        if (_workFlowItem.name=="request_app_admin_account"){
-                            outWorks.push(_workFlowItem);
-                        }
+                        if (item?.os.indexOf("RHEL")!=-1) {
+                            if (_workFlowItem.name=="request_app_admin_account"){
+                                outWorks.push(_workFlowItem);
+                            }
 
-                        if (_workFlowItem.name=="request_sys_admin_account"){
-                            outWorks.push(_workFlowItem);
+                            if (_workFlowItem.name=="request_sys_admin_account"){
+                                outWorks.push(_workFlowItem);
+                            }
                         }
-
                     }
                 }
                 return outWorks;
@@ -180,7 +187,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 status: 'success',
                 data: {
                         display_name: item.display_name,
-                        workflows: this.workFlowsVM(item.workflows),
+                        workflows: this.workFlowsVM(item),
                     },
                 }
         )

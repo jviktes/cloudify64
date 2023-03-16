@@ -43,9 +43,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                 const _workFlowItem = workflows[key];
-                if (_workFlowItem.name=="add_disk"){
-                    outWorks.push(_workFlowItem);
-                }
                 if (_workFlowItem.name=="resize_disk"){
                     outWorks.push(_workFlowItem);
                 }
