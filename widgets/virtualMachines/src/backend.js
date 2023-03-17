@@ -3693,19 +3693,6 @@ r.register('get_vm_requestsData', 'GET', (req, res, next, helper) => {
         .then(data => res.send(data))
         .catch(error => next(error));
 
-    //Executions:
-    // let _includesReqestString = "/executions?_size=1&deployment_id="+_id;
-
-    // return helper.Manager.doGet(_includesReqestString, {
-    //     ...commonManagerRequestOptions
-    // })
-    //     .then(data => {
-    //         rawData = data.items;
-    //         return Promise.all(rawData);
-    //     })
-    //     .then(data => res.send(data))
-    //     .catch(error => next(error));
-
 });
 
 r.register('get_vm_pam_request_executions', 'GET', (req, res, next, helper) => {

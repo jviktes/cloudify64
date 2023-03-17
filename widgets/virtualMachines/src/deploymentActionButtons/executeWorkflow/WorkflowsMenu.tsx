@@ -131,6 +131,7 @@ const WorkflowsMenu: FunctionComponent<WorkflowsMenuProps> = ({
         );
     }
     console.log(filteredAndSortedWorkflows);
+    console.log(workflowsGroups);
     return showOnlyDefaultWorkflows ? (
         <WorkflowsMenuItems workflows={filteredAndSortedWorkflows} onClick={onClick} />
     ) : (

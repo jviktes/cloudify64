@@ -42,7 +42,6 @@ interface ExecuteWorkflowInputsProps extends CommonExecuteWorflowProps {
     onYamlFileChange: (file: File) => void;
     fileLoading: boolean;
     onWorkflowInputChange: OnChange;
-    showInstallOptions: boolean;
     onForceChange: OnCheckboxChange;
     onDryRunChange: OnCheckboxChange;
     onQueueChange: OnCheckboxChange;
@@ -59,7 +58,6 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     onWorkflowInputChange,
     errors,
     toolbox,
-    showInstallOptions,
     force,
     dryRun,
     queue,
@@ -74,7 +72,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     const { Message, Form, Header, Divider, DateInput } = Stage.Basic;
     return (
         <>
-            {_.isEmpty(baseWorkflowInputs) ? (
+            {/* {_.isEmpty(baseWorkflowInputs) ? (
                 <Message content={t('noParams')} />
             ) : (
                 <>
@@ -86,7 +84,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
                     />
                     <InputsHelpIcon />
                 </>
-            )}
+            )} */}
 
             <InputFields
                 inputs={baseWorkflowInputs}
@@ -94,35 +92,8 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
                 inputsState={userWorkflowInputsState}
                 errorsState={errors}
                 toolbox={toolbox}
+                
             />
-            {showInstallOptions && (
-                <>
-                    <Form.Divider className="">
-                        <Header size="tiny">{t('actionsHeader')}</Header>
-                    </Form.Divider>
-
-                    {renderCheckboxField('force', force, onForceChange)}
-                    {renderCheckboxField('dryRun', dryRun, onDryRunChange)}
-                    {renderCheckboxField('queue', queue, onQueueChange)}
-
-                    <Form.Field error={!!errors.scheduledTime}>
-                        {renderActionCheckbox('schedule', schedule, onScheduleChange)}
-                        {schedule && (
-                            <>
-                                <Divider hidden />
-                                <DateInput
-                                    name="scheduledTime"
-                                    value={scheduledTime}
-                                    defaultValue=""
-                                    minDate={moment()}
-                                    maxDate={moment().add(1, 'year')}
-                                    onChange={onScheduledTimeChange}
-                                />
-                            </>
-                        )}
-                    </Form.Field>
-                </>
-            )}
         </>
     );
 };

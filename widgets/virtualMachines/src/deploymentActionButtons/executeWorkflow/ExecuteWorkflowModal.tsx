@@ -37,7 +37,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     deploymentId = '',
     deploymentName,
     deployments = [],
-    hideOptions = false,
+    //hideOptions = false,
     onExecute = _.noop,
     onHide,
     toolbox,
@@ -248,7 +248,6 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                             onWorkflowInputChange={onWorkflowInputChange}
                             fileLoading={isFileLoading}
                             errors={errors}
-                            showInstallOptions={!hideOptions}
                             force={force}
                             dryRun={dryRun}
                             queue={queue}

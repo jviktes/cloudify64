@@ -1,6 +1,9 @@
 import type { FunctionComponent } from 'react';
 import { useEffect } from 'react';
 import { Workflow } from '../executeWorkflow';
+import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
+import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
+//import {ExecuteWorkflowModal} from '../executeWorkflow/ExecuteWorkflowModal'; //'./executeWorkflow/ExecuteWorkflowModal'  
 
 type FetchedDeploymentState =
     // eslint-disable-next-line camelcase
@@ -30,8 +33,8 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         Basic: { Button },
         Hooks: { useResettableState }
     } = Stage;
-    const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
-    const WorkflowsMenu = Stage.Common.Workflows.Menu;
+    //const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
+    //const WorkflowsMenu = Stage.Common.Workflows.Menu;
     //const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
     //const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
 
@@ -141,6 +144,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     workflow={workflow}
                     onHide={resetWorkflow}
                     toolbox={toolbox}
+                    
                 />
             )}
 
