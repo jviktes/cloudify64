@@ -32,7 +32,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             loading:false,
             showBackButton:false,
         };
-
     }
 
     componentDidMount() {
@@ -65,8 +64,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     }
 
-
-
     isItForParrentButton=(item:any)=> {
 
         if (item.labels==undefined || item.labels==null  || item.labels==[]) {
@@ -83,44 +80,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
         return 0;
     }
-
-    getDeploymentIdFromContext = (toolbox: Stage.Types.Toolbox) => {
-        //VIK: zde se nacte deploymentid
-        const deploymentId = toolbox.getContext().getValue('deploymentId');
-        // Deployment Actions Buttons widget does not support multiple actions, thus picking only one deploymentId
-        const firstDeploymentId = castArray(deploymentId)[0] as WidgetParams['id'];
-    
-        return firstDeploymentId;
-    };
-
-//     Restart VM (Dhl vm -> Restart vm) 
-//     Run OAT (Dhl vm -> Run audit) 
-//     Disks 
-//         Add disk (Dhl vm -> Add disk) 
-//         Add ultra disk (Dhl vm -> Add ultra disk) Note: When the custom action button is available, Add disk & Add ultra disk items should be merged into one item Add disk (user will select disk type in the custom form). 
-
-
-//     Privileged Access 
-
-//     Conditional menu options - dependent on platform / OS of the machine: 
-
-//     Windows virtual machine: 
-
-//         Request Windows user account (Dhl windows vm -> Request user account) 
-
-//         Request Windows service account (Dhl windows vm -> Request service account) 
-
-//     Linux virtual machine: 
-
-//         Request sys admin account (Dhl rhel vm -> Request sys admin account) 
-
-//         Request app admin account (Dhl rhel vm -> Request app admin account) 
-
-  
-
-//     Decommission VM 
-
-// Note: Decommission VM will be implemented when the custom action button is available. The standard Execute workflow button does not contain the option to execute Uninstall workflow. 
 
     workFlowsVM=(item:any)=> {
 
@@ -167,8 +126,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 }
                 return outWorks;
     };
-
-            
+        
     getDataForDeploymentId = (item:any) => {
 
         
@@ -193,7 +151,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         )
 
     };
-
 
     // eslint-disable-next-line class-methods-use-this
     onRowClick(_item) {
@@ -509,7 +466,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 {this.renderBackButton()}
 
                 <DataTable
-                    className="agentsTable table-scroll"
+                    className="table-scroll-vm"
                     fetchData={this.fetchGridData}
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
@@ -561,7 +518,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
                                 </DataTable.Data>
-{/* 
+                                {/* 
                                 <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
                                  */}
 

@@ -211,7 +211,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
             <div>
                 <div><span style={{fontWeight:"bold"}}>PAM requests</span></div>
                 <DataTable
-                    className=""
                     noDataMessage="There are no PAM requests"
                 >
 

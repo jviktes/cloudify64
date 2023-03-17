@@ -1,9 +1,16 @@
-/* .table-scroll tr {
+ .table-scroll-vm tr {
   width: 100%;
   display: inline-table;
   table-layout: fixed;
   }
   
+  /* .table-scroll-vm-subtables tr {
+    width: 50%;
+    display: inline-table;
+    table-layout: fixed;
+    } */
+
+  /*
   .table-scroll table{
   height:450px; 
    display: block;

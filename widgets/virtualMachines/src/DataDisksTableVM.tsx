@@ -110,12 +110,26 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         }
     };
     getMountPointData = (_vmData:any,item:any) => {
-        if (_vmData?.os.indexOf("Windows")!=-1) {
-            return (item[0].path);
+        let _outputpath = "";
+
+        try {
+            _outputpath = item[0].path;
+        } catch (error) {
+            
         }
-        else {
-            return (item[0].path);
-        }
+
+        // if (_vmData?.os.indexOf("Windows")!=-1) {
+
+        //     _outputpath = item[0].path;
+
+        // }
+        // else {
+
+        //     _outputpath = item[0].path;
+
+        // }
+        return _outputpath;
+
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -133,7 +147,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
             if (this.state.diskData==null) {
                 return (
                     <div>
-                        <div></div>
+                        <div></div>;
                     </div>
                 );
             }
@@ -141,7 +155,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
             return (<div>
                 <div><span style={{fontWeight:"bold"}}>Data disks</span></div>
 
-                <DataTable className="" noDataMessage="There are no data disks">
+                <DataTable noDataMessage="There are no data disks">
                     <DataTable.Column label="Name" name="disk_name"/>
                     <DataTable.Column label={this.getTableLabelForMountPoint(vmData)} name="mountpoint"/>
 
@@ -158,7 +172,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 // id={this.getUniqueRowIndex()}
                             >
                                 <DataTable.Data title={this.getExtraDiskInfo(item)}>{(item.name)} <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon></DataTable.Data>
-                                <DataTable.Data>{getMountPointData(item.mountpoint)}</DataTable.Data>
+                                <DataTable.Data>{this.getMountPointData(vmData,item?.mountpoint)}</DataTable.Data>
                                 <DataTable.Data>{item.lun}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>

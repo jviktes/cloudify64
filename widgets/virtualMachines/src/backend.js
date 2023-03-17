@@ -45,49 +45,49 @@ module.exports = async function(r) {
 
 
 
-                rawData = [
-                    {
-                        "id": "xa124ls401047",
-                        "deployment_status": "requires_attention",
-                        "sub_services_status": "requires_attention",
-                        "sub_environments_status": null,
-                        "sub_services_count": 2,
-                        "sub_environments_count": 0,
-                        "display_name": "xa124ls401047",
-                        "latest_execution_finished_operations": 108,
-                        "latest_execution_total_operations": 147,
-                        "blueprint_id": "AZURE-RHEL-Single-VM-v9.5",
-                        "site_name": null,
-                        "latest_execution_status": "failed",
-                        "environment_type": "",
-                        "labels": [
-                            {
-                                "key": "csys-consumer-id",
-                                "value": "xa124ls401047-disk-0",
-                                "created_at": "2023-03-06T06:59:19.871Z",
-                                "creator_id": 21
-                            },
-                            {
-                                "key": "csys-obj-parent",
-                                "value": "a3286a7b-4ec9-44a7-9323-29bd2c1d883a",
-                                "created_at": "2023-03-06T06:51:01.343Z",
-                                "creator_id": 21
-                            },
-                            {
-                                "key": "csys-obj-type",
-                                "value": "service",
-                                "created_at": "2023-03-06T06:51:01.343Z",
-                                "creator_id": 21
-                            },
-                            {
-                                "key": "obj-type",
-                                "value": "terraform",
-                                "created_at": "2023-03-06T06:51:01.343Z",
-                                "creator_id": 21
-                            }
-                        ]
-                    }
-                ];
+                // rawData = [
+                //     {
+                //         "id": "xa124ls401047",
+                //         "deployment_status": "requires_attention",
+                //         "sub_services_status": "requires_attention",
+                //         "sub_environments_status": null,
+                //         "sub_services_count": 2,
+                //         "sub_environments_count": 0,
+                //         "display_name": "xa124ls401047",
+                //         "latest_execution_finished_operations": 108,
+                //         "latest_execution_total_operations": 147,
+                //         "blueprint_id": "AZURE-RHEL-Single-VM-v9.5",
+                //         "site_name": null,
+                //         "latest_execution_status": "failed",
+                //         "environment_type": "",
+                //         "labels": [
+                //             {
+                //                 "key": "csys-consumer-id",
+                //                 "value": "xa124ls401047-disk-0",
+                //                 "created_at": "2023-03-06T06:59:19.871Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "csys-obj-parent",
+                //                 "value": "a3286a7b-4ec9-44a7-9323-29bd2c1d883a",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "csys-obj-type",
+                //                 "value": "service",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "obj-type",
+                //                 "value": "terraform",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             }
+                //         ]
+                //     }
+                // ];
                
                 return Promise.all(rawData);
             })
