@@ -528,7 +528,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     {/* <DataTable.Column label="Parent" name="parent_deployment" /> */}
                     <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" name="actions" name="class" />
-                    <DataTable.Column label="" name="config" name="class" />
+                    {/* <DataTable.Column label="" name="config" name="class" /> */}
                     {_.map(data.items, item => (    
                                         
                             <DataTable.RowExpandable key={item.id}>
@@ -550,9 +550,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
                                 {/* <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data> */}
-                                <DataTable.Data><Button icon="add" 
-                                // content={'Show details'} 
-                                onClick={() => this.onRowClick(item)} /></DataTable.Data>
+                                <DataTable.Data><Button icon="expand" onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
@@ -563,9 +561,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
                                 </DataTable.Data>
-
+{/* 
                                 <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
-                                
+                                 */}
+
                             </DataTable.Row>
 
                             <DataTable.Row
