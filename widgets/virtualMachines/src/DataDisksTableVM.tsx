@@ -109,7 +109,14 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
             return ("Mount point");
         }
     };
-
+    getMountPointData = (_vmData:any,item:any) => {
+        if (_vmData?.os.indexOf("Windows")!=-1) {
+            return (item[0].path);
+        }
+        else {
+            return (item[0].path);
+        }
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget,vmData } = this.props;
@@ -151,7 +158,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 // id={this.getUniqueRowIndex()}
                             >
                                 <DataTable.Data title={this.getExtraDiskInfo(item)}>{(item.name)} <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon></DataTable.Data>
-                                <DataTable.Data>{JSON.stringify(item.mountpoint)}</DataTable.Data>
+                                <DataTable.Data>{getMountPointData(item.mountpoint)}</DataTable.Data>
                                 <DataTable.Data>{item.lun}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
                                 <DataTable.Data>{item.disk_size}</DataTable.Data>
