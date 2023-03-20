@@ -16,22 +16,15 @@ module.exports = async function(r) {
         const params = { ...req.query };
         console.log(params);
         let _searchParam = params._search;
-        let _filteredDeploymentParentId = params.filteredDeploymentParentId;
-    
+
         let rawData = [];
-        
-        if (_filteredDeploymentParentId!=undefined  || _filteredDeploymentParentId!=null ) 
-        {
-            console.log("rawData search:");
-            _searchParam = _filteredDeploymentParentId;
-        }
-    
+        let executionsPromises = [];
+
         //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&
         //_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
-    
-        //filter pro pouze VM:
+
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-        //filterRules = []; //zobrazi vsechny deploymenty...
+
         return helper.Manager.doPost('/searches/deployments', {
             params: {
                 _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
@@ -42,8 +35,6 @@ module.exports = async function(r) {
         })
             .then(data => {
                 rawData = data.items;
-
-
 
                 // rawData = [
                 //     {
@@ -88,8 +79,70 @@ module.exports = async function(r) {
                 //         ]
                 //     }
                 // ];
+                //`/executions?deployment_id=${_id}`
+                const capabilitiesPromises = _.map(rawData, deployment =>
+                    helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
+                );
+                //console.log(rawData);
+                return Promise.all([rawData, ...capabilitiesPromises]);
+                
+                // rawData.forEach(_vm => {
+                    
+                //     // pokus o rovnou nacitat detaily pro PAM a executions, dataDisks:
+                //     let exParams = {};
+                //     exParams.tenant = headers.tenant;
+                //     exParams.id = _vm.id;
+                //     let _promise = new Promise(function(resolve, reject) {
+                //         resolve(this.toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { exParams }));
+                //    });
+                //    executionsPromises.push(_promise);
+   
+                //    _promise.then(
                
-                return Promise.all(rawData);
+                //        (_dataExecutions) => { 
+                //             _vm.pokus_executionData = _dataExecutions; 
+                //        }
+                //    );
+                //    Promise.all(executionsPromises).then((_res) => {
+                //        return rawData;
+                //    });
+
+                // });
+
+                //return Promise.all(rawData);
+                //return Promise.all([executionsPromise, ...capabilitiesPromises]);
+            })
+            .then(([rawData, ...spireDeploymentsCapabilities]) => {
+
+                rawData.forEach(_vm => {
+                    _vm.pokus_executionData = spireDeploymentsCapabilities;
+                }); 
+
+                return Promise.resolve({
+
+                    items:rawData
+                    // items: _.sortBy(
+                    //     _.map(spireDeploymentsCapabilities, deploymentCapabilities => {
+                    //         const spireDeploymentId = deploymentCapabilities.deployment_id;
+                    //         const spireEndpointIp = _.get(deploymentCapabilities.capabilities, 'endpoint', '');
+                    //         const deployment = _.find(
+                    //             spireDeployments,
+                    //             d => d.id === deploymentCapabilities.deployment_id
+                    //         );
+                    //         const workflows = _.get(deployment, 'workflows', []);
+
+                    //         return {
+                    //             id: spireDeploymentId,
+                    //             ip: spireEndpointIp,
+                    //             workflows,
+                    //             lastExecution: _.first(executionsData[spireDeploymentId])
+                    //         };
+                    //     }),
+                    //     'id'
+                    // ),
+                    // total: _.size(spireDeploymentsCapabilities)
+
+                });
             })
             .then(data => res.send(data))
             .catch(error => next(error));
@@ -276,17 +329,14 @@ module.exports = async function(r) {
         console.log(params);
         let _id = params.id;
     
-        let _includesReqestString = `/executions?deployment_id=${_id}`; //pokus
+        let _includesReqestString = `/executions?deployment_id=${_id}`;
         //https://cloudify-uat.dhl.com/console/sp/executions?_sort=-created_at&_size=5&_offset=0&deployment_id=xa124ls201046-sadminbu-zdenek.suchel&_include_system_workflows=false
         return helper.Manager.doGet(_includesReqestString, {
             ...commonManagerRequestOptions
         })
             .then(data => {
                 rawData = data.items;
-    
                 //TODO: najit nejmladsi zaznam pro typ zaznamu "create_...envirnoment???" a kdo je creator, ten je pak Requestor pro zobrazeni...
-    
-    
                 return Promise.all(rawData);
             })
             .then(data => res.send(data))

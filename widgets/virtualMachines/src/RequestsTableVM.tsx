@@ -33,8 +33,8 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     componentDidMount() {
         const { toolbox, vmData } = this.props;
-        let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
-        toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
+        //let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
+        //toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
     }
 
     loadRequestData = async (_item:any) =>{
