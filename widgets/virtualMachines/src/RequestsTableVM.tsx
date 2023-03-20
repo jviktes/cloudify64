@@ -53,12 +53,13 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
             try {
                 let outObj = _pamRequest["inputs"];
                 outObj.id = _pamRequest.id;
+                _pamRequest.requestor = <Icon name="spinner" loading/>
                 requestsData.push(outObj)
             } catch (error) {
                 console.log(error);
             }
         });
-        //TODO: toto zatim volat nebudu:
+        
         await this.loadDetailsExecution(requestsData);
 
         this.setState({requestsData}); //tady je pole hodnot ve value
@@ -174,7 +175,8 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                 }
         )
     };
-    getExtraDiskInfo = (item:any)=> {
+    //show all data in tooltip as JSON:
+    getExtraPAMInfo = (item:any)=> {
         let _extraData = JSON.stringify(item);
         return _extraData;
     }
@@ -244,7 +246,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
-                                    <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon>
+                                    <Icon name="info circle" title={this.getExtraPAMInfo(item)}></Icon>
                                 </DataTable.Data>
 
                             </DataTable.Row>
