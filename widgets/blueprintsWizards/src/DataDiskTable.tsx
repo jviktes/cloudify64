@@ -98,6 +98,12 @@ export function DataDiskTable({
         { text: '128GB', name: '128GB', value: 128 },
         { text: '256GB', name: '256GB', value: 256 },
         { text: '512GB', name: '512GB', value: 512 },
+        { text: '1024GB', name: '1024GB', value: 1024 },
+        { text: '2048GB', name: '2048GB', value: 2048 },
+        { text: '4096GB', name: '4096GB', value: 4096 },
+        { text: '8192GB', name: '8192GB', value: 8192 },
+        { text: '16384GB', name: '16384GB', value: 16384 },
+        { text: '32767GB', name: '32767GB', value: 32767 },
     ];
     const DataDiskHostingCashOptions = [
         { text: 'None', name: 'None', value: 'None' },
