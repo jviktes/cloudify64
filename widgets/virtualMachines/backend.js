@@ -18,11 +18,6 @@ module.exports = async function(r) {
         let _searchParam = params._search;
 
         let rawData = [];
-        let executionsPromises = [];
-
-        //https://cloudify-uat.dhl.com/console/sp/searches/deployments?_sort=-created_at&_size=50&
-        //_include=id,display_name,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status
-
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
 
         return helper.Manager.doPost('/searches/deployments', {
@@ -79,73 +74,51 @@ module.exports = async function(r) {
                 //         ]
                 //     }
                 // ];
-                //`/executions?deployment_id=${_id}`
+
+
+
+                //TODO zde to musi vracet create_deployment_environment
+                
+
                 const capabilitiesPromises = _.map(rawData, deployment =>
                     helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
                 );
-                //console.log(rawData);
-                return Promise.all([rawData, ...capabilitiesPromises]);
+
+                return Promise.all([rawData, ...capabilitiesPromises]); 
+                })
+                .then(([rawData, ...capabilitiesPromises]) => {
                 
-                // rawData.forEach(_vm => {
+                    const deploymentsPromises = _.map(rawData, deployment => {
+                        
+                        let filterRules = [];
+                        let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values:[]};
+                        obj_filter.values.push(deployment.id);
+                        filterRules.push(obj_filter);
+
+                        helper.Manager.doPost('/searches/deployments', {body: { filter_rules: filterRules}}, commonManagerRequestOptions)
+                        //helper.Manager.doPost(`/executions/xa124ls201046-sadminbu-zdenek.suchel`, commonManagerRequestOptions)
+                    }
                     
-                //     // pokus o rovnou nacitat detaily pro PAM a executions, dataDisks:
-                //     let exParams = {};
-                //     exParams.tenant = headers.tenant;
-                //     exParams.id = _vm.id;
-                //     let _promise = new Promise(function(resolve, reject) {
-                //         resolve(this.toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { exParams }));
-                //    });
-                //    executionsPromises.push(_promise);
-   
-                //    _promise.then(
-               
-                //        (_dataExecutions) => { 
-                //             _vm.pokus_executionData = _dataExecutions; 
-                //        }
-                //    );
-                //    Promise.all(executionsPromises).then((_res) => {
-                //        return rawData;
-                //    });
+                    );        
+                    
+                    Promise.all(deploymentsPromises);
+                    let combineData = [deploymentsPromises,capabilitiesPromises];
+                    return [rawData, ...combineData];
+                        })
+                        .then(([rawData, ...combineData]) => {
 
-                // });
+                            rawData.forEach(_vm => {
+                                //TODO!!! filter pro konktretni
+                                _vm.dataDisksAllData = combineData;
+                                _vm.executionAllData = combineData;
+                            }); 
 
-                //return Promise.all(rawData);
-                //return Promise.all([executionsPromise, ...capabilitiesPromises]);
-            })
-            .then(([rawData, ...spireDeploymentsCapabilities]) => {
-
-                rawData.forEach(_vm => {
-                    _vm.pokus_executionData = spireDeploymentsCapabilities;
-                }); 
-
-                return Promise.resolve({
-
-                    items:rawData
-                    // items: _.sortBy(
-                    //     _.map(spireDeploymentsCapabilities, deploymentCapabilities => {
-                    //         const spireDeploymentId = deploymentCapabilities.deployment_id;
-                    //         const spireEndpointIp = _.get(deploymentCapabilities.capabilities, 'endpoint', '');
-                    //         const deployment = _.find(
-                    //             spireDeployments,
-                    //             d => d.id === deploymentCapabilities.deployment_id
-                    //         );
-                    //         const workflows = _.get(deployment, 'workflows', []);
-
-                    //         return {
-                    //             id: spireDeploymentId,
-                    //             ip: spireEndpointIp,
-                    //             workflows,
-                    //             lastExecution: _.first(executionsData[spireDeploymentId])
-                    //         };
-                    //     }),
-                    //     'id'
-                    // ),
-                    // total: _.size(spireDeploymentsCapabilities)
-
-                });
-            })
-            .then(data => res.send(data))
-            .catch(error => next(error));
+                            return Promise.resolve({
+                                items:rawData
+                            });
+                        })
+                        .then(data => res.send(data))
+                        .catch(error => next(error));
     });
     
     r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {
