@@ -31,96 +31,68 @@ module.exports = async function(r) {
             .then(data => {
                 rawData = data.items;
 
-                // rawData = [
-                //     {
-                //         "id": "xa124ls401047",
-                //         "deployment_status": "requires_attention",
-                //         "sub_services_status": "requires_attention",
-                //         "sub_environments_status": null,
-                //         "sub_services_count": 2,
-                //         "sub_environments_count": 0,
-                //         "display_name": "xa124ls401047",
-                //         "latest_execution_finished_operations": 108,
-                //         "latest_execution_total_operations": 147,
-                //         "blueprint_id": "AZURE-RHEL-Single-VM-v9.5",
-                //         "site_name": null,
-                //         "latest_execution_status": "failed",
-                //         "environment_type": "",
-                //         "labels": [
-                //             {
-                //                 "key": "csys-consumer-id",
-                //                 "value": "xa124ls401047-disk-0",
-                //                 "created_at": "2023-03-06T06:59:19.871Z",
-                //                 "creator_id": 21
-                //             },
-                //             {
-                //                 "key": "csys-obj-parent",
-                //                 "value": "a3286a7b-4ec9-44a7-9323-29bd2c1d883a",
-                //                 "created_at": "2023-03-06T06:51:01.343Z",
-                //                 "creator_id": 21
-                //             },
-                //             {
-                //                 "key": "csys-obj-type",
-                //                 "value": "service",
-                //                 "created_at": "2023-03-06T06:51:01.343Z",
-                //                 "creator_id": 21
-                //             },
-                //             {
-                //                 "key": "obj-type",
-                //                 "value": "terraform",
-                //                 "created_at": "2023-03-06T06:51:01.343Z",
-                //                 "creator_id": 21
-                //             }
-                //         ]
-                //     }
-                // ];
-
-
-
-                //TODO zde to musi vracet create_deployment_environment
-                
-
-                const capabilitiesPromises = _.map(rawData, deployment =>
+                //nacteni detailu (os, apod.)
+                const executionsPromises = _.map(rawData, deployment => 
                     helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
                 );
-
-                return Promise.all([rawData, ...capabilitiesPromises]); 
+                return Promise.all([rawData, ...executionsPromises]); 
                 })
-                .then(([rawData, ...capabilitiesPromises]) => {
-                
-                    const deploymentsPromises = _.map(rawData, deployment => {
-                        
-                        let filterRules = [];
-                        let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values:[]};
-                        obj_filter.values.push(deployment.id);
-                        filterRules.push(obj_filter);
+                .then(([rawData, ...executionsPromises]) => {
 
-                        helper.Manager.doPost('/searches/deployments', {body: { filter_rules: filterRules}}, commonManagerRequestOptions)
-                        //helper.Manager.doPost(`/executions/xa124ls201046-sadminbu-zdenek.suchel`, commonManagerRequestOptions)
-                    }
-                    
-                    );        
-                    
-                    Promise.all(deploymentsPromises);
-                    let combineData = [deploymentsPromises,capabilitiesPromises];
-                    return [rawData, ...combineData];
-                        })
-                        .then(([rawData, ...combineData]) => {
-
-                            rawData.forEach(_vm => {
-                                //TODO!!! filter pro konktretni
-                                _vm.dataDisksAllData = combineData;
-                                _vm.executionAllData = combineData;
-                            }); 
-
-                            return Promise.resolve({
-                                items:rawData
-                            });
-                        })
-                        .then(data => res.send(data))
-                        .catch(error => next(error));
+                    rawData.forEach(_vm => {
+                        //sparovani rawData(=vm) s executionsDaty:
+                        //let _dta = [];
+                        _vm.executionAllData = [];
+                        executionsPromises.forEach(exObj => {
+                            if (exObj.items[0].deployment_id==_vm.id) {
+                                _vm.executionAllData.push(exObj);
+                            }
+                        });
+                        //_vm.executionAllData = executionsPromises;
+                    }); 
+                    return rawData;
+                })
+                .then(data => res.send(data))
+                .catch(error => next(error));
     });
     
+    r.register('get_vm_detailsData2', 'GET', (req, res, next, helper) => {
+        const _ = require('lodash');
+        console.log('get_vm_dataDiskData...');
+        const { headers } = req;
+        const commonManagerRequestOptions = {
+            headers: {
+                tenant: headers.tenant,
+                cookie: headers.cookie
+            }
+        };
+        // parsing parametres:
+        const params = { ...req.query };
+        let _id = params.id;
+        console.log(params);
+    
+        let filterRules = [];
+        let obj_filter = {"type":"label","key":"csys-obj-parent","operator":"any_of",values:[]};
+        obj_filter.values.push(_id);
+        filterRules.push(obj_filter);
+    
+        let outputData = [];
+    
+        return helper.Manager.doPost('/searches/deployments', {
+            body: { filter_rules: filterRules },
+            ...commonManagerRequestOptions
+        })
+            .then(data => {
+                outputData = data.items;
+                return Promise.all(outputData);
+            })
+            .then(data => res.send(data))
+            .catch(error => next(error));
+    });
+
+
+/////////////
+
     r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {
         const _ = require('lodash');
         console.log('get_vm_detailsData...');
@@ -317,3 +289,48 @@ module.exports = async function(r) {
     });
     
     }
+
+
+                  // rawData = [
+                //     {
+                //         "id": "xa124ls401047",
+                //         "deployment_status": "requires_attention",
+                //         "sub_services_status": "requires_attention",
+                //         "sub_environments_status": null,
+                //         "sub_services_count": 2,
+                //         "sub_environments_count": 0,
+                //         "display_name": "xa124ls401047",
+                //         "latest_execution_finished_operations": 108,
+                //         "latest_execution_total_operations": 147,
+                //         "blueprint_id": "AZURE-RHEL-Single-VM-v9.5",
+                //         "site_name": null,
+                //         "latest_execution_status": "failed",
+                //         "environment_type": "",
+                //         "labels": [
+                //             {
+                //                 "key": "csys-consumer-id",
+                //                 "value": "xa124ls401047-disk-0",
+                //                 "created_at": "2023-03-06T06:59:19.871Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "csys-obj-parent",
+                //                 "value": "a3286a7b-4ec9-44a7-9323-29bd2c1d883a",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "csys-obj-type",
+                //                 "value": "service",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             },
+                //             {
+                //                 "key": "obj-type",
+                //                 "value": "terraform",
+                //                 "created_at": "2023-03-06T06:51:01.343Z",
+                //                 "creator_id": 21
+                //             }
+                //         ]
+                //     }
+                // ];

@@ -31,84 +31,84 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         this.state = this.initialState;
     }
 
-    componentDidMount() {
-        const { toolbox, vmData } = this.props;
-        //let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
-        //toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
-    }
+    // componentDidMount() {
+    //     const { toolbox, vmData } = this.props;
+    //     //let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
+    //     //toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
+    // }
 
-    loadRequestData = async (_item:any) =>{
-        const { toolbox } = this.props;
-        const manager = toolbox.getManager();
-        const tenantName=manager.getSelectedTenant();
+    // loadRequestData = async (_item:any) =>{
+    //     const { toolbox } = this.props;
+    //     const manager = toolbox.getManager();
+    //     const tenantName=manager.getSelectedTenant();
         
-        let params = {};
-        params.tenant = tenantName;
-        params.id = _item.id;
+    //     let params = {};
+    //     params.tenant = tenantName;
+    //     params.id = _item.id;
 
-        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
-        const requestsData = [];
+    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
+    //     const requestsData = [];
         
-        _dataFromExternalSource.forEach(_pamRequest => {
-            try {
-                let outObj = _pamRequest["inputs"];
-                outObj.id = _pamRequest.id;
-                _pamRequest.requestor = <Icon name="spinner" loading/>
-                requestsData.push(outObj)
-            } catch (error) {
-                console.log(error);
-            }
-        });
+    //     _dataFromExternalSource.forEach(_pamRequest => {
+    //         try {
+    //             let outObj = _pamRequest["inputs"];
+    //             outObj.id = _pamRequest.id;
+    //             _pamRequest.requestor = <Icon name="spinner" loading/>
+    //             requestsData.push(outObj)
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     });
         
-        await this.loadDetailsExecution(requestsData);
+    //     await this.loadDetailsExecution(requestsData);
 
-        this.setState({requestsData}); //tady je pole hodnot ve value
-        return requestsData;
-    }
+    //     this.setState({requestsData}); //tady je pole hodnot ve value
+    //     return requestsData;
+    // }
 
-    loadDetailsExecution = async (requestsData:any) => {
-        const { toolbox } = this.props;
-        const manager = toolbox.getManager();
-        const tenantName=manager.getSelectedTenant();
-        let promises = [];
+    // loadDetailsExecution = async (requestsData:any) => {
+    //     const { toolbox } = this.props;
+    //     const manager = toolbox.getManager();
+    //     const tenantName=manager.getSelectedTenant();
+    //     let promises = [];
        
-        try {
-            requestsData.forEach(_pamRequest => {
+    //     try {
+    //         requestsData.forEach(_pamRequest => {
 
-                let params = {};
-                params.tenant = tenantName;
-                params.id = _pamRequest.id;
+    //             let params = {};
+    //             params.tenant = tenantName;
+    //             params.id = _pamRequest.id;
 
-                let _dataExecutions="";
+    //             let _dataExecutions="";
                     
-                let _promise = new Promise(function(resolve, reject) {
-                     resolve(toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }));
-                });
-                promises.push(_promise);
+    //             let _promise = new Promise(function(resolve, reject) {
+    //                  resolve(toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }));
+    //             });
+    //             promises.push(_promise);
 
-                _promise.then(
+    //             _promise.then(
             
-                    (_dataExecutions) => { 
-                        //TODO dodelat podle casu!!! a vzit nejmladsi!!!
-                        _pamRequest.executionData = _dataExecutions;
-                        _dataExecutions.forEach(element => {
-                            if (element.workflow_id=="create_deployment_environment") {
-                                _pamRequest.requestor = element.created_by;
-                            }
-                        });
+    //                 (_dataExecutions) => { 
+    //                     //TODO dodelat podle casu!!! a vzit nejmladsi!!!
+    //                     _pamRequest.executionData = _dataExecutions;
+    //                     _dataExecutions.forEach(element => {
+    //                         if (element.workflow_id=="create_deployment_environment") {
+    //                             _pamRequest.requestor = element.created_by;
+    //                         }
+    //                     });
                         
-                    }
-                );
-                Promise.all(promises).then((_res) => {
-                    return requestsData;
-                });
+    //                 }
+    //             );
+    //             Promise.all(promises).then((_res) => {
+    //                 return requestsData;
+    //             });
                 
-            });
-        } catch (error) {
-            console.log(error);
-        }
-        //return requestsData;
-    }
+    //         });
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     //return requestsData;
+    // }
 
     workFlowsPAMRequests=(item:any, vmData:any)=> {
         let outWorks = [];
@@ -182,33 +182,48 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { toolbox, widget, vmData } = this.props;
+        const { toolbox, widget, vmData,data } = this.props;
         const { DataTable } = Stage.Basic;
 
         //console.log(data);
 
-        if (this.state==null) {
-            return (
-                <div>
-                    <div ></div>
-                </div>
-            );
+        // if (this.state==null) {
+        //     return (
+        //         <div>
+        //             <div ></div>
+        //         </div>
+        //     );
+        // }
+
+        // if (this.state.requestsData==null) {
+        //     return (
+        //         <div>
+        //             <div></div>
+        //         </div>
+        //     );
+        // }
+        // if (this.state.requestsData==undefined) {
+        //     return (
+        //         <div>
+        //             <div></div>
+        //         </div>
+        //     );
+        // }
+
+        let _diskData = [];
+
+        try {
+            data.forEach(element => {
+                //console.log(element);
+                if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1  && (element.display_name.indexOf(vmData.id)!=-1)) {
+                    _diskData.push(element["inputs"]);
+                }
+                
+            });
+        } catch (error) {
+            
         }
 
-        if (this.state.requestsData==null) {
-            return (
-                <div>
-                    <div></div>
-                </div>
-            );
-        }
-        if (this.state.requestsData==undefined) {
-            return (
-                <div>
-                    <div></div>
-                </div>
-            );
-        }
         return (
             <div>
                 <div><span style={{fontWeight:"bold"}}>PAM requests</span></div>
@@ -223,7 +238,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     <DataTable.Column label="Requestor" name="requestor" />
                     <DataTable.Column label="Actions" name="actions"/>
 
-                    {_.map(this.state.requestsData, item => (      
+                    {_.map(_diskData, item => (      
                                       
                             <DataTable.Row
                                 // key={this.getUniqueRowIndex(item)}

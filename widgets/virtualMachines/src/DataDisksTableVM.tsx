@@ -32,11 +32,11 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         this.state = this.initialState;
     }
 
-    componentDidMount() {
-        const { toolbox, vmData } = this.props;
-        let _eventName= 'vm:selectVM_data_disks_' + vmData.id;
-        toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
-    }
+    // componentDidMount() {
+    //     const { toolbox, vmData } = this.props;
+    //     let _eventName= 'vm:selectVM_data_disks_' + vmData.id;
+    //     toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
+    // }
 
     workFlowsDataDisks=(workflows :Workflow[] )=> {
         let outWorks = [];
@@ -72,31 +72,31 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         return Math.random().toString(36).slice(2, 11);
     }
 
-    loadDiskData = async (_item:any) =>{
+    // loadDiskData = async (_item:any) =>{
 
-        const { toolbox } = this.props;
-        const manager = toolbox.getManager();
-        const tenantName=manager.getSelectedTenant();
+    //     const { toolbox } = this.props;
+    //     const manager = toolbox.getManager();
+    //     const tenantName=manager.getSelectedTenant();
         
-        let params = {};
-        params.tenant = tenantName;
-        params.id = _item.id;
+    //     let params = {};
+    //     params.tenant = tenantName;
+    //     params.id = _item.id;
 
-        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
-        const diskData = [] ;
-        _dataFromExternalSource.forEach(_disk => {
-            try {
-                let diskObject = _disk["inputs"];
-                diskObject.name=_disk.id;
-                diskData.push(diskObject);
-            } catch (error) {
-                console.log(error);
-            }
-        });
+    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
+    //     const diskData = [] ;
+    //     _dataFromExternalSource.forEach(_disk => {
+    //         try {
+    //             let diskObject = _disk["inputs"];
+    //             diskObject.name=_disk.id;
+    //             diskData.push(diskObject);
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     });
 
-        this.setState({diskData}); //tady je pole hodnot ve value
-        return diskData;
-    }
+    //     this.setState({diskData}); //tady je pole hodnot ve value
+    //     return diskData;
+    // }
     getExtraDiskInfo = (item:any)=> {
         let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
         return _extraData;
@@ -136,21 +136,18 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         const { data, toolbox, widget,vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
-            if (this.state==null) {
-                return (
-                    <div>
-                        <div ></div>
-                    </div>
-                );
-            }
-    
-            if (this.state.diskData==null) {
-                return (
-                    <div>
-                        <div></div>;
-                    </div>
-                );
-            }
+        let _diskData = [];
+
+        try {
+            data.forEach(element => {
+                //console.log(element);
+                if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1 && (element.display_name.indexOf(vmData.id)!=-1)) {
+                    _diskData.push(element["inputs"]);
+                }
+            });
+        } catch (error) {
+            
+        }
 
             return (<div>
                 <div><span style={{fontWeight:"bold"}}>Data disks</span></div>
@@ -165,7 +162,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
                     <DataTable.Column label="Actions" name="actions"/>
 
-                    {_.map(this.state.diskData, item => (      
+                    {_.map(_diskData, item => (      
                                       
                             <DataTable.Row
                                 // key={this.getUniqueRowIndex()}

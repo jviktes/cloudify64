@@ -34,35 +34,35 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         };
     }
 
-    //componentDidMount() {
-        // console.log("VirtualMachinesTable componentDidMount..."); 
-        // const { data, toolbox, widget } = this.props;
+    componentDidMount() {
+        console.log("VirtualMachinesTable componentDidMount..."); 
+        const { data, toolbox, widget } = this.props;
         //TODO vola se tady? nebo a v didUpdatu:
-        // console.log("componentDidMount:"+JSON.stringify(data)); 
-        // {_.map(data.items, item => (        
+        console.log("componentDidMount:"+JSON.stringify(data)); 
+        {_.map(data.items, item => (        
 
-        //     this.loadDetailedData(item)
-        // ))}
-   // }
+            this.loadDetailedData(item)
+        ))}
+   }
 
-    // componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
-    //     //console.log("VirtualMachinesTable componentDidUpdate..."); 
-    //     const { data, toolbox, widget } = this.props;
+    componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
+        //console.log("VirtualMachinesTable componentDidUpdate..."); 
+        const { data, toolbox, widget } = this.props;
 
-    //     try {
-    //         //pokud uz konecne dorazily data a state je nenacetly, pak takto updatuju state (=> loadDetails...)
-    //         if (this.props.data.length!=0 && prevState.detailedData.length==0 && this.state.loading==false) {
-    //             console.log("componentDidUpdate:"); 
-    //             //spusteni volani celeho cyklu:
-    //                 {_.map(this.props.data.items, item => (        
-    //                     this.loadDetailedData(item)
-    //                 ))}
-    //             }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
+        try {
+            //pokud uz konecne dorazily data a state je nenacetly, pak takto updatuju state (=> loadDetails...)
+            if (this.props.data.length!=0 && prevState.detailedData.length==0 && this.state.loading==false) {
+                console.log("componentDidUpdate:"); 
+                //spusteni volani celeho cyklu:
+                    {_.map(this.props.data.items, item => (        
+                        this.loadDetailedData(item)
+                    ))}
+                }
+        } catch (error) {
+            console.log(error);
+        }
 
-    // }
+    }
 
     isItForParrentButton=(item:any)=> {
 
@@ -199,17 +199,17 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             
                 let _inputs = {};
                 let _index = -1;
-                if (item[0].executionAllData[0].items!=null){
+                if (item.executionAllData[0].items!=null){
                     //hledani indexu ve vm, v execution pro create
-                    for (let index = 0; index < item[0].executionAllData[0].items.length; index++) {
-                        const element = item[0].executionAllData[0].items[index];
+                    for (let index = 0; index < item.executionAllData[0].items.length; index++) {
+                        const element = item.executionAllData[0].items[index];
                         if (element.workflow_id=="create_deployment_environment") {
                             _index=index;
                             break;
                         }
                     }
                     if (_index!=-1) {
-                        let _inputs = item[0].executionAllData[0].items[_index]["parameters"]["inputs"];
+                        let _inputs = item.executionAllData[0].items[_index]["parameters"]["inputs"];
                         _ip=this._getIPAdress(_inputs);
                         _cpus=this._getCPU(_inputs);
                         _ram=this._getRAM(_inputs);
@@ -218,7 +218,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         _environment=this._getEnvironment(_inputs);
                         _os=this._getOS(_inputs);
                         _dataDisks = this._getDataDisks(_inputs);
-                        _display_name = item[0].display_name;
+                        _display_name = item.id;
                     }
                 }
  
@@ -300,54 +300,58 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             return "";
         }
     };
+    //melo by vracet deploymenty s parrantem = executions
+    loadDetailedData = async (_item:any) =>{
 
-    // loadDetailedData = async (_item:any) =>{
+        if ( this.state.loading==false) {
+            this.setState({ loading: true });
+        }
 
-    //     if ( this.state.loading==false) {
-    //         this.setState({ loading: true });
-    //     }
-
-    //     try {
-    //         console.log("loadDetailedData:");
-    //         //console.log(_item.id);
+        try {
+            console.log("loadDetailedData:");
+            //console.log(_item.id);
     
-    //         const { toolbox } = this.props;
-    //         const manager = toolbox.getManager();
-    //         const tenantName=manager.getSelectedTenant();
+            const { toolbox } = this.props;
+            const manager = toolbox.getManager();
+            const tenantName=manager.getSelectedTenant();
             
-    //         if (_item==null) {
-    //             return null;
-    //         }
+            if (_item==null) {
+                return null;
+            }
 
-    //         let params = {};
-    //         params.tenant = tenantName;
-    //         params.id = _item.id;
+            let params = {};
+            params.tenant = tenantName;
+            params.id = _item.id;
 
-    //         if (params.id==null) {
-    //             return null;
-    //         }
+            if (params.id==null) {
+                return null;
+            }
 
-    //         if (this.state==null) {
-    //             return;
-    //         }
+            if (this.state==null) {
+                return;
+            }
 
-    //         let detailedData=this.state.detailedData;
-    //         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData', { params });
+            let detailedData=this.state.detailedData;
+            const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
 
-    //         if (detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1) {
-    //             detailedData.push(_dataFromExternalSource[0]); 
-    //         }
-    //         else {
-    //             console.log("This item already exists");
-    //         }
+            _dataFromExternalSource.forEach(element => {
+                detailedData.push(element); 
+            });
 
-    //         this.setState({detailedData});
+            // if (detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1) {
+            //     detailedData.push(_dataFromExternalSource[0]); 
+            // }
+            // else {
+            //     console.log("This item already exists");
+            // }
 
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
+            this.setState({detailedData});
 
-    // };
+        } catch (error) {
+            console.log(error);
+        }
+
+    };
 
     fetchGridData = fetchParams => {
         const { toolbox } = this.props;
@@ -513,8 +517,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
-                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={data} toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.state.detailedData} toolbox={toolbox} ></DataDisksTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.state.detailedData} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>
