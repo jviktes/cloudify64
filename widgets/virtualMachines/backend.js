@@ -40,15 +40,13 @@ module.exports = async function(r) {
                 .then(([rawData, ...executionsPromises]) => {
 
                     rawData.forEach(_vm => {
-                        //sparovani rawData(=vm) s executionsDaty:
-                        //let _dta = [];
+                        //sparovani rawData(=vm) s executionsDaty, executionData potrebuju pro create_deployment_environment a nacteni detailu os, ram apod.
                         _vm.executionAllData = [];
                         executionsPromises.forEach(exObj => {
                             if (exObj.items[0].deployment_id==_vm.id) {
                                 _vm.executionAllData.push(exObj);
                             }
                         });
-                        //_vm.executionAllData = executionsPromises;
                     }); 
                     return rawData;
                 })
@@ -219,30 +217,7 @@ module.exports = async function(r) {
             ...commonManagerRequestOptions
         })
         .then(data => {
-                //rawData = data.items;
-                //console.log('get_vm_requestsData results:');
-                //console.log("data:");
-                //console.log(data);
-    
-                //mock data:
-    
-                // let fake_data= {requestsData: []};
-    
-                // fake_data.requestsData.push({id:params.id, account_name:"vik1@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik2@dhl.com", role:"user", status:"Grant implemented",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik3@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik4@dhl.com", role:"admin", status:"Revocation approved",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik5@dhl.com", role:"admin", status:"Grant approved",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik6@dhl.com", role:"admin", status:"Grant waiting for approval",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik7@dhl.com", role:"user", status:"Grant approved",requestor:"vik1@dhl.com"});
-                // fake_data.requestsData.push({id:params.id, account_name:"vik8@dhl.com", role:"admin", status:"GGrant implemented",requestor:"vik1@dhl.com"});
-    
-                //console.log(fake_data);
-                //console.log(fake_data.requestsData);
-    
-    
-                //console.log(spireDeployments);
-    
+
                 data.items.forEach(element => {
                     //console.log(element);
                     if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {

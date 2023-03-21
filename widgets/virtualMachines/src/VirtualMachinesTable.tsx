@@ -281,9 +281,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
     _getOS = (inputJson:any)=> {
 
-        //returnValue=this.state.detailedData[_index]["parameters"]["inputs"];
-        //returnValue = returnValue["os_name"]+"(version:"+ returnValue["os_version"]+ ")";
-
         try {
             if (inputJson["os_name"]!=undefined) {
                 return inputJson["os_name"]+" (version: "+ inputJson["os_version"]+ ")";
@@ -334,9 +331,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             let detailedData=this.state.detailedData;
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
 
-            _dataFromExternalSource.forEach(element => {
-                detailedData.push(element); 
-            });
+            // _dataFromExternalSource.forEach(element => {
+            //     detailedData.push(element); 
+            // });
+
+            detailedData[params.id] = _dataFromExternalSource;
 
             // if (detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1) {
             //     detailedData.push(_dataFromExternalSource[0]); 
@@ -414,32 +413,51 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     //          }} />)
     //     }
     // };
-    showCurrentSettings = (item:any) => {
-        const { data } = this.props;
-        let _index = -1;
-        for (let index = 0; index < this.state.detailedData.length; index++) {
-            const element = this.state.detailedData[index];
-            if (element.deployment_id==item.id) {
-                _index=index;
-                 break;
-            }
+    // showCurrentSettings = (item:any) => {
+    //     const { data } = this.props;
+    //     let _index = -1;
+    //     for (let index = 0; index < this.state.detailedData.length; index++) {
+    //         const element = this.state.detailedData[index];
+    //         if (element.deployment_id==item.id) {
+    //             _index=index;
+    //              break;
+    //         }
 
+    //     }
+
+    //     let _indexData = -1;
+    //     for (let index = 0; index < data.items.length; index++) {
+    //         const element = data.items[index];
+    //         if (element.id==item.id) {
+    //             _indexData=index;
+    //              break;
+    //         }
+    //     }
+
+    //     let _dataToShow = this.state.detailedData[_index];
+    //     _dataToShow.workflows = data.items[_indexData].workflows;
+    //     console.log(_dataToShow);
+    //     alert(JSON.stringify(_dataToShow, null, "  "));
+    // };
+
+    getDataDiskData = (data:any, vmData:any) => {
+        let _dataDisk = [];
+        try {
+            //TODO: tady asi vybirat z labelu a parentObj, element.labels contains 
+            data.forEach(element => {
+                if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
+                    let _diksObj = element["inputs"];
+                    _diksObj.name = element.display_name;
+                    _dataDisk.push(_diksObj);
+                }
+            });
+            return _dataDisk;
+        } catch (error) {
+            
         }
+    }
 
-        let _indexData = -1;
-        for (let index = 0; index < data.items.length; index++) {
-            const element = data.items[index];
-            if (element.id==item.id) {
-                _indexData=index;
-                 break;
-            }
-        }
 
-        let _dataToShow = this.state.detailedData[_index];
-        _dataToShow.workflows = data.items[_indexData].workflows;
-        console.log(_dataToShow);
-        alert(JSON.stringify(_dataToShow, null, "  "));
-    };
 
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -448,10 +466,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
 
+
+
         return (
             <div>
-
-                {/* {this.renderBackButton()} */}
 
                 <DataTable
                     className="table-scroll-vm"
@@ -493,7 +511,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
-                                {/* <DataTable.Data>{this.renderHtmlParrentButton(item)}</DataTable.Data> */}
+                             
                                 <DataTable.Data><Button icon="expand" onClick={() => this.onRowClick(item)} /></DataTable.Data>
                                 <DataTable.Data>
 
@@ -517,7 +535,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
-                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.state.detailedData} toolbox={toolbox} ></DataDisksTableVM></div>
+                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id],item)} toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.state.detailedData} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>

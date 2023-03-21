@@ -136,19 +136,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         const { data, toolbox, widget,vmData } = this.props;
         const { DataTable } = Stage.Basic;
 
-        let _diskData = [];
-
-        try {
-            data.forEach(element => {
-                //console.log(element);
-                if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1 && (element.display_name.indexOf(vmData.id)!=-1)) {
-                    _diskData.push(element["inputs"]);
-                }
-            });
-        } catch (error) {
-            
-        }
-
             return (<div>
                 <div><span style={{fontWeight:"bold"}}>Data disks</span></div>
 
@@ -162,7 +149,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
                     <DataTable.Column label="Actions" name="actions"/>
 
-                    {_.map(_diskData, item => (      
+                    {_.map(data, item => (      
                                       
                             <DataTable.Row
                                 // key={this.getUniqueRowIndex()}

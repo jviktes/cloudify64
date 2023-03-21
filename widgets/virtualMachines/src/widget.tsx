@@ -16,7 +16,9 @@ Stage.defineWidget({
     hasStyle:true,
     categories: [Stage.GenericConfig.CATEGORY.OTHERS],
     permission: Stage.GenericConfig.CUSTOM_WIDGET_PERMISSIONS.CUSTOM_ALL,
-
+    initialConfiguration: [
+        Stage.GenericConfig.POLLING_TIME_CONFIG(30),
+    ],
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
         console.log("fetchData");
