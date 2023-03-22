@@ -80,22 +80,65 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         return outWorks;
     };
 
-    getUniqueRowIndex= (item:any) => {
-        return Math.random().toString(36).slice(2, 11);
-    }
+    getDataForDeploymentId = (itemVM:any,item:any) => {
 
-    getDataForDeploymentId = (vmData:any,item:any) => {
+        //puvodni:
+        // return (
+        //     {
+        //         status: 'success',
+        //         data: {
+        //                 display_name: item.display_name,
+        //                 workflows: this.workFlowsPAMRequests(vmData,item),
+        //             },
+        //         }
+        // )
 
-        return (
-            {
-                status: 'success',
-                data: {
-                        display_name: item.display_name,
-                        workflows: this.workFlowsPAMRequests(vmData,item),
-                    },
+
+        if (itemVM["latest_execution_status"] == "in_progress") {
+            return (
+                {
+                    status: 'loading',
+                    tooltip:"Processing"
                 }
-        )
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "error") {
+            return (
+                {
+                    status: 'error',
+                    tooltip:"Error",
+                    error: {} 
+                }
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "waiting") {
+            return (
+                {
+                    status: 'waiting',
+                    data: {
+                        display_name: itemVM.display_name,
+                        workflows: [],
+                    },
+                    tooltip:"Waiting to approval"
+                }
+            )
+        }
+        else { //"completed"
+            return (
+                {
+                    status: 'success',
+                    data: {
+                            display_name: itemVM.display_name,
+                            workflows: this.workFlowsPAMRequests(itemVM,item),
+                        },
+                    tooltip:"Actions"}
+                )
+        }
+
     };
+
+
+
     //show all data in tooltip as JSON:
     getExtraPAMInfo = (item:any)=> {
         let _extraData = JSON.stringify(item);

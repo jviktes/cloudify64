@@ -1,14 +1,9 @@
 // @ts-nocheck File not migrated fully to TS
-import PropTypes, { bool } from 'prop-types';
-import type { Tests } from './types';
+import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
-import { identity } from 'lodash';
-import { castArray } from 'lodash';
 import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
-import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
 import DataDisksTableVM from './DataDisksTableVM';
 import RequestsTableVM from './RequestsTableVM';
-import inputs from '../../common/src/inputs';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -23,6 +18,10 @@ interface VirtualMachinesDataProps {
 
 // eslint-disable-next-line react/prefer-stateless-function
 export default class VirtualMachinesTable extends React.Component<VirtualMachinesDataProps> {
+    static propTypes: {
+        // eslint-disable-next-line react/forbid-prop-types
+        data: PropTypes.Requireable<any[]>;
+    };
 
     constructor(props: VirtualMachinesDataProps) {
         super(props);
@@ -36,9 +35,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     componentDidMount() {
         console.log("VirtualMachinesTable componentDidMount..."); 
-        const { data, toolbox, widget } = this.props;
+        const { data, toolbox } = this.props;
         toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
-        
+
         console.log("componentDidMount:"+JSON.stringify(data)); 
         {_.map(data.items, item => (        
 
@@ -48,7 +47,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
         //console.log("VirtualMachinesTable componentDidUpdate..."); 
-        const { data, toolbox, widget } = this.props;
 
         try {
             //pokud uz konecne dorazily data a state je nenacetly, pak takto updatuju state (=> loadDetails...)
@@ -62,7 +60,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         } catch (error) {
             console.log(error);
         }
-
     }
 
     workFlowsVM=(item:any)=> {
@@ -111,10 +108,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 return outWorks;
     };
         
-    getDataForDeploymentId = (item:any) => {
+    getDataForDeploymentId = (itemVM:any,detailedData:any) => {
 
-        
-        // const fetchedDeploymentState: ComponentProps<typeof DeploymentActionButtons
+        //this.state.detailedData[item.id])
         // // eslint-disable-next-line no-nested-ternary
         // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
         // ? { status: 'loading' }
@@ -124,30 +120,108 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         //TODO - nyni jsou vsechny success --> pozor na errory atd.
 
-        // if (item["latest_execution_status"] == "in_progress") {
-        //     return (
-        //         {
-        //             status: 'loading'
+        //detailedData by mely obshovat sub-deployments a k nim nacetle executions.
+
+        //=> potrebuju najit posledni bezici execution z moznych sub-deploymentu:
+        //             _diksObj.executionAllData = element.executionAllData;
+        //             _dataDisk.push(_diksObj);
+
+        if (detailedData!=null) {
+
+                let _vmExecutions = itemVM.executionAllData;
+
+                try {
+                    detailedData.forEach(_deployment => {
+                        let ttt = _deployment.executionAllData;
+
+                        if(_deployment["blueprint_id"].indexOf("Azure-RHEL-Single-VM")!=-1) {
+
+
+                        }
+                        if(_deployment["blueprint_id"].indexOf("Azure-WS-Single-VM")!=-1) {
+
+
+                        }
+
+                        if(_deployment["blueprint_id"].indexOf("Azure-Data-Disk")!=-1) {
+
+
+                        }
+                        if(_deployment["blueprint_id"].indexOf("JEA-")!=-1) {
+
+
+                        }
+                        if(_deployment["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
+
+
+                        }       
+
+                    });
+                } catch (error) {
+                    
+                }
+
+        }
+        //najdu latest execution
+
+
+        // try {
+        //     data.forEach((element: { [x: string]: any; display_name: any;executionAllData: any;  }) => {
+        //         if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
+        //             let _diksObj = element["inputs"];
+        //             _diksObj.name = element.display_name;
+        //             _diksObj.executionAllData = element.executionAllData;
+        //             _dataDisk.push(_diksObj);
         //         }
-        //     )
+        //     });
+        // } catch (error) {
         // }
-        //else {
+
+        if (itemVM["latest_execution_status"] == "in_progress") {
+            return (
+                {
+                    status: 'loading',
+                    tooltip:"Processing"
+                }
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "error") {
+            return (
+                {
+                    status: 'error',
+                    tooltip:"Error",
+                    error: {} 
+                }
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "waiting") {
+            return (
+                {
+                    status: 'waiting',
+                    data: {
+                        display_name: itemVM.display_name,
+                        workflows: this.workFlowsVM(itemVM),
+                    },
+                    tooltip:"Waiting to approval"
+                }
+            )
+        }
+        else { //"completed"
             return (
                 {
                     status: 'success',
                     data: {
-                            display_name: item.display_name,
-                            workflows: this.workFlowsVM(item),
+                            display_name: itemVM.display_name,
+                            workflows: this.workFlowsVM(itemVM),
                         },
-                    }
-            )
-        //}
+                    tooltip:"Actions"}
+                )
+        }
 
     };
 
     // eslint-disable-next-line class-methods-use-this
-    onRowClick(_item) {
-
+    onRowClick(_item:any) {
 
         //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
         const el = document.getElementById(`${_item.id}_ext`);
@@ -161,23 +235,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             el.style.backgroundColor = '';
             elMain.style.backgroundColor = '';
         }
-        //TODO: volat pouze pri zobrazovani radku, pri skryti nevolat
-        //trigger event a zobrazeni dataTable v tabulce:
-        //trigger event a zobrazeni requests v tabulce:
-        const { toolbox } = this.props;
-        // let _eventNameDataDisks= 'vm:selectVM_data_disks_' + _item.id;
-        // toolbox.getEventBus().trigger(_eventNameDataDisks,_item);
-
-        // let _eventNamePamRequests= 'vm:selectVM_pam_requests_' + _item.id;
-        // toolbox.getEventBus().trigger(_eventNamePamRequests,_item);
 
     }
 
-    //render function, item = vm
     getDetails=(item:any) => {
         
-        const { DataTable } = Stage.Basic;
-
         let _display_name = "";
         let _ip="";
         let _cpus="";
@@ -186,11 +248,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         let _azure_location="";
         let _environment="";
         let _os="";
-        let _dataDisks=[];
-        let _pamRequest = [];
+
         try {
             
-                let _inputs = {};
+               
                 let _index = -1;
                 if (item.executionAllData[0].items!=null){
                     //hledani indexu ve vm, v execution pro create
@@ -210,7 +271,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         _azure_location=this._getLocation(_inputs);
                         _environment=this._getEnvironment(_inputs);
                         _os=this._getOS(_inputs);
-                        _dataDisks = this._getDataDisks(_inputs);
                         _display_name = item.id;
                     }
                 }
@@ -226,8 +286,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         item.azure_location=_azure_location;
         item.environment=_environment;
         item.os=_os;
-        item.dataDisks=_dataDisks;
-        item.pamRequest = _pamRequest;
         item.display_name=_display_name;
     };
     _getLocation= (inputJson:any)=> {
@@ -278,7 +336,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             if (inputJson["os_name"]!=undefined) {
                 return inputJson["os_name"]+" (version: "+ inputJson["os_version"]+ ")";
             }
-            
+            else {
+                return ""; 
+            }
         } catch (error) {
             return "";
         }
@@ -299,8 +359,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         try {
             console.log("loadDetailedData:");
-            //console.log(_item.id);
-    
+
             const { toolbox } = this.props;
             const manager = toolbox.getManager();
             const tenantName=manager.getSelectedTenant();
@@ -324,19 +383,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             let detailedData=this.state.detailedData;
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
 
-            // _dataFromExternalSource.forEach(element => {
-            //     detailedData.push(element); 
-            // });
-
             detailedData[params.id] = _dataFromExternalSource;
-
-            // if (detailedData.indexOf(_dataFromExternalSource[0].deployment_id) === -1) {
-            //     detailedData.push(_dataFromExternalSource[0]); 
-            // }
-            // else {
-            //     console.log("This item already exists");
-            // }
-
             this.setState({detailedData});
 
         } catch (error) {
@@ -357,24 +404,26 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     };
 
     getDataDiskData = (data:any) => {
-        let _dataDisk = [];
+        let _dataDisk: any[] = [];
         try {
-            data.forEach(element => {
+            data.forEach((element: { [x: string]: any; display_name: any;executionAllData: any;  }) => {
                 if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
+                    _diksObj.executionAllData = element.executionAllData;
                     _dataDisk.push(_diksObj);
                 }
             });
             return _dataDisk;
         } catch (error) {
+            return _dataDisk;
         }
     }
 
-    getPAMData = (data:any, vmData:any) => {
-        let _dataPAM= [];
+    getPAMData = (data:any) => {
+        let _dataPAM: any[]= [];
         try {
-            data.forEach(element => {
+            data.forEach((element: { [x: string]: any; display_name: any; executionAllData: any; }) => {
                 if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
@@ -384,15 +433,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             });
             return _dataPAM;
         } catch (error) {
+            return _dataPAM;
         }
     }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
-        const { DataTable,Icon } = Stage.Basic;
-        const manager = toolbox.getManager();
-        const tenantName = manager.getSelectedTenant();
+        const { DataTable } = Stage.Basic;
 
         return (
             <div>
@@ -405,7 +453,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     searchable
                 >
 
-                    {/* <DataTable.Column label="Id" name="id"/> */}
                     <DataTable.Column label="Name" name="labels"/>
                     <DataTable.Column label="OS" name="os" />
                     <DataTable.Column label="IP" name="ip" />
@@ -414,9 +461,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Azure size" name="azure_size" />
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
-                    {/* <DataTable.Column label="Parent" name="parent_deployment" /> */}
                     <DataTable.Column label="" name="" />
-                    <DataTable.Column label="Actions" name="actions" name="class" />
+                    <DataTable.Column label="Actions" name="actions" />
                     {/* <DataTable.Column label="" name="config" name="class" /> */}
                     {_.map(data.items, item => (    
                                         
@@ -426,7 +472,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 id={`${item.id}_main`}
                                 >
                                 {this.getDetails(item)}
-                                {/* <DataTable.Data>{item.id}</DataTable.Data> */}
+
                                 <DataTable.Data>{item.display_name}</DataTable.Data>
 
                                 <DataTable.Data>{item.os}</DataTable.Data>
@@ -444,7 +490,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DeploymentActionButtons
                                         buttonTitle='Actions'
                                         deploymentId={item.id}
-                                        fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                        fetchedDeploymentState={this.getDataForDeploymentId(item,this.state.detailedData[item.id])}
                                         toolbox={toolbox}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
@@ -462,7 +508,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id],item)}  toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])}  toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>
