@@ -31,11 +31,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         this.state = this.initialState;
     }
 
-    // componentDidMount() {
-    //     const { toolbox, vmData } = this.props;
-    //     //let _eventName= 'vm:selectVM_pam_requests_' + vmData.id;
-    //     //toolbox.getEventBus().on(_eventName, this.loadRequestData, this);
-    // }
+
 
     // loadRequestData = async (_item:any) =>{
     //     const { toolbox } = this.props;
@@ -180,49 +176,26 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         let _extraData = JSON.stringify(item);
         return _extraData;
     }
+
+    getRequestor = (item:any) => {
+
+        try {
+            item.executionAllData[0].items.forEach(element => {
+                if (element.workflow_id=="create_deployment_environment") {
+                    return element.created_by;
+                }
+             });
+        } catch (error) {
+            return ""
+        }
+
+
+    }
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { toolbox, widget, vmData,data } = this.props;
         const { DataTable } = Stage.Basic;
-
-        //console.log(data);
-
-        // if (this.state==null) {
-        //     return (
-        //         <div>
-        //             <div ></div>
-        //         </div>
-        //     );
-        // }
-
-        // if (this.state.requestsData==null) {
-        //     return (
-        //         <div>
-        //             <div></div>
-        //         </div>
-        //     );
-        // }
-        // if (this.state.requestsData==undefined) {
-        //     return (
-        //         <div>
-        //             <div></div>
-        //         </div>
-        //     );
-        // }
-
-        let _diskData = [];
-
-        try {
-            data.forEach(element => {
-                //console.log(element);
-                if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1  && (element.display_name.indexOf(vmData.id)!=-1)) {
-                    _diskData.push(element["inputs"]);
-                }
-                
-            });
-        } catch (error) {
-            
-        }
 
         return (
             <div>
@@ -238,7 +211,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     <DataTable.Column label="Requestor" name="requestor" />
                     <DataTable.Column label="Actions" name="actions"/>
 
-                    {_.map(_diskData, item => (      
+                    {_.map(data, item => (      
                                       
                             <DataTable.Row
                                 // key={this.getUniqueRowIndex(item)}
@@ -250,7 +223,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{item?.status}</DataTable.Data>
                                 {/* <DataTable.Data>{JSON.stringify(item?.executionData)}</DataTable.Data> */}
-                                <DataTable.Data>{item?.requestor}</DataTable.Data>
+                                <DataTable.Data>{this.getRequestor(item)}</DataTable.Data>
                                 
                                 <DataTable.Data>
 
