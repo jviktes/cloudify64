@@ -31,81 +31,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         this.state = this.initialState;
     }
 
-
-
-    // loadRequestData = async (_item:any) =>{
-    //     const { toolbox } = this.props;
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-        
-    //     let params = {};
-    //     params.tenant = tenantName;
-    //     params.id = _item.id;
-
-    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_requestsData', { params }); //nactu data,
-    //     const requestsData = [];
-        
-    //     _dataFromExternalSource.forEach(_pamRequest => {
-    //         try {
-    //             let outObj = _pamRequest["inputs"];
-    //             outObj.id = _pamRequest.id;
-    //             _pamRequest.requestor = <Icon name="spinner" loading/>
-    //             requestsData.push(outObj)
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     });
-        
-    //     await this.loadDetailsExecution(requestsData);
-
-    //     this.setState({requestsData}); //tady je pole hodnot ve value
-    //     return requestsData;
-    // }
-
-    // loadDetailsExecution = async (requestsData:any) => {
-    //     const { toolbox } = this.props;
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-    //     let promises = [];
-       
-    //     try {
-    //         requestsData.forEach(_pamRequest => {
-
-    //             let params = {};
-    //             params.tenant = tenantName;
-    //             params.id = _pamRequest.id;
-
-    //             let _dataExecutions="";
-                    
-    //             let _promise = new Promise(function(resolve, reject) {
-    //                  resolve(toolbox.getWidgetBackend().doGet('get_vm_pam_request_executions', { params }));
-    //             });
-    //             promises.push(_promise);
-
-    //             _promise.then(
-            
-    //                 (_dataExecutions) => { 
-    //                     //TODO dodelat podle casu!!! a vzit nejmladsi!!!
-    //                     _pamRequest.executionData = _dataExecutions;
-    //                     _dataExecutions.forEach(element => {
-    //                         if (element.workflow_id=="create_deployment_environment") {
-    //                             _pamRequest.requestor = element.created_by;
-    //                         }
-    //                     });
-                        
-    //                 }
-    //             );
-    //             Promise.all(promises).then((_res) => {
-    //                 return requestsData;
-    //             });
-                
-    //         });
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    //     //return requestsData;
-    // }
-
     workFlowsPAMRequests=(item:any, vmData:any)=> {
         let outWorks = [];
         //    Approve / reject request (applies to * waiting requests)
@@ -178,17 +103,17 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
     }
 
     getRequestor = (item:any) => {
-
+        let _requestor = "";
         try {
             item.executionAllData[0].items.forEach(element => {
                 if (element.workflow_id=="create_deployment_environment") {
-                    return element.created_by;
+                    _requestor= element.created_by;
                 }
              });
         } catch (error) {
-            return ""
+            _requestor = "";
         }
-
+        return _requestor;
 
     }
 
@@ -213,16 +138,12 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                     {_.map(data, item => (      
                                       
-                            <DataTable.Row
-                                // key={this.getUniqueRowIndex(item)}
-                                // id={this.getUniqueRowIndex(item)}
-                            >
+                            <DataTable.Row>
 
                                 {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
                                 <DataTable.Data>{item?.user_id}</DataTable.Data>
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{item?.status}</DataTable.Data>
-                                {/* <DataTable.Data>{JSON.stringify(item?.executionData)}</DataTable.Data> */}
                                 <DataTable.Data>{this.getRequestor(item)}</DataTable.Data>
                                 
                                 <DataTable.Data>
