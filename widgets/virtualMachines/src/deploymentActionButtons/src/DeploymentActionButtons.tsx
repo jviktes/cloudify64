@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
 import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
-//import {ExecuteWorkflowModal} from '../executeWorkflow/ExecuteWorkflowModal'; //'./executeWorkflow/ExecuteWorkflowModal'  
 
 type FetchedDeploymentState =
     // eslint-disable-next-line camelcase
@@ -33,14 +32,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         Basic: { Button },
         Hooks: { useResettableState }
     } = Stage;
-    //const ExecuteWorkflowModal = Stage.Common.Workflows.ExecuteModal;
-    //const WorkflowsMenu = Stage.Common.Workflows.Menu;
-    //const DeploymentActionsMenu = Stage.Common.Deployments.ActionsMenu;
-    //const DeploymentActionsModals = Stage.Common.Deployments.ActionsModals;
-
-    //const [activeAction, setActiveAction, resetActiveAction] = useResettableState<string | null>(null);
-    //const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
-    //const [workflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
     const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
@@ -53,49 +44,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
     const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
 
-    // const actions = Object.freeze({
-    //     delete: 'delete',
-    //     forceDelete: 'forceDelete',
-    //     install: 'install',
-    //     manageLabels: 'manageLabels',
-    //     setSite: 'setSite',
-    //     uninstall: 'uninstall',
-    //     update: 'update'
-    // });
-
-    //const actions = Object();
-
-    //vyber polozek --> TODO: doplnit konfiguraci...
-    // const workFlowsDHL=(workflows :Workflow[] )=> {
-
-    //     //
-    //     //console.log(workflows);
-    //     let outWorks = [];
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-    //             if (_workFlowItem.name=="restart_vm"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //             if (_workFlowItem.name=="run_audit"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //             // if (_workFlowItem.name=="remove_disk"){
-    //             //     outWorks.push(_workFlowItem);
-    //             // }
-    //         }
-    //     }
-    //     return outWorks;
-    // };
-
-    //console.log(fetchedDeploymentState);
-
     return (
         <div>
 
-            {/* workflows musim už tady přetřídit, co chci zobrazit atd. */}
-            {/* TODO: jak tam pridat delete, musim se modlit, aby to bylo v seznamu a nemusel to nejak davat z  DeploymentActionsMenu*/}
-            {/* TODO: jak sem pridat tlacitko pro get parrent?*/}
             <WorkflowsMenu
                 workflows={workflows}
                 trigger={
@@ -104,37 +55,12 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                         color="teal"
                         icon="cogs"
                         disabled={buttonsDisabled}
+                        
                         // content="Execute workflow"
                     />
                 }
                 onClick={setWorkflow}
             />
-
-            {/* VIK toto je menu pod kterym je menu pro deploymnety (instal, update atd.) 
-            seznamy položek jsou natvrdo definované v common/src/deployments/DeploymentsActionMenu:
-                    { name: actions.install, icon: 'play', permission: executeWorkflowPermission },
-                    { name: actions.update, icon: 'edit', permission: 'deployment_update_create' },
-                    { name: actions.setSite, icon: 'building', permission: 'deployment_set_site' },
-                    { name: actions.manageLabels, icon: 'tags', permission: 'deployment_create' },
-                    { name: actions.uninstall, icon: 'recycle', permission: executeWorkflowPermission },
-                    { name: actions.delete, icon: 'trash alternate', permission: 'deployment_delete' },
-                    { name: actions.forceDelete, icon: 'trash', permission: 'deployment_delete' }
-            */}
-            
-            {/* <DeploymentActionsMenu
-                onActionClick={setActiveAction}
-                toolbox={toolbox}
-                trigger={
-                    <Button
-                        className="deploymentActionsButton labeled icon"
-                        color="teal"
-                        icon="content"
-                        disabled={buttonsDisabled}
-                        content={buttonTitle}
-                    />
-                }
-                workflows={workflows}
-            /> */}
 
             {isDeploymentFetched(fetchedDeploymentState) && deploymentId && workflow && (
                 <ExecuteWorkflowModal
@@ -147,17 +73,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     
                 />
             )}
-
-            {/* {isDeploymentFetched(fetchedDeploymentState) && deploymentId && activeAction && (
-                <DeploymentActionsModals
-                    activeAction={activeAction}
-                    deploymentId={deploymentId}
-                    deploymentName={fetchedDeploymentState.data.display_name}
-                    onHide={resetActiveAction}
-                    toolbox={toolbox}
-                    redirectToParentPageAfterDelete={redirectToParentPageAfterDelete}
-                />
-            )} */}
         </div>
     );
 };
