@@ -32,12 +32,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         this.state = this.initialState;
     }
 
-    // componentDidMount() {
-    //     const { toolbox, vmData } = this.props;
-    //     let _eventName= 'vm:selectVM_data_disks_' + vmData.id;
-    //     toolbox.getEventBus().on(_eventName, this.loadDiskData, this);
-    // }
-
     workFlowsDataDisks=(workflows :Workflow[] )=> {
         let outWorks = [];
         for (const key in workflows) {
@@ -54,49 +48,52 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         return outWorks;
     };
 
-    getDataForDeploymentId = (item:any) => {
+    getDataForDeploymentId = (itemVM:any) => {
 
-        return (
-            {
-                status: 'success',
-                data: {
-                        display_name: item.display_name,
-                        workflows: this.workFlowsDataDisks(item.workflows),
-                    },
+        if (itemVM["latest_execution_status"] == "in_progress") {
+            return (
+                {
+                    status: 'loading',
+                    tooltip:"Processing"
                 }
-        )
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "error") {
+            return (
+                {
+                    status: 'error',
+                    tooltip:"Error",
+                    error: {} 
+                }
+            )
+        }
+        else if (itemVM["latest_execution_status"] == "waiting") {
+            return (
+                {
+                    status: 'waiting',
+                    data: {
+                        display_name: itemVM.display_name,
+                        workflows: [],
+                    },
+                    tooltip:"Waiting to approval"
+                }
+            )
+        }
+        else { //"completed"
+            return (
+                {
+                    status: 'success',
+                    data: {
+                            display_name: itemVM.display_name,
+                            workflows: this.workFlowsDataDisks(itemVM.workflows),
+                        },
+                    tooltip:"Actions"
+                }
+            )
 
-    };
-
-    getUniqueRowIndex= () => {
-        return Math.random().toString(36).slice(2, 11);
+         };
     }
 
-    // loadDiskData = async (_item:any) =>{
-
-    //     const { toolbox } = this.props;
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-        
-    //     let params = {};
-    //     params.tenant = tenantName;
-    //     params.id = _item.id;
-
-    //     const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_dataDiskData', { params }); //nactu data,
-    //     const diskData = [] ;
-    //     _dataFromExternalSource.forEach(_disk => {
-    //         try {
-    //             let diskObject = _disk["inputs"];
-    //             diskObject.name=_disk.id;
-    //             diskData.push(diskObject);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     });
-
-    //     this.setState({diskData}); //tady je pole hodnot ve value
-    //     return diskData;
-    // }
     getExtraDiskInfo = (item:any)=> {
         let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
         return _extraData;
@@ -152,8 +149,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                     {_.map(data, item => (      
                                       
                             <DataTable.Row
-                                // key={this.getUniqueRowIndex()}
-                                // id={this.getUniqueRowIndex()}
                             >
                                 <DataTable.Data title={this.getExtraDiskInfo(item)}>{(item.name)} <Icon name="info circle" title={this.getExtraDiskInfo(item)}></Icon></DataTable.Data>
                                 <DataTable.Data>{this.getMountPointData(vmData,item?.mountpoint)}</DataTable.Data>
