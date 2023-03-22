@@ -37,7 +37,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     componentDidMount() {
         console.log("VirtualMachinesTable componentDidMount..."); 
         const { data, toolbox, widget } = this.props;
-        //TODO vola se tady? nebo a v didUpdatu:
+        toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
+        
         console.log("componentDidMount:"+JSON.stringify(data)); 
         {_.map(data.items, item => (        
 
@@ -62,23 +63,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             console.log(error);
         }
 
-    }
-
-    isItForParrentButton=(item:any)=> {
-
-        if (item.labels==undefined || item.labels==null  || item.labels==[]) {
-            return 0;
-        }
-        //{"key":"csys-obj-type","value":"environment"
-        for (const key in item.labels) {
-            if (Object.prototype.hasOwnProperty.call(item.labels, key)) {
-                const _label = item.labels[key];
-                if (_label.key == "csys-obj-parent") {
-                    return _label.value;
-                }
-            }
-        }
-        return 0;
     }
 
     workFlowsVM=(item:any)=> {
@@ -140,15 +124,24 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         //TODO - nyni jsou vsechny success --> pozor na errory atd.
 
-        return (
-            {
-                status: 'success',
-                data: {
-                        display_name: item.display_name,
-                        workflows: this.workFlowsVM(item),
-                    },
-                }
-        )
+        // if (item["latest_execution_status"] == "in_progress") {
+        //     return (
+        //         {
+        //             status: 'loading'
+        //         }
+        //     )
+        // }
+        //else {
+            return (
+                {
+                    status: 'success',
+                    data: {
+                            display_name: item.display_name,
+                            workflows: this.workFlowsVM(item),
+                        },
+                    }
+            )
+        //}
 
     };
 
@@ -358,92 +351,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     };
 
     refreshData() {
+        console.log("VirtualMachines refreshData...");
         const { toolbox } = this.props;
         toolbox.refresh();
     };
-    //melo by odfiltrovat a zobrazit jen jeden radek:
-    getParrent=(filteredDeploymentParentId:any)=> {
-        const { toolbox } = this.props;
-        const { widget } = this.props;
-        //console.log("GetParrent for:"+filteredDeploymentParentId);
-        //const params = {deploymentId: filteredId };
-        //this.fetchGridData(params);
-        
-        this.setState({ showBackButton: true });
-        toolbox.getContext().setValue('filteredDeploymentParentId', filteredDeploymentParentId);
-    }
-    // getAllVirtualMachines =()=> {
-    //     const { toolbox } = this.props;
-    //     const { widget } = this.props;
-    //     console.log("getAllVirtualMachines..");
 
-    //     this.setState({ showBackButton: false });
-    //     toolbox.getContext().setValue('filteredDeploymentParentId', null);
-    // }
-    // renderHtmlParrentButton=(item:any)=> {
-    //     //tlacitko se bude zobrazovat pouze pokud je v labelech "csys-obj-parent"
-    //     const { data, toolbox, widget } = this.props;
-    //     let parrentId = this.isItForParrentButton(item);
-    //     let _content="Go to parent";
-
-    //     if (item.parent_display_name!=undefined){
-    //         _content = "Go to parent " + item.parent_display_name; 
-    //     }
-
-    //     if (parrentId!=0) {
-
-    //         return (<Button
-    //             icon="home"
-    //             title={_content}
-    //                     onClick={(event: Event) => {
-    //                         event.stopPropagation();
-    //                         this.getParrent(parrentId);
-    //              } } />)
-    //     }
-
-    // };
-    // renderBackButton = () => {
-    //     //console.log("renderBackButton..."+this.state.showBackButton);
-    //     if (this.state.showBackButton==true) {
-    //        return (<Button
-    //         icon="home"
-    //         onClick={(event: Event) => {
-    //                     event.stopPropagation();
-    //                     this.getAllVirtualMachines();
-    //          }} />)
-    //     }
-    // };
-    // showCurrentSettings = (item:any) => {
-    //     const { data } = this.props;
-    //     let _index = -1;
-    //     for (let index = 0; index < this.state.detailedData.length; index++) {
-    //         const element = this.state.detailedData[index];
-    //         if (element.deployment_id==item.id) {
-    //             _index=index;
-    //              break;
-    //         }
-
-    //     }
-
-    //     let _indexData = -1;
-    //     for (let index = 0; index < data.items.length; index++) {
-    //         const element = data.items[index];
-    //         if (element.id==item.id) {
-    //             _indexData=index;
-    //              break;
-    //         }
-    //     }
-
-    //     let _dataToShow = this.state.detailedData[_index];
-    //     _dataToShow.workflows = data.items[_indexData].workflows;
-    //     console.log(_dataToShow);
-    //     alert(JSON.stringify(_dataToShow, null, "  "));
-    // };
-
-    getDataDiskData = (data:any, vmData:any) => {
+    getDataDiskData = (data:any) => {
         let _dataDisk = [];
         try {
-            //TODO: tady asi vybirat z labelu a parentObj, element.labels contains 
             data.forEach(element => {
                 if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
                     let _diksObj = element["inputs"];
@@ -453,11 +368,24 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             });
             return _dataDisk;
         } catch (error) {
-            
         }
     }
 
-
+    getPAMData = (data:any, vmData:any) => {
+        let _dataPAM= [];
+        try {
+            data.forEach(element => {
+                if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
+                    let _diksObj = element["inputs"];
+                    _diksObj.name = element.display_name;
+                    _diksObj.executionAllData = element.executionAllData;
+                    _dataPAM.push(_diksObj);
+                }
+            });
+            return _dataPAM;
+        } catch (error) {
+        }
+    }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -465,8 +393,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { DataTable,Icon } = Stage.Basic;
         const manager = toolbox.getManager();
         const tenantName = manager.getSelectedTenant();
-
-
 
         return (
             <div>
@@ -535,8 +461,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout'>
-                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id],item)} toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.state.detailedData} toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} toolbox={toolbox} ></DataDisksTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id],item)}  toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>
