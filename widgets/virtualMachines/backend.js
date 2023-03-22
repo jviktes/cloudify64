@@ -31,7 +31,8 @@ module.exports = async function(r) {
             .then(data => {
                 rawData = data.items;
 
-                //nacteni detailu (os, apod.)
+                //nacteni detailu (os, apod.), TODO: nactou se vsechny? pokud ne, zajima me asi jen:
+                //create_deployment_environment a posledni bezici
                 const executionsPromises = _.map(rawData, deployment => 
                     helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
                 );
@@ -53,7 +54,7 @@ module.exports = async function(r) {
                 .then(data => res.send(data))
                 .catch(error => next(error));
     });
-    
+    //nacteni detailu: pro deployment reprezentujici VM vyberu podrizene deploymenty = Datadisky nebo PAM requesty a k nim pak nanactu jejich executions: 
     r.register('get_vm_detailsData2', 'GET', (req, res, next, helper) => {
         const _ = require('lodash');
         console.log('get_vm_dataDiskData...');
@@ -74,8 +75,6 @@ module.exports = async function(r) {
         obj_filter.values.push(_id);
         filterRules.push(obj_filter);
     
-        //let outputData = [];
-    
         return helper.Manager.doPost('/searches/deployments', {
             body: { filter_rules: filterRules },
             ...commonManagerRequestOptions
@@ -83,7 +82,8 @@ module.exports = async function(r) {
         .then(data => {
             rawData = data.items;
 
-            //nacteni detailu (os, apod.)
+            //nacteni detailu (os, apod.),
+            //TODO: mozna problem, pokud se nenactou vsechny, zajima me: create_deployment_environment pro PAM (requestor)
             const executionsPromises = _.map(rawData, deployment => 
                 helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
             );
