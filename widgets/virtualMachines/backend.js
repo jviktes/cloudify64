@@ -74,15 +74,33 @@ module.exports = async function(r) {
         obj_filter.values.push(_id);
         filterRules.push(obj_filter);
     
-        let outputData = [];
+        //let outputData = [];
     
         return helper.Manager.doPost('/searches/deployments', {
             body: { filter_rules: filterRules },
             ...commonManagerRequestOptions
         })
-            .then(data => {
-                outputData = data.items;
-                return Promise.all(outputData);
+        .then(data => {
+            rawData = data.items;
+
+            //nacteni detailu (os, apod.)
+            const executionsPromises = _.map(rawData, deployment => 
+                helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
+            );
+            return Promise.all([rawData, ...executionsPromises]); 
+            })
+            .then(([rawData, ...executionsPromises]) => {
+
+                rawData.forEach(_vm => {
+                    //sparovani rawData(=vm) s executionsDaty, executionData potrebuju pro create_deployment_environment a nacteni detailu os, ram apod.
+                    _vm.executionAllData = [];
+                    executionsPromises.forEach(exObj => {
+                        if (exObj.items[0].deployment_id==_vm.id) {
+                            _vm.executionAllData.push(exObj);
+                        }
+                    });
+                }); 
+                return rawData;
             })
             .then(data => res.send(data))
             .catch(error => next(error));
