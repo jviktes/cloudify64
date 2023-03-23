@@ -82,51 +82,59 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     getDataForDeploymentId = (itemVM:any,item:any) => {
 
-        if (itemVM["latest_execution_status"] == "in_progress") {
-            return (
-                {
-                    status: 'loading',
-                    tooltip:"Processing"
-                }
-            )
+        const {menuData} = this.props;
+
+        if (menuData.status=='success') {
+            menuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
         }
-        else if (itemVM["latest_execution_status"] == "failed") {
-            return (
-                {
-                    status: 'success',
-                    data: {
-                        display_name: itemVM.display_name,
-                        workflows: this.workFlowsPAMRequests(itemVM,item),
-                    },
-                    error: "Error",
-                    tooltip:"Error",
-                }
-            )
-        }
-        else if (itemVM["latest_execution_status"] == "waiting") {
-            return (
-                {
-                    status: 'waiting',
-                    data: {
-                        display_name: itemVM.display_name,
-                        workflows: [],
-                    },
-                    tooltip:"Waiting to approval"
-                }
-            )
-        }
-        else { //"completed"
-            return (
-                    {
-                        status: 'success',
-                        data: {
-                                display_name: itemVM.display_name,
-                                workflows: this.workFlowsPAMRequests(itemVM,item),
-                            },
-                        tooltip:"Actions"
-                    }
-                )
-        }
+
+        return menuData;
+
+        // if (itemVM["latest_execution_status"] == "in_progress") {
+        //     return (
+        //         {
+        //             status: 'loading',
+        //             tooltip:"Processing"
+        //         }
+        //     )
+        // }
+        // else if (itemVM["latest_execution_status"] == "failed") {
+        //     return (
+        //         {
+        //             status: 'success',
+        //             data: {
+        //                 display_name: itemVM.display_name,
+        //                 workflows: this.workFlowsPAMRequests(itemVM,item),
+        //             },
+        //             error: "Error",
+        //             tooltip:"Error",
+        //         }
+        //     )
+        // }
+        // else if (itemVM["latest_execution_status"] == "waiting") {
+        //     return (
+        //         {
+        //             status: 'waiting',
+        //             data: {
+        //                 display_name: itemVM.display_name,
+        //                 workflows: [],
+        //             },
+        //             tooltip:"Waiting to approval"
+        //         }
+        //     )
+        // }
+        // else { //"completed"
+        //     return (
+        //             {
+        //                 status: 'success',
+        //                 data: {
+        //                         display_name: itemVM.display_name,
+        //                         workflows: this.workFlowsPAMRequests(itemVM,item),
+        //                     },
+        //                 tooltip:"Actions"
+        //             }
+        //         )
+        // }
 
     };
 
@@ -191,7 +199,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
-                                    <Icon name="info circle" title={this.getExtraPAMInfo(item)}></Icon>
+                                    {/* <Icon name="info circle" title={this.getExtraPAMInfo(item)}></Icon> */}
                                 </DataTable.Data>
 
                             </DataTable.Row>

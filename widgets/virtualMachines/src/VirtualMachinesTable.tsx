@@ -107,21 +107,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 }
                 return outWorks;
     };
-        
+
     getDataForDeploymentId = (itemVM:any,detailedData:any) => {
 
-        //this.state.detailedData[item.id])
-        // // eslint-disable-next-line no-nested-ternary
-        // >['fetchedDeploymentState'] = Stage.Utils.isEmptyWidgetData(data)
-        // ? { status: 'loading' }
-        // : data instanceof Error
-        // ? { status: 'error', error: data }
-        // : { status: 'success', data };
-
-        //TODO - nyni jsou vsechny success --> pozor na errory atd.
-
         //detailedData by mely obshovat sub-deployments a k nim nacetle executions.
-
         //=> potrebuju najit posledni bezici execution z moznych sub-deploymentu:
         //             _diksObj.executionAllData = element.executionAllData;
         //             _dataDisk.push(_diksObj);
@@ -140,13 +129,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 //VM:
                 let _vmExecutions = itemVM.executionAllData[0].items;
                 combinedExecutions = _vmExecutions;
-                // _vmExecutions.forEach(element => {
-                //     if (element.status=="started") {
-
-                //     }
-                // });
-
-                //
                 try {
                     detailedData.forEach(_deployment => {
                         let _execs = [];
