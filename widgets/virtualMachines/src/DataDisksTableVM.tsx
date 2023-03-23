@@ -16,6 +16,7 @@ interface DataDisksTableVMProps {
         nodeInstanceId: string;
     };
     vmData:any
+    menuData:any
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
 }
@@ -50,52 +51,60 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
     getDataForDeploymentId = (itemVM:any) => {
 
-        if (itemVM["latest_execution_status"] == "in_progress") {
-            return (
-                {
-                    status: 'loading',
-                    tooltip:"Processing"
-                }
-            )
-        }
-        else if (itemVM["latest_execution_status"] == "failed") {
-            return (
-                {
-                    status: 'success',
-                    data: {
-                        display_name: itemVM.display_name,
-                        workflows: this.workFlowsDataDisks(itemVM.workflows),
-                    },
-                    error: "Error",
-                    tooltip:"Error",
-                }
-            )
-        }
-        else if (itemVM["latest_execution_status"] == "waiting") {
-            return (
-                {
-                    status: 'waiting',
-                    data: {
-                        display_name: itemVM.display_name,
-                        workflows: [],
-                    },
-                    tooltip:"Waiting to approval"
-                }
-            )
-        }
-        else { //"completed"
-            return (
-                {
-                    status: 'success',
-                    data: {
-                            display_name: itemVM.display_name,
-                            workflows: this.workFlowsDataDisks(itemVM.workflows),
-                        },
-                    tooltip:"Actions"
-                }
-            )
+        const {menuData} = this.props;
 
-         };
+        if (menuData.status=='success') {
+            menuData.data.workflows=this.workFlowsDataDisks(itemVM.workflows)
+        }
+
+        return menuData;
+
+        // if (itemVM["latest_execution_status"] == "in_progress") {
+        //     return (
+        //         {
+        //             status: 'loading',
+        //             tooltip:"Processing"
+        //         }
+        //     )
+        // }
+        // else if (itemVM["latest_execution_status"] == "failed") {
+        //     return (
+        //         {
+        //             status: 'success',
+        //             data: {
+        //                 display_name: itemVM.display_name,
+        //                 workflows: this.workFlowsDataDisks(itemVM.workflows),
+        //             },
+        //             error: "Error",
+        //             tooltip:"Error",
+        //         }
+        //     )
+        // }
+        // else if (itemVM["latest_execution_status"] == "waiting") {
+        //     return (
+        //         {
+        //             status: 'waiting',
+        //             data: {
+        //                 display_name: itemVM.display_name,
+        //                 workflows: [],
+        //             },
+        //             tooltip:"Waiting to approval"
+        //         }
+        //     )
+        // }
+        // else { //"completed"
+        //     return (
+        //         {
+        //             status: 'success',
+        //             data: {
+        //                     display_name: itemVM.display_name,
+        //                     workflows: this.workFlowsDataDisks(itemVM.workflows),
+        //                 },
+        //             tooltip:"Actions"
+        //         }
+        //     )
+
+        //  };
     }
 
     getExtraDiskInfo = (item:any)=> {
