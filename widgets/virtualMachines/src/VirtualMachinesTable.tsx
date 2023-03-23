@@ -63,8 +63,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     workFlowsVM=(item:any)=> {
-
-        
                 let outWorks = [];
                 let workflows=item.workflows
                 for (const key in workflows) {
@@ -107,7 +105,34 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 }
                 return outWorks;
     };
+    workFlowsVMWaitingToApproval=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="approve_or_reject"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
+    getProgressText = (latestExec:any)=> {
 
+        try {
+            if (latestExec.Total_operations!=0) {
+                return Math.floor(latestExec.Finished_operations/latestExec.Total_operations*100);
+            }
+            else {
+                return "running";
+            }
+
+        } catch (error) {
+            return "running";
+        }
+
+    }
     getDataForDeploymentId = (itemVM:any,detailedData:any) => {
 
         //detailedData by mely obshovat sub-deployments a k nim nacetle executions.
@@ -122,6 +147,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         latestRunningExecution.Error = "";
         latestRunningExecution.CreatedBy = "";
         latestRunningExecution.Status = "";
+        latestRunningExecution.Finished_operations=0;
+        latestRunningExecution.Total_operations=0;
 
         let combinedExecutions = [];
 
@@ -150,8 +177,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
                     latestRunningExecution.DateTime =latestExec.created_at;
                     latestRunningExecution.Error = latestExec.error;
-                    latestRunningExecution.CreatedBy = latestExec.created_;
+                    latestRunningExecution.CreatedBy = latestExec.created_by;
                     latestRunningExecution.Status = latestExec.status;
+                    latestRunningExecution.Finished_operations=latestExec.finished_operations;
+                    latestRunningExecution.Total_operations=latestExec.total_operations;
 
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
                         latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
@@ -169,18 +198,31 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         latestRunningExecution.Tooltip = "Privileged access request - RHEL";
                     }  
                     
-                    if (itemVM["latest_execution_status"] == "in_progress"  || latestRunningExecution?.Status=="pending") {
+
+                    //vyhodnoceni approval:
+                    //podminky: "latest_execution_status": "completed" 
+                    //AND latestRunningExecution.Error.contains ("breakpoint_plugin.resources.breakpoint.start")
+                    let internalStatus = "";
+
+                    if ((itemVM["latest_execution_status"] == "completed") && (latestRunningExecution?.Error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
+                        internalStatus = "waitingToApproval";
+                    }
+                    else {
+                        internalStatus=itemVM["latest_execution_status"];
+                    }
+
+                    if (internalStatus== "in_progress"  || latestRunningExecution?.Status=="pending") {
                         return (
                             {
                                 status: 'loading',
-                                tooltip:latestRunningExecution.Tooltip
+                                tooltip:(latestRunningExecution.Tooltip + "(Executed by: "+latestRunningExecution.CreatedBy+",Progress (%):"+this.getProgressText(latestRunningExecution)+")")
                             }
                         )
                     }
-                    else if (itemVM["latest_execution_status"] == "failed") {
+                    else if (internalStatus == "failed") {
                         return (
                             {
-                                status: 'success',
+                                status: 'error', //TODO - pokud je chyba, co s tím???
                                 data: {
                                     display_name: itemVM.display_name,
                                     workflows: this.workFlowsVM(itemVM),
@@ -190,20 +232,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             }
                         )
                     }
-                    //TODO urceni stavu waiting:
-                    else if (itemVM["latest_execution_status"] == "waiting") {
+
+                    else if (internalStatus == "waitingToApproval") {
                         return (
                             {
-                                status: 'waiting',
+                                status: 'waitingToApproval',
                                 data: {
                                     display_name: itemVM.display_name,
-                                    workflows: this.workFlowsVM(itemVM),
+                                    workflows: this.workFlowsVMWaitingToApproval(itemVM),
                                 },
                                 tooltip:"Waiting to approval"
                             }
                         )
                     }
-                    else { //"completed"
+                    else if (internalStatus == "completed") {
                         return (
                             {
                                 status: 'success',
@@ -213,6 +255,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     },
                                 tooltip:"Actions"}
                             )
+                    }
+                    else {
+                        return null;
                     }
                 }
 

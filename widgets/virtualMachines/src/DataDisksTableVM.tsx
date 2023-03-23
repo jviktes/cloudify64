@@ -80,10 +80,10 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         //         }
         //     )
         // }
-        // else if (itemVM["latest_execution_status"] == "waiting") {
+        // else if (itemVM["latest_execution_status"] == "waitingToApproval") {
         //     return (
         //         {
-        //             status: 'waiting',
+        //             status: 'waitingToApproval',
         //             data: {
         //                 display_name: itemVM.display_name,
         //                 workflows: [],

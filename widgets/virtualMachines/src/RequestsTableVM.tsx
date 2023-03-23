@@ -79,7 +79,19 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         }
         return outWorks;
     };
-
+    workFlowsVMWaitingToApproval=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="approve_or_reject"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
     getDataForDeploymentId = (itemVM:any,item:any) => {
 
         const {menuData} = this.props;
@@ -87,7 +99,9 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         if (menuData.status=='success') {
             menuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
         }
-
+        if (menuData.status=='waitingToApproval') {
+            menuData.data.workflows=this.workFlowsVMWaitingToApproval(item)
+        }
         return menuData;
 
         // if (itemVM["latest_execution_status"] == "in_progress") {
@@ -111,10 +125,10 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         //         }
         //     )
         // }
-        // else if (itemVM["latest_execution_status"] == "waiting") {
+        // else if (itemVM["latest_execution_status"] == "waitingToApproval") {
         //     return (
         //         {
-        //             status: 'waiting',
+        //             status: 'waitingToApproval',
         //             data: {
         //                 display_name: itemVM.display_name,
         //                 workflows: [],
@@ -137,8 +151,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         // }
 
     };
-
-
 
     //show all data in tooltip as JSON:
     getExtraPAMInfo = (item:any)=> {

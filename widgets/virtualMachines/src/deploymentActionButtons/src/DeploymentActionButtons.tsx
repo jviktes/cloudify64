@@ -8,12 +8,12 @@ import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 type FetchedDeploymentState =
     // eslint-disable-next-line camelcase
     | { status: 'success'; data: { display_name: string; workflows: Workflow[] };tooltip:any}
-    | { status: 'loading';tooltip:any}
-    | { status: 'error'; error: Error;tooltip:any }
-    | { status: 'waiting';tooltip:any};
+    | { status: 'loading';data: { display_name: string; workflows: Workflow[] };tooltip:any}
+    | { status: 'error'; data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
+    | { status: 'waitingToApproval';data: { display_name: string; workflows: Workflow[] };tooltip:any};
 
-const isDeploymentFetched = (state: FetchedDeploymentState): state is FetchedDeploymentState & { status: 'success' } =>
-    state.status === 'success';
+// const isDeploymentFetched = (state: FetchedDeploymentState): state is FetchedDeploymentState & { status: 'success' } =>
+//     state.status === 'success';
 
 interface DeploymentActionButtonsProps {
     deploymentId?: string | null;
@@ -41,20 +41,20 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
     }, [fetchedDeploymentState]);
 
-    const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
-    const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
-
+    //const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
+    //const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
+    //const workflows = fetchedDeploymentState.data.workflows;
 
     const renderWorkMenu=()=>{
         if (fetchedDeploymentState.status=="success") {
             return (<WorkflowsMenu
-                workflows={workflows}
+                workflows={fetchedDeploymentState.data.workflows}
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
                         color="teal"
                         icon="cogs"
-                        disabled={buttonsDisabled}
+                        disabled={false}
                         title={fetchedDeploymentState.tooltip}
                     />
                 }
@@ -63,32 +63,31 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
         if (fetchedDeploymentState.status=="loading") {
             return (<Icon name="spinner" loading disabled title={fetchedDeploymentState.tooltip} />)
-            // <WorkflowsMenu
-            //     workflows={workflows}
-            //     trigger={
-            //         <Button
-            //             className="executeWorkflowButton icon"
-            //             color="teal"
-            //             icon="cogs"
-            //             disabled={buttonsDisabled}
-            //             title={fetchedDeploymentState.tooltip}
-            //         />
-            //     }
-            //     onClick={setWorkflow}
-            // />
         }
         if (fetchedDeploymentState.status=="error") {
-            return (<Icon name="stop" color="red" title={fetchedDeploymentState.tooltip} />)
-        }
-        if (fetchedDeploymentState.status=="waiting") {
             return (<WorkflowsMenu
-                workflows={workflows}
+                workflows={fetchedDeploymentState.data.workflows}
+                trigger={
+                    <Button
+                        className="executeWorkflowButton icon"
+                        color="red"
+                        icon="cogs"
+                        disabled={false}
+                        title={fetchedDeploymentState.tooltip}
+                    />
+                }
+                onClick={setWorkflow}
+            />)
+        }
+        if (fetchedDeploymentState.status=="waitingToApproval") {
+            return (<WorkflowsMenu
+                workflows={fetchedDeploymentState.data.workflows}
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
                         color="teal"
                         icon="cogs"
-                        disabled={buttonsDisabled}
+                        disabled={false}
                         title={fetchedDeploymentState.tooltip}
                     />
                 }
@@ -104,7 +103,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
             {renderWorkMenu()}
 
-            {isDeploymentFetched(fetchedDeploymentState) && deploymentId && workflow && (
+            {deploymentId && workflow && (
                 <ExecuteWorkflowModal
                     open
                     deploymentId={deploymentId}
