@@ -93,63 +93,14 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         return outWorks;
     };
     getDataForDeploymentId = (itemVM:any,item:any) => {
-
         const {menuData} = this.props;
-
-        if (menuData.status=='success') {
+        if (menuData.status=='waitingToApproval') {
+            menuData.data.workflows=this.workFlowsVMWaitingToApproval(itemVM)
+        }
+        else {
             menuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
         }
-        if (menuData.status=='waitingToApproval') {
-            menuData.data.workflows=this.workFlowsVMWaitingToApproval(item)
-        }
         return menuData;
-
-        // if (itemVM["latest_execution_status"] == "in_progress") {
-        //     return (
-        //         {
-        //             status: 'loading',
-        //             tooltip:"Processing"
-        //         }
-        //     )
-        // }
-        // else if (itemVM["latest_execution_status"] == "failed") {
-        //     return (
-        //         {
-        //             status: 'success',
-        //             data: {
-        //                 display_name: itemVM.display_name,
-        //                 workflows: this.workFlowsPAMRequests(itemVM,item),
-        //             },
-        //             error: "Error",
-        //             tooltip:"Error",
-        //         }
-        //     )
-        // }
-        // else if (itemVM["latest_execution_status"] == "waitingToApproval") {
-        //     return (
-        //         {
-        //             status: 'waitingToApproval',
-        //             data: {
-        //                 display_name: itemVM.display_name,
-        //                 workflows: [],
-        //             },
-        //             tooltip:"Waiting to approval"
-        //         }
-        //     )
-        // }
-        // else { //"completed"
-        //     return (
-        //             {
-        //                 status: 'success',
-        //                 data: {
-        //                         display_name: itemVM.display_name,
-        //                         workflows: this.workFlowsPAMRequests(itemVM,item),
-        //                     },
-        //                 tooltip:"Actions"
-        //             }
-        //         )
-        // }
-
     };
 
     //show all data in tooltip as JSON:
@@ -185,7 +136,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                     noDataMessage="There are no PAM requests"
                 >
 
-                    {/* <DataTable.Column label="Id" name="id"/> */}
                     <DataTable.Column label="Account name" name="account_name"/>
                     <DataTable.Column label="Role" name="role" />
                     <DataTable.Column label="Status" name="status" />
@@ -196,7 +146,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                       
                             <DataTable.Row>
 
-                                {/* <DataTable.Data>{JSON.stringify(item)}</DataTable.Data> */}
                                 <DataTable.Data>{item?.user_id}</DataTable.Data>
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{item?.status}</DataTable.Data>
@@ -206,12 +155,11 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
-                                            deploymentId={vmData.id}
+                                            deploymentId={item.name}
                                             fetchedDeploymentState={this.getDataForDeploymentId(vmData,item)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
-                                        />
-                                    {/* <Icon name="info circle" title={this.getExtraPAMInfo(item)}></Icon> */}
+                                     />
                                 </DataTable.Data>
 
                             </DataTable.Row>

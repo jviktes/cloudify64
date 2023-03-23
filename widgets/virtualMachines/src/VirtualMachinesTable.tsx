@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
 import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
+import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
 
 interface VirtualMachinesDataProps {
@@ -211,7 +212,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         internalStatus=itemVM["latest_execution_status"];
                     }
 
-                    if (internalStatus== "in_progress"  || latestRunningExecution?.Status=="pending") {
+                    if (internalStatus== "in_progress"  || latestRunningExecution?.Status=="pending" || latestRunningExecution?.Status=="started") {
                         return (
                             {
                                 status: 'loading',
@@ -278,6 +279,23 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
         const el = document.getElementById(`${_item.id}_ext`);
+        const elMain = document.getElementById(`${_item.id}_main`);
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            el.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#e0e0e0';
+        } else {
+            el.style.display = 'none';
+            el.style.backgroundColor = '';
+            elMain.style.backgroundColor = '';
+        }
+
+    }
+
+    onRowExecutionClick(_item:any) {
+
+        //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
+        const el = document.getElementById(`${_item.id}_executions`);
         const elMain = document.getElementById(`${_item.id}_main`);
         if (el.style.display === 'none') {
             el.style.display = '';
@@ -489,7 +507,40 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             return _dataPAM;
         }
     }
+    getExecutionData = (itemVM:any,detailedData:any) => {
+        let combinedExecutions = [];
+        if (detailedData!=undefined) {
+            //VM:
+            let _vmExecutions = itemVM.executionAllData[0].items;
+            combinedExecutions = _vmExecutions;
+            try {
+                detailedData.forEach(_deployment => {
+                    let _execs = [];
 
+                    try {
+                        _execs = _deployment.executionAllData[0].items;
+                        if (_execs!=null) {
+                            combinedExecutions = combinedExecutions.concat(_deployment.executionAllData[0].items);
+                        }
+                    } catch (error) {
+                        
+                    }
+                });
+            } catch (error) {
+                
+            }
+        }
+
+        try {
+            combinedExecutions.sort(function(a,b){
+                return new Date(b.created_at) - new Date(a.created_at);
+              });
+        } catch (error) {
+            
+        }
+
+        return combinedExecutions;
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -537,7 +588,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
                              
-                                <DataTable.Data><Button icon="expand" onClick={() => this.onRowClick(item)} /></DataTable.Data>
+                                <DataTable.Data>
+                                    <Button icon="expand" onClick={() => this.onRowClick(item)} />
+                                    <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
+                                    </DataTable.Data>
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
@@ -563,6 +617,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} menuData={this.getDataForDeploymentId(item,this.state.detailedData[item.id])} toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getDataForDeploymentId(item,this.state.detailedData[item.id])} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
+                                    </DataTable.Data>
+                            </DataTable.Row>
+
+                            <DataTable.Row
+                                key={`${item.id}_executions`}
+                                style={{ display: 'none' }}
+                                id={`${item.id}_executions`}>
+                                    <DataTable.Data colSpan={11}>
+                                            <div style={{width:"100%"}}><ExecutionsTableVM widget={widget} vmData={item} data={this.getExecutionData(item,this.state.detailedData[item.id])} toolbox={toolbox} ></ExecutionsTableVM></div>
                                     </DataTable.Data>
                             </DataTable.Row>
 
