@@ -58,12 +58,16 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                 }
             )
         }
-        else if (itemVM["latest_execution_status"] == "error") {
+        else if (itemVM["latest_execution_status"] == "failed") {
             return (
                 {
-                    status: 'error',
+                    status: 'success',
+                    data: {
+                        display_name: itemVM.display_name,
+                        workflows: this.workFlowsDataDisks(itemVM.workflows),
+                    },
+                    error: "Error",
                     tooltip:"Error",
-                    error: {} 
                 }
             )
         }

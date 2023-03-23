@@ -82,18 +82,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     getDataForDeploymentId = (itemVM:any,item:any) => {
 
-        //puvodni:
-        // return (
-        //     {
-        //         status: 'success',
-        //         data: {
-        //                 display_name: item.display_name,
-        //                 workflows: this.workFlowsPAMRequests(vmData,item),
-        //             },
-        //         }
-        // )
-
-
         if (itemVM["latest_execution_status"] == "in_progress") {
             return (
                 {
@@ -102,12 +90,16 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                 }
             )
         }
-        else if (itemVM["latest_execution_status"] == "error") {
+        else if (itemVM["latest_execution_status"] == "failed") {
             return (
                 {
-                    status: 'error',
+                    status: 'success',
+                    data: {
+                        display_name: itemVM.display_name,
+                        workflows: this.workFlowsPAMRequests(itemVM,item),
+                    },
+                    error: "Error",
                     tooltip:"Error",
-                    error: {} 
                 }
             )
         }
@@ -125,13 +117,14 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         }
         else { //"completed"
             return (
-                {
-                    status: 'success',
-                    data: {
-                            display_name: itemVM.display_name,
-                            workflows: this.workFlowsPAMRequests(itemVM,item),
-                        },
-                    tooltip:"Actions"}
+                    {
+                        status: 'success',
+                        data: {
+                                display_name: itemVM.display_name,
+                                workflows: this.workFlowsPAMRequests(itemVM,item),
+                            },
+                        tooltip:"Actions"
+                    }
                 )
         }
 

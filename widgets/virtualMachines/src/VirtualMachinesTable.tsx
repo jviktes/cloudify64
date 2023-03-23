@@ -126,96 +126,122 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //             _diksObj.executionAllData = element.executionAllData;
         //             _dataDisk.push(_diksObj);
 
-        if (detailedData!=null) {
+        //najdu latest execution, toto pouziju pouze pro stavy loading, waiting nebo error:
+        let latestRunningExecution = {};
+        latestRunningExecution.DateTime = "";
+        latestRunningExecution.Tooltip = "";
+        latestRunningExecution.Error = "";
+        latestRunningExecution.CreatedBy = "";
+        latestRunningExecution.Status = "";
 
-                let _vmExecutions = itemVM.executionAllData;
+        let combinedExecutions = [];
 
+        if (detailedData!=undefined) {
+                //VM:
+                let _vmExecutions = itemVM.executionAllData[0].items;
+                combinedExecutions = _vmExecutions;
+                // _vmExecutions.forEach(element => {
+                //     if (element.status=="started") {
+
+                //     }
+                // });
+
+                //
                 try {
                     detailedData.forEach(_deployment => {
-                        let ttt = _deployment.executionAllData;
+                        let _execs = [];
 
-                        if(_deployment["blueprint_id"].indexOf("Azure-RHEL-Single-VM")!=-1) {
-
-
+                        try {
+                            _execs = _deployment.executionAllData[0].items;
+                            if (_execs!=null) {
+                                combinedExecutions = combinedExecutions.concat(_deployment.executionAllData[0].items);
+                            }
+                        } catch (error) {
+                            
                         }
-                        if(_deployment["blueprint_id"].indexOf("Azure-WS-Single-VM")!=-1) {
-
-
-                        }
-
-                        if(_deployment["blueprint_id"].indexOf("Azure-Data-Disk")!=-1) {
-
-
-                        }
-                        if(_deployment["blueprint_id"].indexOf("JEA-")!=-1) {
-
-
-                        }
-                        if(_deployment["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
-
-
-                        }       
-
                     });
                 } catch (error) {
                     
                 }
+                if (combinedExecutions.length>0) {
+                    let latestExec = combinedExecutions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+        
+                    latestRunningExecution.DateTime =latestExec.created_at;
+                    latestRunningExecution.Error = latestExec.error;
+                    latestRunningExecution.CreatedBy = latestExec.created_;
+                    latestRunningExecution.Status = latestExec.status;
+
+                    if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
+                        latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
+                    }
+                    if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
+                        latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
+                    }
+                    if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
+                        latestRunningExecution.Tooltip = "Data disks management operation";
+                    }
+                    if(latestExec["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+                        latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
+                    }
+                    if(latestExec["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+                        latestRunningExecution.Tooltip = "Privileged access request - RHEL";
+                    }  
+                    
+                    if (itemVM["latest_execution_status"] == "in_progress"  || latestRunningExecution?.Status=="pending") {
+                        return (
+                            {
+                                status: 'loading',
+                                tooltip:latestRunningExecution.Tooltip
+                            }
+                        )
+                    }
+                    else if (itemVM["latest_execution_status"] == "failed") {
+                        return (
+                            {
+                                status: 'success',
+                                data: {
+                                    display_name: itemVM.display_name,
+                                    workflows: this.workFlowsVM(itemVM),
+                                },
+                                error: latestRunningExecution.Error,
+                                tooltip:latestRunningExecution.Error, 
+                            }
+                        )
+                    }
+                    //TODO urceni stavu waiting:
+                    else if (itemVM["latest_execution_status"] == "waiting") {
+                        return (
+                            {
+                                status: 'waiting',
+                                data: {
+                                    display_name: itemVM.display_name,
+                                    workflows: this.workFlowsVM(itemVM),
+                                },
+                                tooltip:"Waiting to approval"
+                            }
+                        )
+                    }
+                    else { //"completed"
+                        return (
+                            {
+                                status: 'success',
+                                data: {
+                                        display_name: itemVM.display_name,
+                                        workflows: this.workFlowsVM(itemVM),
+                                    },
+                                tooltip:"Actions"}
+                            )
+                    }
+                }
 
         }
-        //najdu latest execution
-
-
-        // try {
-        //     data.forEach((element: { [x: string]: any; display_name: any;executionAllData: any;  }) => {
-        //         if(element["blueprint_id"].indexOf("AZURE-Data-Disk")!=-1) {
-        //             let _diksObj = element["inputs"];
-        //             _diksObj.name = element.display_name;
-        //             _diksObj.executionAllData = element.executionAllData;
-        //             _dataDisk.push(_diksObj);
-        //         }
-        //     });
-        // } catch (error) {
-        // }
-
-        if (itemVM["latest_execution_status"] == "in_progress") {
+        else {
             return (
                 {
                     status: 'loading',
-                    tooltip:"Processing"
+                    tooltip:latestRunningExecution.Tooltip
                 }
             )
-        }
-        else if (itemVM["latest_execution_status"] == "error") {
-            return (
-                {
-                    status: 'error',
-                    tooltip:"Error",
-                    error: {} 
-                }
-            )
-        }
-        else if (itemVM["latest_execution_status"] == "waiting") {
-            return (
-                {
-                    status: 'waiting',
-                    data: {
-                        display_name: itemVM.display_name,
-                        workflows: this.workFlowsVM(itemVM),
-                    },
-                    tooltip:"Waiting to approval"
-                }
-            )
-        }
-        else { //"completed"
-            return (
-                {
-                    status: 'success',
-                    data: {
-                            display_name: itemVM.display_name,
-                            workflows: this.workFlowsVM(itemVM),
-                        },
-                    tooltip:"Actions"}
-                )
         }
 
     };
