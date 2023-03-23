@@ -150,8 +150,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         latestRunningExecution.Status = "";
         latestRunningExecution.Finished_operations=0;
         latestRunningExecution.Total_operations=0;
+        latestRunningExecution.Deployment_Id="";
+        latestRunningExecution.TypeError = "";
 
         let combinedExecutions = [];
+        
+        let stateSummaryForDeployments = [];
 
         if (detailedData!=undefined) {
                 //VM:
@@ -160,6 +164,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 try {
                     detailedData.forEach(_deployment => {
                         let _execs = [];
+                        
+                        let stateDeploymentObj = {};
+                        stateDeploymentObj.executions = _deployment.executionAllData[0].items;
+                        stateSummaryForDeployments[_deployment.id]=stateDeploymentObj;
 
                         try {
                             _execs = _deployment.executionAllData[0].items;
@@ -182,21 +190,27 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     latestRunningExecution.Status = latestExec.status;
                     latestRunningExecution.Finished_operations=latestExec.finished_operations;
                     latestRunningExecution.Total_operations=latestExec.total_operations;
+                    latestRunningExecution.Deployment_Id=latestExec.deployment_id;
 
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
                         latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
+                        latestRunningExecution.TypeError="vm";
                     }
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
                         latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
+                        latestRunningExecution.TypeError="vm";
                     }
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
                         latestRunningExecution.Tooltip = "Data disks management operation";
+                        latestRunningExecution.TypeError="data_disks";
                     }
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
                         latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
+                        latestRunningExecution.TypeError="pam_requests";
                     }
                     if(latestExec["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
                         latestRunningExecution.Tooltip = "Privileged access request - RHEL";
+                        latestRunningExecution.TypeError="pam_requests";
                     }  
                     
 
@@ -205,17 +219,19 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     //AND latestRunningExecution.Error.contains ("breakpoint_plugin.resources.breakpoint.start")
                     let internalStatus = "";
 
-                    if ((itemVM["latest_execution_status"] == "completed") && (latestRunningExecution?.Error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
+                    if ((latestRunningExecution?.Error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
                         internalStatus = "waitingToApproval";
                     }
                     else {
-                        internalStatus=itemVM["latest_execution_status"];
+                        internalStatus=latestRunningExecution.Status;//itemVM["latest_execution_status"];
                     }
 
-                    if (internalStatus== "in_progress"  || latestRunningExecution?.Status=="pending" || latestRunningExecution?.Status=="started") {
+                    if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
                         return (
                             {
                                 status: 'loading',
+                                stateSummaryForDeployments:stateSummaryForDeployments,
+                                latestRunningExecution:latestRunningExecution,
                                 tooltip:(latestRunningExecution.Tooltip + "(Executed by: "+latestRunningExecution.CreatedBy+",Progress (%):"+this.getProgressText(latestRunningExecution)+")")
                             }
                         )
@@ -224,9 +240,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         return (
                             {
                                 status: 'error', //TODO - pokud je chyba, co s tím???
+                                stateSummaryForDeployments:stateSummaryForDeployments,
+                                latestRunningExecution:latestRunningExecution,
                                 data: {
                                     display_name: itemVM.display_name,
                                     workflows: this.workFlowsVM(itemVM),
+                                    type:"data_disks",
                                 },
                                 error: latestRunningExecution.Error,
                                 tooltip:latestRunningExecution.Error, 
@@ -238,18 +257,22 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         return (
                             {
                                 status: 'waitingToApproval',
+                                stateSummaryForDeployments:stateSummaryForDeployments,
+                                latestRunningExecution:latestRunningExecution,
                                 data: {
                                     display_name: itemVM.display_name,
-                                    workflows: this.workFlowsVMWaitingToApproval(itemVM),
+                                    workflows: this.workFlowsVM(itemVM)
                                 },
                                 tooltip:"Waiting to approval"
                             }
                         )
                     }
-                    else if (internalStatus == "completed") {
+                    else if (internalStatus == "completed" || internalStatus == "terminated" ) {
                         return (
                             {
                                 status: 'success',
+                                stateSummaryForDeployments:stateSummaryForDeployments,
+                                latestRunningExecution:latestRunningExecution,
                                 data: {
                                         display_name: itemVM.display_name,
                                         workflows: this.workFlowsVM(itemVM),
@@ -482,6 +505,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;
+                    _diksObj.workflows = element["workflows"];
+                    _diksObj.deployment_id = element.deployment_id;
                     _dataDisk.push(_diksObj);
                 }
             });
@@ -499,6 +524,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;
+                    _diksObj.workflows = element["workflows"];
+                    _diksObj.deployment_id = element.deployment_id;
                     _dataPAM.push(_diksObj);
                 }
             });

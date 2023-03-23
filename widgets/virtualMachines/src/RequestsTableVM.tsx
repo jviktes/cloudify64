@@ -94,13 +94,43 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
     };
     getDataForDeploymentId = (itemVM:any,item:any) => {
         const {menuData} = this.props;
-        if (menuData.status=='waitingToApproval') {
-            menuData.data.workflows=this.workFlowsVMWaitingToApproval(itemVM)
+
+        let returnMenuData = {};
+
+        returnMenuData.status='success';
+        returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
+        returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
+        returnMenuData.data = {
+            display_name: menuData?.data?.display_name,
+            workflows: [],
+            type:menuData?.data?.type,
+        };
+        returnMenuData.error= "";//menuData.latestRunningExecution?.Error;
+        returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
+
+
+        //vyberu posledni:
+        let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+        returnMenuData.error= _latestExec.error;
+        //TODO?
+        if (_latestExec?.status_display== "failed") {
+            returnMenuData.status= 'error';
+        }
+
+        //TODO hledani chyby:
+        if (_latestExec?.status=='waitingToApproval') {
+            returnMenuData.data.workflows=this.workFlowsVMWaitingToApproval(itemVM)
         }
         else {
-            menuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
+            returnMenuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
         }
-        return menuData;
+
+
+        //toto prebije vse:
+        if (menuData.status=="loading") {
+            returnMenuData.status= 'loading';
+        }
+        return returnMenuData;
     };
 
     //show all data in tooltip as JSON:

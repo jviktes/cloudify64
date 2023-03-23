@@ -49,11 +49,38 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         return outWorks;
     };
 
-    getDataForDeploymentId = (itemVM:any) => {
+    getDataForDeploymentId = (item:any) => {
 
         const {menuData} = this.props;
-        menuData.data.workflows=this.workFlowsDataDisks(itemVM.workflows)
-        return menuData;
+
+        let returnMenuData = {};
+
+        returnMenuData.status='success';
+        returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
+        returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
+        returnMenuData.data = {
+            display_name: menuData?.data?.display_name,
+            workflows: this.workFlowsDataDisks(item.workflows),
+            type:menuData?.data?.type,
+        };
+        returnMenuData.error= "";//;"menuData.latestRunningExecution?.Error";
+        returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
+
+
+        //vyberu posledni:
+        let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+        returnMenuData.error= _latestExec.error;
+        //"completed"
+        if (_latestExec?.status_display== "failed") {
+            returnMenuData.status= 'error';
+        }
+
+        //toto prebije vse:
+        if (menuData.status=="loading") {
+            returnMenuData.status= 'loading';
+        }
+       
+        return returnMenuData;
     }
 
     getExtraDiskInfo = (item:any)=> {
@@ -123,7 +150,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                     <DeploymentActionButtons
                                             buttonTitle='Disk actions'
                                             deploymentId={item.name}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData)}
+                                            fetchedDeploymentState={this.getDataForDeploymentId(item)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />

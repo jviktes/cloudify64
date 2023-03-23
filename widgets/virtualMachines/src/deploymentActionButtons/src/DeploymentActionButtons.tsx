@@ -7,10 +7,10 @@ import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 
 type FetchedDeploymentState =
     // eslint-disable-next-line camelcase
-    | { status: 'success'; data: { display_name: string; workflows: Workflow[] };tooltip:any}
-    | { status: 'loading';data: { display_name: string; workflows: Workflow[] };tooltip:any}
-    | { status: 'error'; data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
-    | { status: 'waitingToApproval';data: { display_name: string; workflows: Workflow[] };tooltip:any};
+    | { status: 'success';stateSummaryForDeployments:[],latestRunningExecution:any, data: { display_name: string; workflows: Workflow[] };tooltip:any}
+    | { status: 'loading';stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any}
+    | { status: 'error'; stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
+    | { status: 'waitingToApproval';stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any};
 
 // const isDeploymentFetched = (state: FetchedDeploymentState): state is FetchedDeploymentState & { status: 'success' } =>
 //     state.status === 'success';
@@ -85,7 +85,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
-                        color="teal"
+                        color="yellow"
                         icon="cogs"
                         disabled={false}
                         title={fetchedDeploymentState.tooltip}
