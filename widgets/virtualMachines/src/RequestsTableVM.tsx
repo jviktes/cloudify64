@@ -166,7 +166,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { toolbox, widget, vmData,data } = this.props;
+        const { toolbox, widget, vmData,data,menuData } = this.props;
         const { DataTable } = Stage.Basic;
 
         return (
@@ -196,7 +196,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
                                             deploymentId={this.getDeploymnetIdBasedOnStatus(vmData,item)}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(vmData,item)}
+                                            fetchedDeploymentStateComplete={menuData}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                      />

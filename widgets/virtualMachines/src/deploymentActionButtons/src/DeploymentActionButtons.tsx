@@ -1,23 +1,28 @@
 import type { FunctionComponent } from 'react';
-//import { useEffect } from 'react';
 import { Icon } from 'semantic-ui-react';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
 import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 
-type FetchedDeploymentState =
-    // eslint-disable-next-line camelcase
-    | { status: 'success';stateSummaryForDeployments:[],latestRunningExecution:any, data: { display_name: string; workflows: Workflow[] };tooltip:any}
-    | { status: 'loading';stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any}
-    | { status: 'error'; stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
-    | { status: 'waitingToApproval';stateSummaryForDeployments:[],latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any};
+// type FetchedDeploymentState =
+//     // eslint-disable-next-line camelcase
+//     | { status: 'success';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any, data: { display_name: string; workflows: Workflow[] };tooltip:any}
+//     | { status: 'loading';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any}
+//     | { status: 'error'; stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
+//     | { status: 'waitingToApproval';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any};
 
-// const isDeploymentFetched = (state: FetchedDeploymentState): state is FetchedDeploymentState & { status: 'success' } =>
-//     state.status === 'success';
+
+type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any, rootDeploymentId:any};
+
+// stateSummaryForDeployments:stateSummaryForDeployments,
+// display_name: itemVM.display_name,
+// childDeployment_Id:deploymentId,
+// rootDeploymentId: itemVM.display_name,
+// workflows: this.workFlowsVM(itemVM),
 
 interface DeploymentActionButtonsProps {
     deploymentId?: string | null;
-    fetchedDeploymentState: FetchedDeploymentState;
+    fetchedDeploymentStateComplete: FetchedDeploymentStateComplete;
     toolbox: Stage.Types.Toolbox;
     redirectToParentPageAfterDelete: boolean;
     buttonTitle:string;
@@ -25,7 +30,7 @@ interface DeploymentActionButtonsProps {
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
     deploymentId,
-    fetchedDeploymentState,
+    fetchedDeploymentStateComplete,
     toolbox
 }) => {
     const {
@@ -35,60 +40,379 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
-    // useEffect(() => {
-    //     if (fetchedDeploymentState.status === 'error') {
-    //         log.error('Error when fetching deployment data', fetchedDeploymentState.error);
-    //     }
-    // }, [fetchedDeploymentState]);
+    const getLastGeneralExecution =() => {
+            let combinedExecutions = [];
 
-    //const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
-    //const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];
-    //const workflows = fetchedDeploymentState.data.workflows;
+            let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
+            combinedExecutions=_vmExecutions;
+            if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
+                fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
+                    let _execs = [];
+    
+                    try {
+                        _execs = _deployment.executionAllData[0].items;
+                        if (_execs!=null) {
+                            combinedExecutions = combinedExecutions.concat(_deployment.executionAllData[0].items);
+                        }
+                    } catch (error) {
+            
+                    }
+                });
+            }
+
+
+        if (combinedExecutions.length!=0) {
+            let latestExec = combinedExecutions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+            return latestExec;
+        }
+        else {
+            return null;
+        }
+
+        
+    }
+
+    const getCurrentLastExecution =(deployment_id:any) => {
+        
+        let stateSummaryForDeployments = [];
+
+        if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
+                //VM:
+                let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
+                //stateSummaryForDeployments[fetchedDeploymentStateComplete.itemVM.display_name]=_vmExecutions;
+                
+                let stateDeploymentObjVM = {};
+                stateDeploymentObjVM.executions = _vmExecutions;
+                stateSummaryForDeployments[fetchedDeploymentStateComplete.itemVM.display_name]=stateDeploymentObjVM;
+                //childs deployments:
+                try {
+                    fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
+
+                        let stateDeploymentObj = {};
+                        stateDeploymentObj.executions = _deployment.executionAllData[0].items;
+                        stateSummaryForDeployments[_deployment.id]=stateDeploymentObj;
+
+                    });
+                } catch (error) {
+                    
+                }
+       }
+       try {
+        let latestExec = stateSummaryForDeployments[deployment_id].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+            return latestExec;
+        } catch (error) {
+            return null;
+       }
+    }
+
+    const workFlowsDataDisks=(workflows :Workflow[] )=> {
+        let outWorks = [];
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="resize_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="remove_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
+
+    const workFlowsPAMRequests=(item:any, vmData:any)=> {
+        let outWorks = [];
+        //    Approve / reject request (applies to * waiting requests)
+        // Revoke (applies to Grant approved / Grant implemented requests)
+
+        let workflows=item.workflows;
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+
+                if (_workFlowItem?.name=="revoke_app_admin_account"){
+                    if (vmData?.role=="aadminbu") {
+                        //Revoke app admin account
+                        outWorks.push(_workFlowItem);
+                    }
+                }
+                if (_workFlowItem?.name=="revoke_sys_admin_account"){
+                    if (vmData?.role=="sadminbu") {
+                        //Revoke app admin account
+                        outWorks.push(_workFlowItem);
+                    }
+                }
+                try {
+                    if (_workFlowItem.name=="revoke_service_account"){
+                        if (vmData.id_blueprint_id.indexOf("JEA-Service-Account")!=-1) {
+                            //Revoke app admin account
+                            outWorks.push(_workFlowItem);
+                        }
+                    } 
+                } catch (error) {
+                    //console.log(error);
+                }
+                try {
+                    if (_workFlowItem.name=="revoke_user_account"){
+                        if (vmData.id_blueprint_id.indexOf("JEA-Account")!=-1) {
+                            //Revoke app admin account
+                            outWorks.push(_workFlowItem);
+                        }
+                    }
+                } catch (error) {
+                    //console.log(error);
+                }    
+
+
+            }
+        }
+        return outWorks;
+    };
+    const workFlowsVMWaitingToApproval=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="approve_or_reject"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
+
+    const workFlowsVM=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="restart_vm"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="run_audit"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="add_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                if (_workFlowItem.name=="add_ultra_disk"){
+                    outWorks.push(_workFlowItem);
+                }
+                //TODO pouze pro WIN:
+                if (item?.os.indexOf("Windows")!=-1) {
+                    if (_workFlowItem.name=="request_user_account"){
+                        outWorks.push(_workFlowItem);
+                    }
+
+                    if (_workFlowItem.name=="request_service_account"){
+                        outWorks.push(_workFlowItem);
+                    }
+
+                    if (_workFlowItem.name=="resize_windows_vm"){
+                        outWorks.push(_workFlowItem);
+                    }
+
+                }
+
+                //TODO pouze pro Linux:
+                if (item?.os.indexOf("RHEL")!=-1) {
+                    if (_workFlowItem.name=="request_app_admin_account"){
+                        outWorks.push(_workFlowItem);
+                    }
+
+                    if (_workFlowItem.name=="request_sys_admin_account"){
+                        outWorks.push(_workFlowItem);
+                    }
+
+                    if (_workFlowItem.name=="resize_rhel_vm"){
+                        outWorks.push(_workFlowItem);
+                    }
+                }
+            }
+        }
+        return outWorks;
+};
+
+    const getStatus = (lastGeneralExecution:any) => {
+
+        let returnStatus = "";
+
+        if (lastGeneralExecution!=null) {
+            
+            let internalStatus = lastGeneralExecution.status;
+            if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
+              internalStatus = "waitingToApproval";
+            }
+
+            if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
+                        returnStatus='loading';
+            }
+            else if (internalStatus == "failed") {
+                        returnStatus= 'error';   
+            }
+            else if (internalStatus == "waitingToApproval") {
+                returnStatus='waitingToApproval';
+            }
+            else if (internalStatus == "completed" || internalStatus == "terminated" ) {
+                returnStatus='success';
+            }
+            else {
+                returnStatus = "uknown";
+            }
+            
+        }
+        else {
+            returnStatus='loading'; //pokud nejsou jeste data...
+        } 
+
+        return returnStatus;
+    }
+    const getWorkFlows = (_lastCurrentExecution:any,_lastCurrentStatus:any) => {
+
+        //musim poznat, jestli se jedna o disky, vm nebo PAM a podle stavu, uzivatelskych roli atd. vracet seznam workwlows
+        let deploymentType="";
+        let workflows = [];
+        if (_lastCurrentExecution!=null) {
+            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
+                deploymentType = "vm";
+                
+            }
+            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
+                deploymentType = "vm";
+                
+            }
+            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
+                deploymentType = "dataDisks";
+                
+            }
+            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+                deploymentType = "pams";
+               
+            }
+            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+                deploymentType = "pams";
+            }  
+    
+            if (deploymentType=="vm") {
+                 workflows=workFlowsVM(fetchedDeploymentStateComplete.itemVM);
+            }
+            if (deploymentType=="dataDisks") {
+                workflows=workFlowsDataDisks(fetchedDeploymentStateComplete.workflows);
+            }
+            if (deploymentType=="pams") {
+                if (_lastCurrentStatus=="waitingToApproval") {
+                    workflows=workFlowsVMWaitingToApproval(fetchedDeploymentStateComplete.workflows);
+                }
+                else {
+                    workflows=workFlowsPAMRequests(fetchedDeploymentStateComplete.workflows,fetchedDeploymentStateComplete.itemVM);
+                }
+            }
+        }
+ 
+
+        return workflows;
+
+    }
+    const getToolTip =() => {
+        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
+        //     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
+            
+        // }
+        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
+        //     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
+            
+        // }
+        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
+        //     latestRunningExecution.Tooltip = "Data disks management operation";
+            
+        // }
+        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+        //     latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
+           
+        // }
+        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+        //     latestRunningExecution.Tooltip = "Privileged access request - RHEL";
+            
+        // }
+        
+        // getProgressText = (latestExec:any)=> {
+
+        //     try {
+        //         if (latestExec.Total_operations!=0) {
+        //             return Math.floor(latestExec.Finished_operations/latestExec.Total_operations*100);
+        //         }
+        //         else {
+        //             return "running";
+        //         }
+    
+        //     } catch (error) {
+        //         return "running";
+        //     }
+    
+        // }
+
+        return "tooltip text";
+    }
 
     const renderWorkMenu=()=>{
-        if (fetchedDeploymentState.status=="success") {
+        let _lastGeneralExecution = getLastGeneralExecution();
+        let _computedGeneralStatus = getStatus(_lastGeneralExecution);
+
+        let _lastCurrentExecution = getCurrentLastExecution(fetchedDeploymentStateComplete.childDeployment_Id);
+        let _lastCurrentStatus = getStatus(_lastCurrentExecution);
+        let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
+        let _computedTooTip = getToolTip();
+
+        if (_computedGeneralStatus=="loading") {
+            return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
+        }
+
+        if (_lastCurrentStatus=="success") {
             return (<WorkflowsMenu
-                workflows={fetchedDeploymentState.data.workflows}
+                workflows={_computedWorkFlows}
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
                         color="teal"
                         icon="cogs"
                         disabled={false}
-                        title={fetchedDeploymentState.tooltip}
+                        title={_computedTooTip}
                     />
                 }
                 onClick={setWorkflow}
             />)
         }
-        if (fetchedDeploymentState.status=="loading") {
-            return (<Icon name="spinner" loading disabled title={fetchedDeploymentState.tooltip} />)
+        if (_lastCurrentStatus=="loading") {
+            return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
-        if (fetchedDeploymentState.status=="error") {
+        if (_lastCurrentStatus=="error") {
             return (<WorkflowsMenu
-                workflows={fetchedDeploymentState.data.workflows}
+                workflows={_computedWorkFlows}
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
                         color="red"
                         icon="cogs"
                         disabled={false}
-                        title={fetchedDeploymentState.tooltip}
+                        title={_computedTooTip}
                     />
                 }
                 onClick={setWorkflow}
             />)
         }
-        if (fetchedDeploymentState.status=="waitingToApproval") {
+        if (_lastCurrentStatus=="waitingToApproval") {
             return (<WorkflowsMenu
-                workflows={fetchedDeploymentState.data.workflows}
+                workflows={_computedWorkFlows}
                 trigger={
                     <Button
                         className="executeWorkflowButton icon"
                         color="yellow"
                         icon="cogs"
                         disabled={false}
-                        title={fetchedDeploymentState.tooltip}
+                        title={_computedTooTip}
                     />
                 }
                 onClick={setWorkflow}
@@ -96,7 +420,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
         return <div>Nothing to render</div>
     }
-
 
     return (
         <div>
@@ -107,11 +430,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 <ExecuteWorkflowModal
                     open
                     deploymentId={deploymentId}
-                    deploymentName={fetchedDeploymentState.data.display_name}
+                    deploymentName={fetchedDeploymentStateComplete.itemVM.display_name}
                     workflow={workflow}
                     onHide={resetWorkflow}
-                    toolbox={toolbox}
-                    
+                    toolbox={toolbox} 
                 />
             )}
         </div>

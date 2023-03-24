@@ -33,55 +33,55 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         this.state = this.initialState;
     }
 
-    workFlowsDataDisks=(workflows :Workflow[] )=> {
-        let outWorks = [];
-        for (const key in workflows) {
-            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-                const _workFlowItem = workflows[key];
-                if (_workFlowItem.name=="resize_disk"){
-                    outWorks.push(_workFlowItem);
-                }
-                if (_workFlowItem.name=="remove_disk"){
-                    outWorks.push(_workFlowItem);
-                }
-            }
-        }
-        return outWorks;
-    };
+    // workFlowsDataDisks=(workflows :Workflow[] )=> {
+    //     let outWorks = [];
+    //     for (const key in workflows) {
+    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+    //             const _workFlowItem = workflows[key];
+    //             if (_workFlowItem.name=="resize_disk"){
+    //                 outWorks.push(_workFlowItem);
+    //             }
+    //             if (_workFlowItem.name=="remove_disk"){
+    //                 outWorks.push(_workFlowItem);
+    //             }
+    //         }
+    //     }
+    //     return outWorks;
+    // };
 
-    getDataForDeploymentId = (item:any) => {
+    // getDataForDeploymentId = (item:any) => {
 
-        const {menuData} = this.props;
+    //     const {menuData} = this.props;
 
-        let returnMenuData = {};
+    //     let returnMenuData = {};
 
-        returnMenuData.status='success';
-        returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
-        returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
-        returnMenuData.data = {
-            display_name: menuData?.data?.display_name,
-            workflows: this.workFlowsDataDisks(item.workflows),
-            type:menuData?.data?.type,
-        };
-        returnMenuData.error= "";//;"menuData.latestRunningExecution?.Error";
-        returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
+    //     returnMenuData.status='success';
+    //     returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
+    //     returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
+    //     returnMenuData.data = {
+    //         display_name: menuData?.data?.display_name,
+    //         workflows: this.workFlowsDataDisks(item.workflows),
+    //         type:menuData?.data?.type,
+    //     };
+    //     returnMenuData.error= "";//;"menuData.latestRunningExecution?.Error";
+    //     returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
 
 
-        //vyberu posledni:
-        let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
-        returnMenuData.error= _latestExec.error;
-        //"completed"
-        if (_latestExec?.status_display== "failed") {
-            returnMenuData.status= 'error';
-        }
+    //     //vyberu posledni:
+    //     let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+    //     returnMenuData.error= _latestExec.error;
+    //     //"completed"
+    //     if (_latestExec?.status_display== "failed") {
+    //         returnMenuData.status= 'error';
+    //     }
 
-        //toto prebije vse:
-        if (menuData.status=="loading") {
-            returnMenuData.status= 'loading';
-        }
+    //     //toto prebije vse:
+    //     if (menuData.status=="loading") {
+    //         returnMenuData.status= 'loading';
+    //     }
        
-        return returnMenuData;
-    }
+    //     return returnMenuData;
+    // }
 
     getExtraDiskInfo = (item:any)=> {
         let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
@@ -119,7 +119,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { data, toolbox, widget,vmData } = this.props;
+        const { data, toolbox, widget,vmData,menuData } = this.props;
         const { DataTable } = Stage.Basic;
 
             return (<div>
@@ -150,7 +150,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                     <DeploymentActionButtons
                                             buttonTitle='Disk actions'
                                             deploymentId={item.name}
-                                            fetchedDeploymentState={this.getDataForDeploymentId(item)}
+                                            fetchedDeploymentStateComplete={menuData}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
