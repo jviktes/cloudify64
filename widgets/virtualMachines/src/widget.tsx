@@ -30,6 +30,7 @@ Stage.defineWidget({
         //console.log("params:");
         //console.log(params);
         let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
+        //toolbox.getEventBus().trigger('deployments:regularRefresh');
         return _results;
     },
 

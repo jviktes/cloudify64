@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import { useEffect } from 'react';
+//import { useEffect } from 'react';
 import { Icon } from 'semantic-ui-react';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
@@ -35,11 +35,11 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
-    useEffect(() => {
-        if (fetchedDeploymentState.status === 'error') {
-            log.error('Error when fetching deployment data', fetchedDeploymentState.error);
-        }
-    }, [fetchedDeploymentState]);
+    // useEffect(() => {
+    //     if (fetchedDeploymentState.status === 'error') {
+    //         log.error('Error when fetching deployment data', fetchedDeploymentState.error);
+    //     }
+    // }, [fetchedDeploymentState]);
 
     //const buttonsDisabled = !deploymentId || ['error', 'loading'].includes(fetchedDeploymentState.status);
     //const workflows = isDeploymentFetched(fetchedDeploymentState) ? fetchedDeploymentState.data.workflows : [];

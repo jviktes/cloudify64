@@ -30,6 +30,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         this.state = {
             detailedData: [],
             loading:false,
+            lastLoadingDate:undefined,
             showBackButton:false,
         };
     }
@@ -39,7 +40,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { data, toolbox } = this.props;
         toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
 
-        console.log("componentDidMount:"+JSON.stringify(data)); 
+        //console.log("componentDidMount:"+JSON.stringify(data)); 
         {_.map(data.items, item => (        
 
             this.loadDetailedData(item)
@@ -47,17 +48,32 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
    }
 
     componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        //console.log("VirtualMachinesTable componentDidUpdate..."); 
+        console.log("VirtualMachinesTable componentDidUpdate..."); 
 
         try {
-            //pokud uz konecne dorazily data a state je nenacetly, pak takto updatuju state (=> loadDetails...)
-            if (this.props.data.length!=0 && prevState.detailedData.length==0 && this.state.loading==false) {
-                console.log("componentDidUpdate:"); 
+
+            
+            let isAfter30s = false;
+            if (this.state.lastLoadingDate==undefined) {
+                isAfter30s=true;
+            }
+            else {
+                if ((Date.now()-this.state.lastLoadingDate)>30000) {
+                    isAfter30s=true;
+                }
+            }
+            
+            if (this.state.loading==false && isAfter30s) {
+                console.log("componentDidUpdate call loading:"); 
                 //spusteni volani celeho cyklu:
                     {_.map(this.props.data.items, item => (        
                         this.loadDetailedData(item)
                     ))}
-                }
+                    this.setState({lastLoadingDate:Date.now()});
+            }
+            
+            this.setState({ loading: false });
+
         } catch (error) {
             console.log(error);
         }
@@ -456,10 +472,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     //melo by vracet deploymenty s parrantem = executions
     loadDetailedData = async (_item:any) =>{
 
-        if ( this.state.loading==false) {
-            this.setState({ loading: true });
-        }
-
+        // if ( this.state.loading==false) {
+        //     this.setState({ loading: true });
+        // }
+        // this.setState({ lastLoadingDate: true });
+        
         try {
             console.log("loadDetailedData:");
 
@@ -489,6 +506,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             detailedData[params.id] = _dataFromExternalSource;
             this.setState({detailedData});
 
+            //if ( this.state.loading==false) {
+                //this.setState({ loading: false });
+            //}
+
         } catch (error) {
             console.log(error);
         }
@@ -502,7 +523,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     refreshData() {
         console.log("VirtualMachines refreshData...");
-        const { toolbox } = this.props;
+
+        const { data, toolbox } = this.props;
+
+        {_.map(data.items, item => (        
+
+            this.loadDetailedData(item)
+        ))}
+
         toolbox.refresh();
     };
 
