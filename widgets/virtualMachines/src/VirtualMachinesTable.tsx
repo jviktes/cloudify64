@@ -48,11 +48,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
    }
 
     componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
-        console.log("VirtualMachinesTable componentDidUpdate..."); 
+        //console.log("VirtualMachinesTable componentDidUpdate..."); 
 
         try {
 
-            
+            if (this.props.data.items.length==undefined){
+                return;
+            }
+
             let isAfter30s = false;
             if (this.state.lastLoadingDate==undefined) {
                 isAfter30s=true;
@@ -66,18 +69,69 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             if (this.state.loading==false && isAfter30s) {
                 console.log("componentDidUpdate call loading:"); 
                 //spusteni volani celeho cyklu:
-                    {_.map(this.props.data.items, item => (        
+                    //this.setState({ loading: true });
+                    if ( this.state.loading==false) {
+                        this.setState({ loading: true });
+                    }
+                    
+                    {_.map(this.props.data.items, item => (
                         this.loadDetailedData(item)
                     ))}
-                    this.setState({lastLoadingDate:Date.now()});
+                    //if (this.props.data.items.length!=undefined){
+                        this.setState({lastLoadingDate:Date.now()});
+                        this.setState({ loading: false });
+                    //}    
+
+
             }
             
-            this.setState({ loading: false });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    //melo by vracet deploymenty s parrantem = executions
+    loadDetailedData = async (_item:any) =>{
+
+
+
+        try {
+            console.log("loadDetailedData:");
+
+            const { toolbox } = this.props;
+            const manager = toolbox.getManager();
+            const tenantName=manager.getSelectedTenant();
+            
+            if (_item==null) {
+                return null;
+            }
+
+            let params = {};
+            params.tenant = tenantName;
+            params.id = _item.id;
+
+            if (params.id==null) {
+                return null;
+            }
+
+            if (this.state==null) {
+                return;
+            }
+
+            let detailedData=this.state.detailedData;
+            const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
+
+            detailedData[params.id] = _dataFromExternalSource;
+            this.setState({detailedData});
+
+            //if ( this.state.loading==false) {
+                //this.setState({ loading: false });
+            //}
 
         } catch (error) {
             console.log(error);
         }
-    }
+
+    };
 
     workFlowsVM=(item:any)=> {
                 let outWorks = [];
@@ -468,52 +522,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         } catch (error) {
             return "";
         }
-    };
-    //melo by vracet deploymenty s parrantem = executions
-    loadDetailedData = async (_item:any) =>{
-
-        // if ( this.state.loading==false) {
-        //     this.setState({ loading: true });
-        // }
-        // this.setState({ lastLoadingDate: true });
-        
-        try {
-            console.log("loadDetailedData:");
-
-            const { toolbox } = this.props;
-            const manager = toolbox.getManager();
-            const tenantName=manager.getSelectedTenant();
-            
-            if (_item==null) {
-                return null;
-            }
-
-            let params = {};
-            params.tenant = tenantName;
-            params.id = _item.id;
-
-            if (params.id==null) {
-                return null;
-            }
-
-            if (this.state==null) {
-                return;
-            }
-
-            let detailedData=this.state.detailedData;
-            const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
-
-            detailedData[params.id] = _dataFromExternalSource;
-            this.setState({detailedData});
-
-            //if ( this.state.loading==false) {
-                //this.setState({ loading: false });
-            //}
-
-        } catch (error) {
-            console.log(error);
-        }
-
     };
 
     fetchGridData = fetchParams => {
