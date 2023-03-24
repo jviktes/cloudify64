@@ -90,6 +90,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             if (_workFlowItem.name=="request_service_account"){
                                 outWorks.push(_workFlowItem);
                             }
+
+                            if (_workFlowItem.name=="resize_windows_vm"){
+                                outWorks.push(_workFlowItem);
+                            }
+
                         }
 
                         //TODO pouze pro Linux:
@@ -99,6 +104,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             }
 
                             if (_workFlowItem.name=="request_sys_admin_account"){
+                                outWorks.push(_workFlowItem);
+                            }
+
+                            if (_workFlowItem.name=="resize_rhel_vm"){
                                 outWorks.push(_workFlowItem);
                             }
                         }
