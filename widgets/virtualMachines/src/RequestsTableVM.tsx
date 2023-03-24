@@ -108,23 +108,24 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         returnMenuData.error= "";//menuData.latestRunningExecution?.Error;
         returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
 
-
         //vyberu posledni:
         let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
         returnMenuData.error= _latestExec.error;
         //TODO?
-        if (_latestExec?.status_display== "failed") {
-            returnMenuData.status= 'error';
+        if (_latestExec?.status_display== "failed")
+        {
+            if (returnMenuData?.error.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1) 
+                {
+                    returnMenuData.status= 'waitingToApproval';
+                }
         }
 
-        //TODO hledani chyby:
-        if (_latestExec?.status=='waitingToApproval') {
+        if (returnMenuData.status=='waitingToApproval') {
             returnMenuData.data.workflows=this.workFlowsVMWaitingToApproval(itemVM)
         }
         else {
             returnMenuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
         }
-
 
         //toto prebije vse:
         if (menuData.status=="loading") {
@@ -132,6 +133,15 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         }
         return returnMenuData;
     };
+
+    getDeploymnetIdBasedOnStatus = (vmData:any,item:any)=> {
+        if (item.status=='waitingToApproval') {
+            return item.name;
+        }
+        else {
+            return vmData.id;
+        }
+    }
 
     //show all data in tooltip as JSON:
     getExtraPAMInfo = (item:any)=> {
@@ -185,7 +195,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
-                                            deploymentId={item.name}
+                                            deploymentId={this.getDeploymnetIdBasedOnStatus(vmData,item)}
                                             fetchedDeploymentState={this.getDataForDeploymentId(vmData,item)}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
