@@ -214,6 +214,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     // }
 
+    //itemVM = hlavni VM
     getMenuData = (itemVM:any,detailedData:any, deploymentId:any) => {
 
         return (
@@ -620,7 +621,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;
                     _diksObj.workflows = element["workflows"];
-                    _diksObj.deployment_id = element.deployment_id;
+                    _diksObj.deployment_id = element.id;
                     _dataDisk.push(_diksObj);
                 }
             });
@@ -639,7 +640,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;
                     _diksObj.workflows = element["workflows"];
-                    _diksObj.deployment_id = element.deployment_id;
+                    _diksObj.deployment_id = element.id;
                     _dataPAM.push(_diksObj);
                 }
             });
@@ -740,6 +741,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         deploymentId={item.id}
                                         fetchedDeploymentStateComplete={this.getMenuData(item,this.state.detailedData[item.id],item.id)}
                                         toolbox={toolbox}
+                                        currentDeployment = {item}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
                                 </DataTable.Data>

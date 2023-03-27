@@ -152,6 +152,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                             deploymentId={item.name}
                                             fetchedDeploymentStateComplete={menuData}
                                             toolbox={toolbox}
+                                            currentDeployment = {item}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                         />
                                 </DataTable.Data>

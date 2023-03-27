@@ -26,12 +26,14 @@ interface DeploymentActionButtonsProps {
     toolbox: Stage.Types.Toolbox;
     redirectToParentPageAfterDelete: boolean;
     buttonTitle:string;
+    currentDeployment:any;
 }
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
     deploymentId,
     fetchedDeploymentStateComplete,
-    toolbox
+    toolbox,
+    currentDeployment
 }) => {
     const {
         Basic: { Button },
@@ -105,8 +107,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
        }
     }
 
-    const workFlowsDataDisks=(workflows :Workflow[] )=> {
+    const workFlowsDataDisks=(item:any)=> {
         let outWorks = [];
+        let workflows=item.workflows;
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                 const _workFlowItem = workflows[key];
@@ -169,7 +172,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
         return outWorks;
     };
-    const workFlowsVMWaitingToApproval=(item:any)=> {
+    const workFlowsPAMRequestWaitingToApproval=(item:any)=> {
         let outWorks = [];
         let workflows=item.workflows
         for (const key in workflows) {
@@ -270,44 +273,53 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
         return returnStatus;
     }
+
+    const getDeploymenttype = (_lastCurrentExecution:any) => {
+        let deploymentType="";
+        if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
+            deploymentType = "vm";
+            
+        }
+        if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
+            deploymentType = "vm";
+            
+        }
+        if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
+            deploymentType = "dataDisks";
+            
+        }
+        if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+            deploymentType = "pams";
+           
+        }
+        if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+            deploymentType = "pams";
+        }  
+        return deploymentType;
+
+    }
+
     const getWorkFlows = (_lastCurrentExecution:any,_lastCurrentStatus:any) => {
 
         //musim poznat, jestli se jedna o disky, vm nebo PAM a podle stavu, uzivatelskych roli atd. vracet seznam workwlows
-        let deploymentType="";
+      
         let workflows = [];
         if (_lastCurrentExecution!=null) {
-            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
-                deploymentType = "vm";
-                
-            }
-            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
-                deploymentType = "vm";
-                
-            }
-            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
-                deploymentType = "dataDisks";
-                
-            }
-            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
-                deploymentType = "pams";
-               
-            }
-            if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
-                deploymentType = "pams";
-            }  
-    
+
+            let deploymentType = getDeploymenttype(_lastCurrentExecution);
+
             if (deploymentType=="vm") {
                  workflows=workFlowsVM(fetchedDeploymentStateComplete.itemVM);
             }
             if (deploymentType=="dataDisks") {
-                workflows=workFlowsDataDisks(fetchedDeploymentStateComplete.workflows);
+                workflows=workFlowsDataDisks(fetchedDeploymentStateComplete.itemVM);
             }
             if (deploymentType=="pams") {
                 if (_lastCurrentStatus=="waitingToApproval") {
-                    workflows=workFlowsVMWaitingToApproval(fetchedDeploymentStateComplete.workflows);
+                    workflows=workFlowsPAMRequestWaitingToApproval(fetchedDeploymentStateComplete.itemVM); //approve_or_reject na urovni deployment = zdenek...
                 }
                 else {
-                    workflows=workFlowsPAMRequests(fetchedDeploymentStateComplete.workflows,fetchedDeploymentStateComplete.itemVM);
+                    workflows=workFlowsPAMRequests(fetchedDeploymentStateComplete.itemVM,currentDeployment); //revoke_app_admin_account na urovni VM
                 }
             }
         }
@@ -316,6 +328,16 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return workflows;
 
     }
+
+    const getDeploymnetIdBasedOnStatus = (vmData:any,deploymentItem:any)=> {
+        if (deploymentItem.status=='waitingToApproval') {
+            return deploymentItem.name;
+        }
+        else {
+            return vmData.id;
+        }
+    }
+    
     const getToolTip =() => {
         // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
         //     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
@@ -361,7 +383,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         let _lastGeneralExecution = getLastGeneralExecution();
         let _computedGeneralStatus = getStatus(_lastGeneralExecution);
 
-        let _lastCurrentExecution = getCurrentLastExecution(fetchedDeploymentStateComplete.childDeployment_Id);
+        let _lastCurrentExecution = getCurrentLastExecution(deploymentId);
         let _lastCurrentStatus = getStatus(_lastCurrentExecution);
         let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
         let _computedTooTip = getToolTip();
