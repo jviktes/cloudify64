@@ -731,7 +731,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                              
                                 <DataTable.Data>
+                                    
                                     <Button icon="expand" onClick={() => this.onRowClick(item)} />
+
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
                                     </DataTable.Data>
                                 <DataTable.Data>

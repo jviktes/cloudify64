@@ -238,41 +238,38 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             }
         }
         return outWorks;
-};
+    };
 
     const getStatus = (lastGeneralExecution:any) => {
-
-        let returnStatus = "";
 
         if (lastGeneralExecution!=null) {
             
             let internalStatus = lastGeneralExecution.status;
             if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
-              internalStatus = "waitingToApproval";
+              return "waitingToApproval";
             }
 
             if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
-                        returnStatus='loading';
+                return 'loading';
             }
             else if (internalStatus == "failed") {
-                        returnStatus= 'error';   
+                return'error';   
             }
             else if (internalStatus == "waitingToApproval") {
-                returnStatus='waitingToApproval';
+                return 'waitingToApproval';
             }
             else if (internalStatus == "completed" || internalStatus == "terminated" ) {
-                returnStatus='success';
+                return 'success';
             }
             else {
-                returnStatus = "uknown";
+                return "uknown";
             }
             
         }
         else {
-            returnStatus='loading'; //pokud nejsou jeste data...
+            return 'loading'; //pokud nejsou jeste data...
         } 
 
-        return returnStatus;
     }
 
     const getDeploymenttype = (_lastCurrentExecution:any) => {
@@ -344,60 +341,72 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
     }
     
-    const getToolTip =() => {
-        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
-        //     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
-            
-        // }
-        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
-        //     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
-            
-        // }
-        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
-        //     latestRunningExecution.Tooltip = "Data disks management operation";
-            
-        // }
-        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
-        //     latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
-           
-        // }
-        // if(_lastCurrentExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
-        //     latestRunningExecution.Tooltip = "Privileged access request - RHEL";
-            
-        // }
-        
-        // getProgressText = (latestExec:any)=> {
+    const getToolTip =(_lastGeneralExecution:any, _status:any) => {
+        let _toolTipText = "Actions";
 
-        //     try {
-        //         if (latestExec.Total_operations!=0) {
-        //             return Math.floor(latestExec.Finished_operations/latestExec.Total_operations*100);
-        //         }
-        //         else {
-        //             return "running";
-        //         }
-    
-        //     } catch (error) {
-        //         return "running";
-        //     }
-    
-        // }
+        if (_status=="loading") {
+            
+                if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
+                _toolTipText= "Virtual machine provisioning / update - RHEL";
+                    
+                }
+                if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
+                    _toolTipText = "Virtual machine provisioning / update - Windows Server";
+                    
+                }
+                if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
+                    _toolTipText = "Data disks management operation";
+                    
+                }
+                if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+                    _toolTipText = "Privileged access request - Windows Server";
+                
+                }
+                if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+                    _toolTipText= "Privileged access request - RHEL";
+                }
 
-        return "tooltip text";
+
+                try {
+                    if (_lastGeneralExecution.Total_operations!=0) {
+                        _toolTipText = _toolTipText +"(" +Math.floor(_lastGeneralExecution.Finished_operations/_lastGeneralExecution.Total_operations*100) +")";
+                    }
+                } catch (error) {
+               
+                }
+        }
+
+        if (_status=="success") {
+            _toolTipText = "Actions";
+        }
+        if (_status=="error") {
+            _toolTipText = "Error in task";
+            _toolTipText = _toolTipText + "(" +_lastGeneralExecution.error+ ")";
+        }
+        if (_status=="waitingToApproval") {
+            _toolTipText = "Waiting to approval";
+        }
+
+        return _toolTipText;
     }
 
     const renderWorkMenu=()=>{
+
         let _lastGeneralExecution = getLastGeneralExecution();
         let _computedGeneralStatus = getStatus(_lastGeneralExecution);
-
-        let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
-        let _lastCurrentStatus = getStatus(_lastCurrentExecution);
-        let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
-        let _computedTooTip = getToolTip();
+        let _computedTooTip = getToolTip(_lastGeneralExecution, _computedGeneralStatus);
 
         if (_computedGeneralStatus=="loading") {
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
 
+        
+        let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
+        let _lastCurrentStatus = getStatus(_lastCurrentExecution);
+        _computedTooTip = getToolTip(_lastCurrentExecution, _lastCurrentStatus);
+
+        let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
+        
         if (_lastCurrentStatus=="success") {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
@@ -407,7 +416,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                         color="teal"
                         icon="cogs"
                         disabled={false}
-                        title={_computedTooTip}
+                        title={"Actions"}
                     />
                 }
                 onClick={setWorkflow}
