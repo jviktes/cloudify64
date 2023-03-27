@@ -12,28 +12,29 @@ import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 //     | { status: 'waitingToApproval';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any};
 
 
-type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any, rootDeploymentId:any};
+type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any};
 
 // stateSummaryForDeployments:stateSummaryForDeployments,
 // display_name: itemVM.display_name,
 // childDeployment_Id:deploymentId,
-// rootDeploymentId: itemVM.display_name,
 // workflows: this.workFlowsVM(itemVM),
 
 interface DeploymentActionButtonsProps {
-    deploymentId?: string | null;
+    //deploymentId?: string | null;
     fetchedDeploymentStateComplete: FetchedDeploymentStateComplete;
     toolbox: Stage.Types.Toolbox;
     redirectToParentPageAfterDelete: boolean;
     buttonTitle:string;
     currentDeployment:any;
+    currentDeploymentId:any;
 }
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
-    deploymentId,
+    //deploymentId,
     fetchedDeploymentStateComplete,
     toolbox,
-    currentDeployment
+    currentDeployment,
+    currentDeploymentId
 }) => {
     const {
         Basic: { Button },
@@ -329,12 +330,17 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     }
 
-    const getDeploymnetIdBasedOnStatus = (vmData:any,deploymentItem:any)=> {
-        if (deploymentItem.status=='waitingToApproval') {
-            return deploymentItem.name;
+    const getDeploymnetIdBasedOnStatus = ()=> {
+
+        //pokud je sta
+        let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
+        let _lastCurrentStatus = getStatus(_lastCurrentExecution);
+
+        if (_lastCurrentStatus=='waitingToApproval') {
+            return fetchedDeploymentStateComplete.itemVM.id;
         }
         else {
-            return vmData.id;
+            return currentDeploymentId;
         }
     }
     
@@ -383,7 +389,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         let _lastGeneralExecution = getLastGeneralExecution();
         let _computedGeneralStatus = getStatus(_lastGeneralExecution);
 
-        let _lastCurrentExecution = getCurrentLastExecution(deploymentId);
+        let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
         let _lastCurrentStatus = getStatus(_lastCurrentExecution);
         let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
         let _computedTooTip = getToolTip();
@@ -448,10 +454,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
             {renderWorkMenu()}
 
-            {deploymentId && workflow && (
+            {workflow && (
                 <ExecuteWorkflowModal
                     open
-                    deploymentId={deploymentId}
+                    deploymentId={getDeploymnetIdBasedOnStatus()}
                     deploymentName={fetchedDeploymentStateComplete.itemVM.display_name}
                     workflow={workflow}
                     onHide={resetWorkflow}

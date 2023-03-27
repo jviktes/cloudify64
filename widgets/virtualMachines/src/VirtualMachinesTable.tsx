@@ -738,10 +738,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                                     <DeploymentActionButtons
                                         buttonTitle='Actions'
-                                        deploymentId={item.id}
+                                        //deploymentId={item.id}
                                         fetchedDeploymentStateComplete={this.getMenuData(item,this.state.detailedData[item.id],item.id)}
                                         toolbox={toolbox}
                                         currentDeployment = {item}
+                                        currentDeploymentId = {item.id}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                     />
                                 </DataTable.Data>

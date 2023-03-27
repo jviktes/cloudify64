@@ -196,9 +196,10 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
-                                            deploymentId={item.name}
+                                            //deploymentId={item.name}
                                             fetchedDeploymentStateComplete={menuData}
                                             currentDeployment = {item}
+                                            currentDeploymentId = {item.deployment_id}
                                             toolbox={toolbox}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                      />
