@@ -35,7 +35,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const getLastGeneralExecution =() => {
             let combinedExecutions = [];
-            
+
             let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
             combinedExecutions=_vmExecutions;
             if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
@@ -62,7 +62,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             return null;
         }
 
-        
     }
 
     const getCurrentLastExecution =(deployment_id:any) => {
@@ -94,7 +93,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             return latestExec;
         } catch (error) {
             return null;
-       }
+        }
     }
 
     const workFlowsDataDisks=(item:any)=> {
@@ -235,15 +234,11 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             
             let internalStatus = lastGeneralExecution.status;
 
-            // console.log("-----------------------------------------------------------");
-            // console.log(lastGeneralExecution);
-            // console.log("-----------------------------------------------------------");
-
             //toto vraci child (deployment pro PAM) za chybu:
             if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
               return eVMStates.WaitingToApproval;//"waitingToApproval";
             }
-            //toto vraci VM (deployment pro VM) za chybu:
+            //toto vraci VM (deployment pro VM) za chybu, pokud budu chtit zobrazovat pouze věci pro VM, pro tuto chybu vracet success? 
             if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
                 return eVMStates.WaitingToApproval; // "waitingToApproval";
             }
@@ -328,7 +323,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const getDeploymnetIdBasedOnStatus = ()=> {
 
-        //pokud je sta
+        //pokud je stav WaitingToApproval, pak se vraci jiny deployment:
         let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
         let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
 

@@ -155,6 +155,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                             currentDeployment = {item}
                                             currentDeploymentId = {item.deployment_id}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                            parametresModal={item}
                                         />
                                 </DataTable.Data>
 

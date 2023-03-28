@@ -130,86 +130,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     };
 
-    //             let outWorks = [];
-    //             let workflows=item.workflows
-    //             for (const key in workflows) {
-    //                 if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //                     const _workFlowItem = workflows[key];
-    //                     if (_workFlowItem.name=="restart_vm"){
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                     if (_workFlowItem.name=="run_audit"){
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                     if (_workFlowItem.name=="add_disk"){
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                     if (_workFlowItem.name=="add_ultra_disk"){
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                     //TODO pouze pro WIN:
-    //                     if (item?.os.indexOf("Windows")!=-1) {
-    //                         if (_workFlowItem.name=="request_user_account"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-    
-    //                         if (_workFlowItem.name=="request_service_account"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-
-    //                         if (_workFlowItem.name=="resize_windows_vm"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-
-    //                     }
-
-    //                     //TODO pouze pro Linux:
-    //                     if (item?.os.indexOf("RHEL")!=-1) {
-    //                         if (_workFlowItem.name=="request_app_admin_account"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-
-    //                         if (_workFlowItem.name=="request_sys_admin_account"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-
-    //                         if (_workFlowItem.name=="resize_rhel_vm"){
-    //                             outWorks.push(_workFlowItem);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //             return outWorks;
-    // };
-    // workFlowsVMWaitingToApproval=(item:any)=> {
-    //     let outWorks = [];
-    //     let workflows=item.workflows
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-    //             if (_workFlowItem.name=="approve_or_reject"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //         }
-    //     }
-    //     return outWorks;
-    // };
-    // getProgressText = (latestExec:any)=> {
-
-    //     try {
-    //         if (latestExec.Total_operations!=0) {
-    //             return Math.floor(latestExec.Finished_operations/latestExec.Total_operations*100);
-    //         }
-    //         else {
-    //             return "running";
-    //         }
-
-    //     } catch (error) {
-    //         return "running";
-    //     }
-
-    // }
-
     //itemVM = hlavni VM
     getMenuData = (itemVM:any,detailedData:any, deploymentId:any) => {
 
@@ -223,223 +143,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 }
             )
     }
-
-
-    //     //detailedData by mely obshovat sub-deployments a k nim nacetle executions.
-    //     //=> potrebuju najit posledni bezici execution z moznych sub-deploymentu:
-    //     //             _diksObj.executionAllData = element.executionAllData;
-    //     //             _dataDisk.push(_diksObj);
-
-    //     //najdu latest execution, toto pouziju pouze pro stavy loading, waiting nebo error:
-    //     let latestRunningExecution = {};
-    //     latestRunningExecution.DateTime = "";
-    //     latestRunningExecution.Tooltip = "";
-    //     latestRunningExecution.Error = "";
-    //     latestRunningExecution.CreatedBy = "";
-    //     latestRunningExecution.Status = "";
-    //     latestRunningExecution.Finished_operations=0;
-    //     latestRunningExecution.Total_operations=0;
-    //     latestRunningExecution.Deployment_Id="";
-    //     latestRunningExecution.TypeError = "";
-
-    //     let combinedExecutions = [];
-        
-    //     let stateSummaryForDeployments = [];
-
-    //     if (detailedData!=undefined) {
-    //             //VM:
-    //             let _vmExecutions = itemVM.executionAllData[0].items;
-
-    //             combinedExecutions = _vmExecutions;
-    //             try {
-    //                 detailedData.forEach(_deployment => {
-    //                     let _execs = [];
-                        
-    //                     let stateDeploymentObj = {};
-    //                     stateDeploymentObj.executions = _deployment.executionAllData[0].items;
-    //                     stateSummaryForDeployments[_deployment.id]=stateDeploymentObj;
-
-    //                     try {
-    //                         _execs = _deployment.executionAllData[0].items;
-    //                         if (_execs!=null) {
-    //                             combinedExecutions = combinedExecutions.concat(_deployment.executionAllData[0].items);
-    //                         }
-    //                     } catch (error) {
-                            
-    //                     }
-    //                 });
-    //             } catch (error) {
-                    
-    //             }
-
-    //             if (combinedExecutions.length>0) {
-    //                 let latestExec = combinedExecutions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
-        
-    //                 latestRunningExecution.DateTime =latestExec.created_at;
-    //                 latestRunningExecution.Error = latestExec.error;
-    //                 latestRunningExecution.CreatedBy = latestExec.created_by;
-    //                 latestRunningExecution.Status = latestExec.status;
-    //                 latestRunningExecution.Finished_operations=latestExec.finished_operations;
-    //                 latestRunningExecution.Total_operations=latestExec.total_operations;
-    //                 latestRunningExecution.Deployment_Id=latestExec.deployment_id;
-
-    //                 if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
-    //                     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
-                        
-    //                 }
-    //                 if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
-    //                     latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
-                        
-    //                 }
-    //                 if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
-    //                     latestRunningExecution.Tooltip = "Data disks management operation";
-                        
-    //                 }
-    //                 if(latestExec["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
-    //                     latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
-                       
-    //                 }
-    //                 if(latestExec["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
-    //                     latestRunningExecution.Tooltip = "Privileged access request - RHEL";
-                        
-    //                 }  
-                    
-    //                 let lastVMExecution = this.getLastVMExecution(_vmExecutions);
-
-    //                 //vyhodnoceni approval:
-    //                 //podminky: "latest_execution_status": "completed" 
-    //                 //AND latestRunningExecution.Error.contains ("breakpoint_plugin.resources.breakpoint.start")
-    //                 let internalStatus = "";
-
-    //                 //if ((latestRunningExecution?.Error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
-    //                  //   internalStatus = "waitingToApproval";
-    //                 //}
-    //                 //else {
-    //                     internalStatus=lastVMExecution.Status;//latestRunningExecution.Status;//itemVM["latest_execution_status"];
-    //                 //}
-
-    //                 if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
-    //                     return (
-    //                         {
-    //                             status: 'loading',
-    //                             stateSummaryForDeployments:stateSummaryForDeployments,
-    //                             latestRunningExecution:latestRunningExecution,
-    //                             lastVMExecution:lastVMExecution,
-    //                             tooltip:(latestRunningExecution.Tooltip + "(Executed by: "+latestRunningExecution.CreatedBy+",Progress (%):"+this.getProgressText(latestRunningExecution)+")")
-    //                         }
-    //                     )
-    //                 }
-    //                 else if (internalStatus == "failed") {
-    //                     return (
-    //                         {
-    //                             status: 'error', //TODO - pokud je chyba, co s tím???
-    //                             stateSummaryForDeployments:stateSummaryForDeployments,
-    //                             latestRunningExecution:latestRunningExecution,
-    //                             lastVMExecution:lastVMExecution,
-    //                             data: {
-    //                                 display_name: itemVM.display_name,
-    //                                 workflows: this.workFlowsVM(itemVM),
-    //                                 type:"data_disks",
-    //                             },
-    //                             error: latestRunningExecution.Error,
-    //                             tooltip:latestRunningExecution.Error, 
-    //                         }
-    //                     )
-    //                 }
-
-    //                 else if (internalStatus == "waitingToApproval") {
-    //                     return (
-    //                         {
-    //                             status: 'waitingToApproval',
-    //                             stateSummaryForDeployments:stateSummaryForDeployments,
-    //                             latestRunningExecution:latestRunningExecution,
-    //                             lastVMExecution:lastVMExecution,
-    //                             data: {
-    //                                 display_name: itemVM.display_name,
-    //                                 workflows: this.workFlowsVM(itemVM)
-    //                             },
-    //                             tooltip:"Waiting to approval"
-    //                         }
-    //                     )
-    //                 }
-    //                 else if (internalStatus == "completed" || internalStatus == "terminated" ) {
-    //                     return (
-    //                         {
-    //                             status: 'success',
-    //                             stateSummaryForDeployments:stateSummaryForDeployments,
-    //                             latestRunningExecution:latestRunningExecution,
-    //                             lastVMExecution:lastVMExecution,
-    //                             data: {
-    //                                     display_name: itemVM.display_name,
-    //                                     workflows: this.workFlowsVM(itemVM),
-    //                                 },
-    //                             tooltip:"Actions"}
-    //                         )
-    //                 }
-    //                 else {
-    //                     return null;
-    //                 }
-    //             }
-
-    //     }
-    //     else {
-    //         return (
-    //             {
-    //                 status: 'loading',
-    //                 tooltip:latestRunningExecution.Tooltip
-    //             }
-    //         )
-    //     }
-
-    // };
-
-    // getLastVMExecution = (combinedExecutions:any)=>{
-
-    //     let latestExec = combinedExecutions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
-        
-    //     let latestRunningExecution = {};
-    //     latestRunningExecution.DateTime = "";
-    //     latestRunningExecution.Tooltip = "";
-    //     latestRunningExecution.Error = "";
-    //     latestRunningExecution.CreatedBy = "";
-    //     latestRunningExecution.Status = "";
-    //     latestRunningExecution.Finished_operations=0;
-    //     latestRunningExecution.Total_operations=0;
-    //     latestRunningExecution.Deployment_Id="";
-    //     latestRunningExecution.TypeError = "";
-
-    //     latestRunningExecution.DateTime =latestExec.created_at;
-    //     latestRunningExecution.Error = latestExec.error;
-    //     latestRunningExecution.CreatedBy = latestExec.created_by;
-    //     latestRunningExecution.Status = latestExec.status;
-    //     latestRunningExecution.Finished_operations=latestExec.finished_operations;
-    //     latestRunningExecution.Total_operations=latestExec.total_operations;
-    //     latestRunningExecution.Deployment_Id=latestExec.deployment_id;
-
-    //     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
-    //         latestRunningExecution.Tooltip = "Virtual machine provisioning / update - RHEL";
-    //         latestRunningExecution.TypeError="vm";
-    //     }
-    //     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-WS-SINGLE-VM")!=-1) {
-    //         latestRunningExecution.Tooltip = "Virtual machine provisioning / update - Windows Server";
-    //         latestRunningExecution.TypeError="vm";
-    //     }
-    //     if(latestExec["blueprint_id"].toUpperCase().indexOf("AZURE-DATA-DISK")!=-1) {
-    //         latestRunningExecution.Tooltip = "Data disks management operation";
-    //         latestRunningExecution.TypeError="data_disks";
-    //     }
-    //     if(latestExec["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
-    //         latestRunningExecution.Tooltip = "Privileged access request - Windows Server";
-    //         latestRunningExecution.TypeError="pam_requests";
-    //     }
-    //     if(latestExec["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
-    //         latestRunningExecution.Tooltip = "Privileged access request - RHEL";
-    //         latestRunningExecution.TypeError="pam_requests";
-    //     }  
-
-    //     return latestRunningExecution;
-
-    // }
 
     // eslint-disable-next-line class-methods-use-this
     onRowClick(_item:any) {
@@ -458,7 +161,52 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
 
     }
+    getExpandedButton (item:any) {
+        //pokud v expanded data budou nejake chyby nebo waitingy, pak se tlacitko bude zobrazovat jinak:
+        //nactu data pro
 
+        let isAnyErrorInSubDeployments = false;
+        let isAnyWaitingForWaitingForApprovalInSubDeployments = false;
+        try {
+            this.state.detailedData[item.id].forEach(_deployment => {
+
+                try {
+                    let latestExec= _deployment.executionAllData[0].items.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+
+                    //pokud je posledni beh problemovy, pak :
+
+                    if ((latestExec?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
+                        isAnyWaitingForWaitingForApprovalInSubDeployments = true;
+                      }
+                        //   //toto vraci VM (deployment pro VM) za chybu, pokud budu chtit zobrazovat pouze věci pro VM, pro tuto chybu vracet success? 
+                        //   if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
+                        //       return eVMStates.WaitingToApproval; // "waitingToApproval";
+                        //   }
+
+                      else if (latestExec.status == "failed") {
+                          isAnyErrorInSubDeployments = true;
+                      }
+                      else if (latestExec.status == "waitingToApproval") {
+                        isAnyWaitingForWaitingForApprovalInSubDeployments = true;
+                      }
+                } catch (error) {
+                    
+                }
+
+            });
+        } catch (error) {
+            
+        }
+        if (isAnyErrorInSubDeployments==true) {
+            return <Button icon="expand" color='red' onClick={() => this.onRowClick(item)} />;
+        }
+        if (isAnyWaitingForWaitingForApprovalInSubDeployments==true) {
+            return <Button icon="expand" color='yellow' onClick={() => this.onRowClick(item)} />;
+        }
+
+        return <Button icon="expand" onClick={() => this.onRowClick(item)} />;
+
+    }
     onRowExecutionClick(_item:any) {
 
         //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
@@ -565,6 +313,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         return combinedExecutions;
     }
+    
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -613,9 +362,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                              
                                 <DataTable.Data>
-
-                                    <Button icon="expand" onClick={() => this.onRowClick(item)} />
-
+                                    {this.getExpandedButton(item)}
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
                                     </DataTable.Data>
                                 <DataTable.Data>
@@ -623,12 +370,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DeploymentActionButtons
                                         buttonTitle='Actions'
                                         //deploymentId={item.id}
-                                        fetchedDeploymentStateComplete={this.getMenuData(item,this.state.detailedData[item.id],item.id)}
+                                        fetchedDeploymentStateComplete={this.getMenuData(item, this.state.detailedData[item.id], item.id)}
                                         toolbox={toolbox}
-                                        currentDeployment = {item}
-                                        currentDeploymentId = {item.id}
-                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
-                                    />
+                                        currentDeployment={item}
+                                        currentDeploymentId={item.id}
+                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 
+                                        parametresModal={item}                                    />
                                 </DataTable.Data>
                                 {/* 
                                 <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
