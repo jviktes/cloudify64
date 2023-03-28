@@ -31,6 +31,7 @@ export interface ExecuteWorkflowModalProps {
     toolbox: Stage.Types.Toolbox;
     workflow: Workflow | string;
     open: boolean;
+    parametresModal:any;
 }
 
 const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
@@ -42,7 +43,8 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     onHide,
     toolbox,
     workflow,
-    open
+    open,
+    parametresModal
 }) => {
     if (_.isString(workflow) && !(_.isString(deploymentId) && deploymentId)) {
         throw Error(
@@ -72,6 +74,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     function setWorkflowParams(workflowResource: Workflow) {
         setBaseWorkflowParams(workflowResource.parameters);
+        console.log(parametresModal);
         setUserWorkflowParams(
             _.mapValues(workflowResource.parameters, parameterData =>
                 getInputFieldInitialValue(parameterData.default, parameterData.type)

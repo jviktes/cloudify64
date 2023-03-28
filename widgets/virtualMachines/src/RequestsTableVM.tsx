@@ -201,6 +201,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                             currentDeployment = {item}
                                             currentDeploymentId = {item.deployment_id}
                                             toolbox={toolbox}
+                                            parametresModal={item}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
                                      />
                                 </DataTable.Data>

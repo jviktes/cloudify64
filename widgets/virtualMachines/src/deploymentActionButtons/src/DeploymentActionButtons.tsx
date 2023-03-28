@@ -1,5 +1,6 @@
 import type { FunctionComponent } from 'react';
 import { Icon } from 'semantic-ui-react';
+import { eVMStates } from '../../eVMStates';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
 import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
@@ -27,6 +28,7 @@ interface DeploymentActionButtonsProps {
     buttonTitle:string;
     currentDeployment:any;
     currentDeploymentId:any;
+    parametresModal:any;
 }
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
@@ -34,7 +36,8 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     fetchedDeploymentStateComplete,
     toolbox,
     currentDeployment,
-    currentDeploymentId
+    currentDeploymentId,
+    parametresModal,
 }) => {
     const {
         Basic: { Button },
@@ -245,29 +248,40 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         if (lastGeneralExecution!=null) {
             
             let internalStatus = lastGeneralExecution.status;
+
+            // console.log("-----------------------------------------------------------");
+            // console.log(lastGeneralExecution);
+            // console.log("-----------------------------------------------------------");
+
+            //toto vraci child (deployment pro PAM) za chybu:
             if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
-              return "waitingToApproval";
+              return eVMStates.WaitingToApproval;//"waitingToApproval";
+            }
+            //toto vraci VM (deployment pro VM) za chybu:
+            if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
+                return eVMStates.WaitingToApproval; // "waitingToApproval";
             }
 
             if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
-                return 'loading';
+                return eVMStates.Loading;//'loading';
             }
             else if (internalStatus == "failed") {
-                return'error';   
+                return eVMStates.Error;//'error';   
             }
             else if (internalStatus == "waitingToApproval") {
-                return 'waitingToApproval';
+                return eVMStates.WaitingToApproval; //'waitingToApproval';
             }
             else if (internalStatus == "completed" || internalStatus == "terminated" ) {
-                return 'success';
+                return eVMStates.Success;// 'success';
             }
             else {
-                return "uknown";
+                return  eVMStates.Default;// "uknown";
             }
             
         }
         else {
-            return 'loading'; //pokud nejsou jeste data...
+            return eVMStates.Loading;
+            //return  'loading'; //pokud nejsou jeste data...
         } 
 
     }
@@ -297,7 +311,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     }
 
-    const getWorkFlows = (_lastCurrentExecution:any,_lastCurrentStatus:any) => {
+    const getWorkFlows = (_lastCurrentExecution:any,_lastCurrentStatus: eVMStates) => {
 
         //musim poznat, jestli se jedna o disky, vm nebo PAM a podle stavu, uzivatelskych roli atd. vracet seznam workwlows
       
@@ -313,7 +327,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 workflows=workFlowsDataDisks(fetchedDeploymentStateComplete.itemVM);
             }
             if (deploymentType=="pams") {
-                if (_lastCurrentStatus=="waitingToApproval") {
+                if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
                     workflows=workFlowsPAMRequestWaitingToApproval(fetchedDeploymentStateComplete.itemVM); //approve_or_reject na urovni deployment = zdenek...
                 }
                 else {
@@ -322,7 +336,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             }
         }
  
-
         return workflows;
 
     }
@@ -331,9 +344,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
         //pokud je sta
         let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
-        let _lastCurrentStatus = getStatus(_lastCurrentExecution);
+        let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
 
-        if (_lastCurrentStatus=='waitingToApproval') {
+        if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
             return fetchedDeploymentStateComplete.itemVM.id;
         }
         else {
@@ -341,11 +354,15 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
     }
     
-    const getToolTip =(_lastGeneralExecution:any, _status:any) => {
+    const getToolTip =(_lastGeneralExecution:any, _status:eVMStates) => {
         let _toolTipText = "Actions";
 
-        if (_status=="loading") {
-            
+        switch (_status) {
+            case eVMStates.Loading:
+                if (_lastGeneralExecution==null || fetchedDeploymentStateComplete.stateSummaryForDeployments==undefined) {
+                    return "Loading..."
+                }
+
                 if(_lastGeneralExecution["blueprint_id"].toUpperCase().indexOf("AZURE-RHEL-SINGLE-VM")!=-1) {
                 _toolTipText= "Virtual machine provisioning / update - RHEL";
                     
@@ -366,7 +383,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     _toolTipText= "Privileged access request - RHEL";
                 }
 
-
+                //try to add progress %
                 try {
                     if (_lastGeneralExecution.Total_operations!=0) {
                         _toolTipText = _toolTipText +"(" +Math.floor(_lastGeneralExecution.Finished_operations/_lastGeneralExecution.Total_operations*100) +")";
@@ -374,40 +391,45 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 } catch (error) {
                
                 }
-        }
-
-        if (_status=="success") {
-            _toolTipText = "Actions";
-        }
-        if (_status=="error") {
-            _toolTipText = "Error in task";
-            _toolTipText = _toolTipText + "(" +_lastGeneralExecution.error+ ")";
-        }
-        if (_status=="waitingToApproval") {
-            _toolTipText = "Waiting to approval";
+                break;
+             case eVMStates.Success:
+                _toolTipText = "Actions";
+                break;
+            case eVMStates.Error:
+                _toolTipText = "Error in task";
+                _toolTipText = _toolTipText + "(" +_lastGeneralExecution.error+ ")";
+                break;
+            case eVMStates.WaitingToApproval:
+                _toolTipText = "Waiting to approval";
+                break;
+            case eVMStates.Default:
+                _toolTipText = "?";
+                break;
+            default:
+                break;
         }
 
         return _toolTipText;
     }
 
     const renderWorkMenu=()=>{
-
+        //for loading icon only:
         let _lastGeneralExecution = getLastGeneralExecution();
         let _computedGeneralStatus = getStatus(_lastGeneralExecution);
         let _computedTooTip = getToolTip(_lastGeneralExecution, _computedGeneralStatus);
 
-        if (_computedGeneralStatus=="loading") {
+        if (_computedGeneralStatus==eVMStates.Loading) {
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
 
-        
+        //specific deployment:
         let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
         let _lastCurrentStatus = getStatus(_lastCurrentExecution);
         _computedTooTip = getToolTip(_lastCurrentExecution, _lastCurrentStatus);
 
         let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
         
-        if (_lastCurrentStatus=="success") {
+        if (_lastCurrentStatus==eVMStates.Success) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
@@ -422,10 +444,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 onClick={setWorkflow}
             />)
         }
-        if (_lastCurrentStatus=="loading") {
+        if (_lastCurrentStatus==eVMStates.Loading) {
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
-        if (_lastCurrentStatus=="error") {
+        if (_lastCurrentStatus==eVMStates.Error) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
@@ -440,7 +462,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 onClick={setWorkflow}
             />)
         }
-        if (_lastCurrentStatus=="waitingToApproval") {
+        if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
@@ -455,9 +477,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 onClick={setWorkflow}
             />)
         }
-        return <div>Nothing to render</div>
+        return <div></div>
     }
-
+    console.log(parametresModal);
     return (
         <div>
 
@@ -469,6 +491,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     deploymentId={getDeploymnetIdBasedOnStatus()}
                     deploymentName={fetchedDeploymentStateComplete.itemVM.display_name}
                     workflow={workflow}
+                    parametresModal={currentDeploymentId}
                     onHide={resetWorkflow}
                     toolbox={toolbox} 
                 />
