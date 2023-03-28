@@ -5,6 +5,7 @@ import DeploymentActionButtons from '../src/deploymentActionButtons/src/Deployme
 import DataDisksTableVM from './DataDisksTableVM';
 import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
+import { getDetails } from './VMHelpers';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -123,17 +124,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             detailedData[params.id] = _dataFromExternalSource;
             this.setState({detailedData});
 
-            //if ( this.state.loading==false) {
-                //this.setState({ loading: false });
-            //}
-
         } catch (error) {
             console.log(error);
         }
 
     };
 
-    // workFlowsVM=(item:any)=> {
     //             let outWorks = [];
     //             let workflows=item.workflows
     //             for (const key in workflows) {
@@ -228,7 +224,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             )
     }
 
-    // getDataForDeploymentId = (itemVM:any,detailedData:any) => {
 
     //     //detailedData by mely obshovat sub-deployments a k nim nacetle executions.
     //     //=> potrebuju najit posledni bezici execution z moznych sub-deploymentu:
@@ -481,119 +476,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     }
 
-    getDetails=(item:any) => {
-        
-        let _display_name = "";
-        let _ip="";
-        let _cpus="";
-        let _ram="";
-        let _azure_size=""; 
-        let _azure_location="";
-        let _environment="";
-        let _os="";
-
-        try {
-            
-               
-                let _index = -1;
-                if (item.executionAllData[0].items!=null){
-                    //hledani indexu ve vm, v execution pro create
-                    for (let index = 0; index < item.executionAllData[0].items.length; index++) {
-                        const element = item.executionAllData[0].items[index];
-                        if (element.workflow_id=="create_deployment_environment") {
-                            _index=index;
-                            break;
-                        }
-                    }
-                    if (_index!=-1) {
-                        let _inputs = item.executionAllData[0].items[_index]["parameters"]["inputs"];
-                        _ip=this._getIPAdress(_inputs);
-                        _cpus=this._getCPU(_inputs);
-                        _ram=this._getRAM(_inputs);
-                        _azure_size=this._getAzureSize(_inputs); 
-                        _azure_location=this._getLocation(_inputs);
-                        _environment=this._getEnvironment(_inputs);
-                        _os=this._getOS(_inputs);
-                        _display_name = item.id;
-                    }
-                }
- 
-        } catch (error) {
-            console.log(error);
-        }
-
-        item.ip=_ip;
-        item.cpus=_cpus;
-        item.ram=_ram;
-        item.azure_size=_azure_size;
-        item.azure_location=_azure_location;
-        item.environment=_environment;
-        item.os=_os;
-        item.display_name=_display_name;
-    };
-    _getLocation= (inputJson:any)=> {
-        try {
-            return inputJson["datacenter"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getIPAdress = (inputJson:any)=> {
-        try {
-            return inputJson["reservation"]["ip"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getCPU = (inputJson:any)=> {
-        try {
-            return inputJson["size"]["cpu"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getRAM = (inputJson:any)=> {
-        try {
-            return inputJson["size"]["ram"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getAzureSize = (inputJson:any)=> {
-        try {
-            return inputJson["size"]["id"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getEnvironment = (inputJson:any)=> {
-        try {
-            return inputJson["environment"];
-        } catch (error) {
-            return "";
-        }
-    }
-    _getOS = (inputJson:any)=> {
-
-        try {
-            if (inputJson["os_name"]!=undefined) {
-                return inputJson["os_name"]+" (version: "+ inputJson["os_version"]+ ")";
-            }
-            else {
-                return ""; 
-            }
-        } catch (error) {
-            return "";
-        }
-    }
-    _getDataDisks= (inputJson:any) => {
-        try {
-            return inputJson["data_disks"];
-        } catch (error) {
-            return "";
-        }
-    };
-
     fetchGridData = fetchParams => {
         const { toolbox } = this.props;
         return toolbox.refresh(fetchParams);
@@ -717,7 +599,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
                                 >
-                                {this.getDetails(item)}
+                                {getDetails(item)}
 
                                 <DataTable.Data>{item.display_name}</DataTable.Data>
 
@@ -731,7 +613,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                              
                                 <DataTable.Data>
-                                    
+
                                     <Button icon="expand" onClick={() => this.onRowClick(item)} />
 
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />

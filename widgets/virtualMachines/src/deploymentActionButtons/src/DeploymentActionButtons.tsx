@@ -5,20 +5,7 @@ import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
 import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 
-// type FetchedDeploymentState =
-//     // eslint-disable-next-line camelcase
-//     | { status: 'success';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any, data: { display_name: string; workflows: Workflow[] };tooltip:any}
-//     | { status: 'loading';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any}
-//     | { status: 'error'; stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };error: Error;tooltip:any }
-//     | { status: 'waitingToApproval';stateSummaryForDeployments:[],lastVMExecution:any,latestRunningExecution:any,data: { display_name: string; workflows: Workflow[] };tooltip:any};
-
-
 type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any};
-
-// stateSummaryForDeployments:stateSummaryForDeployments,
-// display_name: itemVM.display_name,
-// childDeployment_Id:deploymentId,
-// workflows: this.workFlowsVM(itemVM),
 
 interface DeploymentActionButtonsProps {
     //deploymentId?: string | null;
@@ -48,7 +35,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const getLastGeneralExecution =() => {
             let combinedExecutions = [];
-
+            
             let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
             combinedExecutions=_vmExecutions;
             if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
@@ -85,8 +72,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
                 //VM:
                 let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
-                //stateSummaryForDeployments[fetchedDeploymentStateComplete.itemVM.display_name]=_vmExecutions;
-                
+
                 let stateDeploymentObjVM = {};
                 stateDeploymentObjVM.executions = _vmExecutions;
                 stateSummaryForDeployments[fetchedDeploymentStateComplete.itemVM.display_name]=stateDeploymentObjVM;
