@@ -33,7 +33,7 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
 
         return (
             <div>
-                <div><span style={{fontWeight:"bold"}}>Execuions history</span></div>
+                <div><span style={{fontWeight:"bold"}}>Executions</span></div>
                 <DataTable>
 
                     <DataTable.Column label="status_display" name="status_display"/>

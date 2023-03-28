@@ -9,24 +9,24 @@ import type { BaseWorkflowInputs, OnCheckboxChange, OnDateInputChange, UserWorkf
 
 const t = Stage.Utils.getT('widgets.common.deployments.execute');
 
-function renderActionCheckbox(name: string, checked: boolean, onChange: OnCheckboxChange) {
-    const { Checkbox } = Stage.Basic.Form;
-    return (
-        <Checkbox
-            name={name}
-            toggle
-            label={t(`actions.${name}.label`)}
-            help={t(`actions.${name}.help`)}
-            checked={checked}
-            onChange={onChange}
-        />
-    );
-}
+// function renderActionCheckbox(name: string, checked: boolean, onChange: OnCheckboxChange) {
+//     const { Checkbox } = Stage.Basic.Form;
+//     return (
+//         <Checkbox
+//             name={name}
+//             toggle
+//             label={t(`actions.${name}.label`)}
+//             help={t(`actions.${name}.help`)}
+//             checked={checked}
+//             onChange={onChange}
+//         />
+//     );
+// }
 
-function renderCheckboxField(name: string, checked: boolean, onChange: OnCheckboxChange) {
-    const { Field } = Stage.Basic.Form;
-    return <Field>{renderActionCheckbox(name, checked, onChange)}</Field>;
-}
+// function renderCheckboxField(name: string, checked: boolean, onChange: OnCheckboxChange) {
+//     const { Field } = Stage.Basic.Form;
+//     return <Field>{renderActionCheckbox(name, checked, onChange)}</Field>;
+// }
 
 export interface CommonExecuteWorflowProps {
     baseWorkflowInputs: BaseWorkflowInputs;
@@ -73,20 +73,6 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     const { Message, Form, Header, Divider, DateInput } = Stage.Basic;
     return (
         <>
-            {/* {_.isEmpty(baseWorkflowInputs) ? (
-                <Message content={t('noParams')} />
-            ) : (
-                <>
-                    <YamlFileButton
-                        onChange={onYamlFileChange}
-                        dataType="execution parameters"
-                        fileLoading={fileLoading}
-                        iconButton
-                    />
-                    <InputsHelpIcon />
-                </>
-            )} */}
-
             <InputFields
                 inputs={baseWorkflowInputs}
                 onChange={onWorkflowInputChange}
