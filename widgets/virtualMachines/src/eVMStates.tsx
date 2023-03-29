@@ -3,6 +3,7 @@ export enum eVMStates {
     Loading = 'loading',
     Error = 'error',
     WaitingToApproval = 'waitingToApproval',
+    WaitingToRevoke= 'waitingToRevoke',
     Default = 'default',
 }
 

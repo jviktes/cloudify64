@@ -10,6 +10,8 @@ export type Workflow = {
     plugin: string;
     // eslint-disable-next-line camelcase
     is_available: boolean;
+    tooltip:string;
+    isDisabled:boolean;
 };
 
 export type WorkflowParameters = Record<string, string>;

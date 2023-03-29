@@ -37,6 +37,8 @@ const WorkflowsMenuItems: FunctionComponent<WorkflowsMenuItemsProps> = ({ workfl
                 content={<StyledTitle name={workflow.name} />}
                 key={workflow.name}
                 onClick={() => onClick(workflow)}
+                disabled={workflow?.isDisabled}
+                title={workflow.tooltip}
             />
         ))}
     </>

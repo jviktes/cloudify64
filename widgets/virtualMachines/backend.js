@@ -87,6 +87,7 @@ module.exports = async function(r) {
             const executionsPromises = _.map(rawData, deployment => 
                 helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
             );
+
             return Promise.all([rawData, ...executionsPromises]); 
             })
             .then(([rawData, ...executionsPromises]) => {
@@ -100,7 +101,26 @@ module.exports = async function(r) {
                         }
                     });
                 }); 
-                return rawData;
+                //return rawData;
+
+                //dotazy na capabilites:
+                const capabilitesPromises = _.map(rawData, deployment => 
+                    helper.Manager.doGet(`/deployments/${deployment.id}/capabilities`, commonManagerRequestOptions)
+                );
+                return   Promise.all([rawData, ...capabilitesPromises]);   
+            })
+            .then(([rawData, ...capabilitesPromises]) => {
+
+                rawData.forEach(_vm => {
+                    //sparovani rawData(=vm) s capabilitesDaty
+                    _vm.capabilities = [];
+                    capabilitesPromises.forEach(exObj => {
+                        if (exObj.deployment_id==_vm.id) {
+                            _vm.capabilities.push(exObj);
+                        }
+                    });
+                }); 
+                return rawData; 
             })
             .then(data => res.send(data))
             .catch(error => next(error));

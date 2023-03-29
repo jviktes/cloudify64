@@ -55,9 +55,9 @@ const DeployBlueprintModalWizard: FunctionComponent<DeployBlueprintModalProps> =
             );
     }
 
-    function openDeploymentPage(deploymentId: string, deploymentName: string) {
-        toolbox.drillDown(toolbox.getWidget(), 'deployment', { deploymentId }, deploymentName);
-    }
+    // function openDeploymentPage(deploymentId: string, deploymentName: string) {
+    //     toolbox.drillDown(toolbox.getWidget(), 'deployment', { deploymentId }, deploymentName);
+    // }
 
     function finalizeDeployAndInstall(deploymentId: string, params: BlueprintDeployParams) {
         finalizeDeploy(deploymentId, params);
@@ -66,8 +66,9 @@ const DeployBlueprintModalWizard: FunctionComponent<DeployBlueprintModalProps> =
 
     function finalizeDeploy(deploymentId: string, { deploymentName }: BlueprintDeployParams) {
         toolbox.getEventBus().trigger('deployments:refresh');
+        console.log("finalizeDeploy:"+deploymentId + "/deploymentName:"+deploymentName);
         onHide();
-        openDeploymentPage(deploymentId, deploymentName);
+        //openDeploymentPage(deploymentId, deploymentName);
     }
 
     return (

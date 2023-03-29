@@ -1,11 +1,6 @@
 //// @ts-nocheck File not migrated fully to TS
-import PropTypes, { bool } from 'prop-types';
-import type { Tests } from './types';
-import { Button, Icon, Item } from 'semantic-ui-react';
-import { identity } from 'lodash';
-import { castArray } from 'lodash';
+import PropTypes from 'prop-types';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
-import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
 
 interface RequestsTableVMProps {
     data: {
@@ -17,6 +12,7 @@ interface RequestsTableVMProps {
     vmData:any
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;
+    menuData:any;
 }
 
 // eslint-disable-next-line react/prefer-stateless-function
@@ -164,10 +160,62 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         return _requestor;
 
     }
+    //special processing for PAM status
+    getPAMStatus = (item:any)=> {
+        
+        if (item==undefined) {
+            return "Uknown #1";
+        }
+        else {
+            try {
+                let latestExec = item.executionAllData[0].items.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+                if (latestExec!=null) {
+                      if (latestExec.workflow_id=="create_deployment_environment" || latestExec.workflow_id=="create_deployment_environment") {
+                          return "New";
+                      }
+                      else if (latestExec?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1) {
+                          return "Grant access - pending approval";
+                      }
+                      else if (latestExec?.error?.toLowerCase().indexOf("cloudify.interfaces.lifecycle.delete")!=-1) {
+                        return "Revoke access - pending approval";
+                    }
+                      else if (latestExec.workflow_id=="approve_or_reject" && (latestExec.status=="pending" || latestExec.status=="started" || latestExec.status=="queued")) {
+                          return "In progress";
+                      }
+                      else if (latestExec.workflow_id=="install" && (latestExec.status=="pending" || latestExec.status=="started" || latestExec.status=="queued")) {
+                        return "In progress";
+                        }
+                      else if (latestExec.workflow_id=="approve_or_reject" && (latestExec.status=="completed" || latestExec.status=="terminated")) {
+                          return "Implemented";
+                      }
+                      else if (latestExec.workflow_id=="install" && (latestExec.status=="completed" || latestExec.status=="terminated")) {
+                        return "Implemented";
+                    }
+                      else if (latestExec?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")==-1 && (latestExec.status=="failed")) {
+                          return "Failed";
+                      }
+                     else if (latestExec.workflow_id=="uninstall") {
+                        return "In progress";
+                        }
+                      else {
+                        return "";
+                      }
+                      
+                }
+                else {
+                  return "Uknown #2";
+                }
+      
+              } catch (error) {
+                  return "Uknown #3";
+              }
+        }
+
+    }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
-        const { toolbox, widget, vmData,data,menuData } = this.props;
+        const { toolbox, widget,data,menuData } = this.props;
         const { DataTable } = Stage.Basic;
 
         return (
@@ -189,7 +237,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                 <DataTable.Data>{item?.user_id}</DataTable.Data>
                                 <DataTable.Data>{item?.role}</DataTable.Data>
-                                <DataTable.Data>{item?.status}</DataTable.Data>
+                                <DataTable.Data>{this.getPAMStatus(item)}</DataTable.Data>
                                 <DataTable.Data>{this.getRequestor(item)}</DataTable.Data>
                                 
                                 <DataTable.Data>

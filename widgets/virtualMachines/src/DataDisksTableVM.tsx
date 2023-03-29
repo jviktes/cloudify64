@@ -33,56 +33,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         this.state = this.initialState;
     }
 
-    // workFlowsDataDisks=(workflows :Workflow[] )=> {
-    //     let outWorks = [];
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-    //             if (_workFlowItem.name=="resize_disk"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //             if (_workFlowItem.name=="remove_disk"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //         }
-    //     }
-    //     return outWorks;
-    // };
-
-    // getDataForDeploymentId = (item:any) => {
-
-    //     const {menuData} = this.props;
-
-    //     let returnMenuData = {};
-
-    //     returnMenuData.status='success';
-    //     returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
-    //     returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
-    //     returnMenuData.data = {
-    //         display_name: menuData?.data?.display_name,
-    //         workflows: this.workFlowsDataDisks(item.workflows),
-    //         type:menuData?.data?.type,
-    //     };
-    //     returnMenuData.error= "";//;"menuData.latestRunningExecution?.Error";
-    //     returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
-
-
-    //     //vyberu posledni:
-    //     let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
-    //     returnMenuData.error= _latestExec.error;
-    //     //"completed"
-    //     if (_latestExec?.status_display== "failed") {
-    //         returnMenuData.status= 'error';
-    //     }
-
-    //     //toto prebije vse:
-    //     if (menuData.status=="loading") {
-    //         returnMenuData.status= 'loading';
-    //     }
-       
-    //     return returnMenuData;
-    // }
-
     getExtraDiskInfo = (item:any)=> {
         let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
         return _extraData;
@@ -116,6 +66,21 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
         // }
         return _outputpath;
 
+    };
+    getDiskSizeFromCapabilities = (item:any) => {
+
+    if (item.capabilities!=null) {
+
+        try {
+            item.disk_size = item.capabilities[0].capabilities["disk_size"];
+        } catch (error) {
+            console.log(error);
+            return item.disk_size;
+        }
+    }
+
+    return item.disk_size;
+
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -143,7 +108,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
                                 <DataTable.Data>{this.getMountPointData(vmData,item?.mountpoint)}</DataTable.Data>
                                 <DataTable.Data>{item.lun}</DataTable.Data>
                                 <DataTable.Data>{item.disk_type}</DataTable.Data>
-                                <DataTable.Data>{item.disk_size}</DataTable.Data>
+                                <DataTable.Data>{this.getDiskSizeFromCapabilities(item)}</DataTable.Data>
   
                                 <DataTable.Data>
 

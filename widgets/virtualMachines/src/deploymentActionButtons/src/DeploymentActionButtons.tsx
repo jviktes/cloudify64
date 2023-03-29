@@ -1,5 +1,6 @@
 import type { FunctionComponent } from 'react';
 import { Icon } from 'semantic-ui-react';
+import { emptyState } from '../../../../../app/reducers/managerReducer';
 import { eVMStates } from '../../eVMStates';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
@@ -62,6 +63,23 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             return null;
         }
 
+    }
+
+    const hasVMPAMRequests = () => {
+        let _result = false;
+        if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
+            fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
+
+                if(_deployment["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+                    
+                    _result = true;
+                }
+                if(_deployment["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+                    _result = true;
+                }  
+            });
+        }
+        return _result;
     }
 
     const getCurrentLastExecution =(deployment_id:any) => {
@@ -149,6 +167,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     if (_workFlowItem.name=="revoke_user_account"){
                         if (vmData.id_blueprint_id.indexOf("JEA-Account")!=-1) {
                             //Revoke app admin account
+                            
                             outWorks.push(_workFlowItem);
                         }
                     }
@@ -177,10 +196,20 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const workFlowsVM=(item:any)=> {
         let outWorks = [];
-        let workflows=item.workflows
+        let workflows=item.workflows;
+
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
                 const _workFlowItem = workflows[key];
+
+                if (_workFlowItem.name=="uninstall"){
+                    _workFlowItem.isDisabled = hasVMPAMRequests();
+                    if (_workFlowItem.isDisabled==true) {
+                        _workFlowItem.tooltip = "Virtual machine has PAMs, please delete them before running unistall";
+                    }
+                    outWorks.push(_workFlowItem);
+                }
+
                 if (_workFlowItem.name=="restart_vm"){
                     outWorks.push(_workFlowItem);
                 }
@@ -223,6 +252,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                         outWorks.push(_workFlowItem);
                     }
                 }
+
             }
         }
         return outWorks;
@@ -234,16 +264,22 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             
             let internalStatus = lastGeneralExecution.status;
 
+            if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
+                return eVMStates.Loading;//'loading';
+            }
             //toto vraci child (deployment pro PAM) za chybu:
-            if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
+            else if ((lastGeneralExecution?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
               return eVMStates.WaitingToApproval;//"waitingToApproval";
             }
             //toto vraci VM (deployment pro VM) za chybu, pokud budu chtit zobrazovat pouze věci pro VM, pro tuto chybu vracet success? 
-            if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
+            else if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
                 return eVMStates.WaitingToApproval; // "waitingToApproval";
             }
+            else if ((lastGeneralExecution?.error?.toLowerCase().indexOf("cloudify.interfaces.lifecycle.delete")!=-1)) {
+                return eVMStates.WaitingToRevoke;
+            }
 
-            if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
+            else if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
                 return eVMStates.Loading;//'loading';
             }
             else if (internalStatus == "failed") {
@@ -321,13 +357,13 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     }
 
-    const getDeploymnetIdBasedOnStatus = ()=> {
+    const getDeploymnetIdBasedOnStatus = (workflow:any)=> {
 
         //pokud je stav WaitingToApproval, pak se vraci jiny deployment:
-        let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
-        let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
+        //let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
+        //let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
 
-        if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
+        if (workflow.name=="revoke_app_admin_account" ||  workflow.name=="revoke_sys_admin_account" ||  workflow.name=="revoke_service_account" || workflow.name=="revoke_user_account") {
             return fetchedDeploymentStateComplete.itemVM.id;
         }
         else {
@@ -335,6 +371,20 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
     }
     
+    const getDeploymnetNameBasedOnStatus = (workflow:any)=> {
+
+        //pokud je stav WaitingToApproval, pak se vraci jiny deployment:
+        //let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
+        //let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
+
+        if (workflow.name=="revoke_app_admin_account" ||  workflow.name=="revoke_sys_admin_account" ||  workflow.name=="revoke_service_account" || workflow.name=="revoke_user_account") {
+            return fetchedDeploymentStateComplete.itemVM.display_name;
+        }
+        else {
+            return currentDeploymentId;
+        }
+    }
+
     const getToolTip =(_lastGeneralExecution:any, _status:eVMStates) => {
         let _toolTipText = "Actions";
 
@@ -367,7 +417,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 //try to add progress %
                 try {
                     if (_lastGeneralExecution.Total_operations!=0) {
-                        _toolTipText = _toolTipText +"(" +Math.floor(_lastGeneralExecution.Finished_operations/_lastGeneralExecution.Total_operations*100) +")";
+                        if (!Number.isNaN(Math.floor(_lastGeneralExecution.Finished_operations / _lastGeneralExecution.Total_operations * 100))) {
+                            _toolTipText = _toolTipText +"(" +Math.floor(_lastGeneralExecution.Finished_operations/_lastGeneralExecution.Total_operations*100) +")";
+                        }
                     }
                 } catch (error) {
                
@@ -383,6 +435,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             case eVMStates.WaitingToApproval:
                 _toolTipText = "Waiting to approval";
                 break;
+            case eVMStates.WaitingToRevoke:
+                    _toolTipText = "Waiting to revoke";
+                    break;
             case eVMStates.Default:
                 _toolTipText = "?";
                 break;
@@ -443,7 +498,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 onClick={setWorkflow}
             />)
         }
-        if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
+        if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
@@ -460,7 +515,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
         return <div></div>
     }
-    console.log(parametresModal);
+    //console.log(parametresModal);
     return (
         <div>
 
@@ -469,8 +524,8 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             {workflow && (
                 <ExecuteWorkflowModal
                     open
-                    deploymentId={getDeploymnetIdBasedOnStatus()}
-                    deploymentName={fetchedDeploymentStateComplete.itemVM.display_name}
+                    deploymentId={getDeploymnetIdBasedOnStatus(workflow)}
+                    deploymentName={getDeploymnetNameBasedOnStatus(fetchedDeploymentStateComplete.itemVM.display_name)}
                     workflow={workflow}
                     parametresModal={currentDeploymentId}
                     onHide={resetWorkflow}

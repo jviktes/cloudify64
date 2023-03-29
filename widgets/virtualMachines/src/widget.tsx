@@ -21,7 +21,7 @@ Stage.defineWidget({
     ],
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
-        console.log("fetchData");
+        //console.log("fetchData");
 
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();

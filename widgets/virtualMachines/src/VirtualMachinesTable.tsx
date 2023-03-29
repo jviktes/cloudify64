@@ -27,7 +27,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     constructor(props: VirtualMachinesDataProps) {
         super(props);
-        console.log("VirtualMachinesTable ctor:");
+        //console.log("VirtualMachinesTable ctor:");
         this.state = {
             detailedData: [],
             loading:false,
@@ -37,7 +37,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     componentDidMount() {
-        console.log("VirtualMachinesTable componentDidMount..."); 
+        //console.log("VirtualMachinesTable componentDidMount..."); 
         const { data, toolbox } = this.props;
         toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
 
@@ -68,7 +68,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             }
             
             if (this.state.loading==false && isAfter30s) {
-                console.log("componentDidUpdate call loading:"); 
+                //console.log("componentDidUpdate call loading:"); 
                 //spusteni volani celeho cyklu:
                     //this.setState({ loading: true });
                     if ( this.state.loading==false) {
@@ -96,7 +96,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
 
         try {
-            console.log("loadDetailedData:");
+            //console.log("loadDetailedData:");
 
             const { toolbox } = this.props;
             const manager = toolbox.getManager();
@@ -168,35 +168,58 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         let isAnyErrorInSubDeployments = false;
         let isAnyWaitingForWaitingForApprovalInSubDeployments = false;
         try {
-            this.state.detailedData[item.id].forEach(_deployment => {
 
-                try {
-                    let latestExec= _deployment.executionAllData[0].items.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+            if (this.state.detailedData[item.id]!=null) {
+                this.state.detailedData[item.id].forEach(_deployment => {
 
-                    //pokud je posledni beh problemovy, pak :
+                    try {
+                        let latestExec= _deployment.executionAllData[0].items.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+    
+                        if (latestExec?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1) {
+                            isAnyWaitingForWaitingForApprovalInSubDeployments = true;
+                        }
+ 
+                        if (latestExec?.error?.toLowerCase().indexOf("cloudify.interfaces.lifecycle.delete")!=-1) {
+                            isAnyWaitingForWaitingForApprovalInSubDeployments = true;
+                        }
 
-                    if ((latestExec?.error?.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1)) {
-                        isAnyWaitingForWaitingForApprovalInSubDeployments = true;
-                      }
-                        //   //toto vraci VM (deployment pro VM) za chybu, pokud budu chtit zobrazovat pouze věci pro VM, pro tuto chybu vracet success? 
-                        //   if ((lastGeneralExecution?.error?.toLowerCase().indexOf("grant_access_breakpoints")!=-1)) {
-                        //       return eVMStates.WaitingToApproval; // "waitingToApproval";
-                        //   }
+                        //pokud je posledni beh problemovy, pak :
+                        // if (latestExec.error!=null && latestExec.error!="") {
+                        //     if (latestExec.error.length>0) {
+                        //         try {
+                        //             let _index=latestExec.error.toString().toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start");
+                        //             if (_index!=-1) 
+                        //             {
+                        //                 console.log("isAnyWaitingForWaitingForApprovalInSubDeployments = true");
+                        //                 isAnyWaitingForWaitingForApprovalInSubDeployments = "true";
+                        //             }
+    
+                        //         } catch (error) {
+                        //             console.log(error);
+                        //         }
+                        //     }
+                        // }
 
-                      else if (latestExec.status == "failed") {
-                          isAnyErrorInSubDeployments = true;
-                      }
-                      else if (latestExec.status == "waitingToApproval") {
-                        isAnyWaitingForWaitingForApprovalInSubDeployments = true;
-                      }
-                } catch (error) {
-                    
-                }
+                        //prednost bude mit waiting stav:
+                        if (latestExec.status == "failed" && (!isAnyWaitingForWaitingForApprovalInSubDeployments)) {
+                            isAnyErrorInSubDeployments = true;
+                        }
 
-            });
+                        if (latestExec.status == "WaitingToApproval") {
+                            isAnyWaitingForWaitingForApprovalInSubDeployments = true;
+                        }
+
+                    } catch (error) {
+                        console.log(error);
+                    }
+    
+                });
+            }
+
         } catch (error) {
-            
+            console.log(error);
         }
+
         if (isAnyErrorInSubDeployments==true) {
             return <Button icon="expand" color='red' onClick={() => this.onRowClick(item)} />;
         }
@@ -250,6 +273,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;
+                    _diksObj.capabilities = element.capabilities;
                     _diksObj.workflows = element["workflows"];
                     _diksObj.deployment_id = element.id;
                     _dataDisk.push(_diksObj);
@@ -375,7 +399,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         currentDeployment={item}
                                         currentDeploymentId={item.id}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 
-                                        parametresModal={item}                                    />
+                                        parametresModal={item}/>
                                 </DataTable.Data>
                                 {/* 
                                 <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
