@@ -194,6 +194,21 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return outWorks;
     };
 
+    const workFlowsPAMRequestWaitingToRevoke=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+                if (_workFlowItem.name=="approve_or_reject"){
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
+
+
     const workFlowsVM=(item:any)=> {
         let outWorks = [];
         let workflows=item.workflows;
@@ -346,6 +361,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             if (deploymentType=="pams") {
                 if (_lastCurrentStatus==eVMStates.WaitingToApproval) {
                     workflows=workFlowsPAMRequestWaitingToApproval(fetchedDeploymentStateComplete.itemVM); //approve_or_reject na urovni deployment = zdenek...
+                }
+                else if (_lastCurrentStatus==eVMStates.WaitingToRevoke) {
+                    workflows=workFlowsPAMRequestWaitingToRevoke(fetchedDeploymentStateComplete.itemVM); //approve_or_reject na urovni deployment = zdenek...
                 }
                 else {
                     workflows=workFlowsPAMRequests(fetchedDeploymentStateComplete.itemVM,currentDeployment); //revoke_app_admin_account na urovni VM
