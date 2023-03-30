@@ -1,6 +1,7 @@
-//// @ts-nocheck File not migrated fully to TS
+// @ts-nocheck File not migrated fully to TS
 import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
+import { IdPopup } from '../../../app/components/shared';
 import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
 import ExecutionsTableVM from './ExecutionsTableVM';
@@ -33,6 +34,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             loading:false,
             lastLoadingDate:undefined,
             showBackButton:false,
+            hoveredExecution: null,
         };
     }
 
@@ -183,23 +185,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                             isAnyWaitingForWaitingForApprovalInSubDeployments = true;
                         }
 
-                        //pokud je posledni beh problemovy, pak :
-                        // if (latestExec.error!=null && latestExec.error!="") {
-                        //     if (latestExec.error.length>0) {
-                        //         try {
-                        //             let _index=latestExec.error.toString().toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start");
-                        //             if (_index!=-1) 
-                        //             {
-                        //                 console.log("isAnyWaitingForWaitingForApprovalInSubDeployments = true");
-                        //                 isAnyWaitingForWaitingForApprovalInSubDeployments = "true";
-                        //             }
-    
-                        //         } catch (error) {
-                        //             console.log(error);
-                        //         }
-                        //     }
-                        // }
-
                         //prednost bude mit waiting stav:
                         if (latestExec.status == "failed" && (!isAnyWaitingForWaitingForApprovalInSubDeployments)) {
                             isAnyErrorInSubDeployments = true;
@@ -337,11 +322,23 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         return combinedExecutions;
     }
-    
+    setHoveredExecution(idToCheck) {
+        const { hoveredExecution } = this.state;
+        if (hoveredExecution !== idToCheck) {
+            this.setState({ hoveredExecution: idToCheck });
+        }
+    }
+    unsetHoveredExecution(idToCheck) {
+        const { hoveredExecution } = this.state;
+        if (hoveredExecution === idToCheck) {
+            this.setState({ hoveredExecution: null });
+        }
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
-        const { DataTable } = Stage.Basic;
+        const { DataTable} = Stage.Basic;
+        const {hoveredExecution} = this.state;
 
         return (
             <div>
@@ -367,14 +364,19 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     {/* <DataTable.Column label="" name="config" name="class" /> */}
                     {_.map(data.items, item => (    
                                         
-                            <DataTable.RowExpandable key={item.id}>
+                            <DataTable.RowExpandable key={item.id} 
+
+                            >
                             <DataTable.Row 
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
+                                onMouseOver={() => this.setHoveredExecution(item.id)}
+                                onFocus={() => this.setHoveredExecution(item.id)}
+                                onMouseOut={() => this.unsetHoveredExecution(item.id)}
                                 >
                                 {getDetails(item)}
 
-                                <DataTable.Data>{item.display_name}</DataTable.Data>
+                                <DataTable.Data><IdPopup  id={item.id} selected={hoveredExecution === item.id} />{item.display_name}</DataTable.Data>
 
                                 <DataTable.Data>{item.os}</DataTable.Data>
                                 <DataTable.Data>{item.ip}</DataTable.Data>
