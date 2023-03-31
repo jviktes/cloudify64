@@ -34,7 +34,8 @@ export default function BlueprintsTable({
             className={tableName}
             noDataMessage={noDataMessage}
         >
-            <DataTable.Column label="Name" name="id" width="80%" />
+            <DataTable.Column label="Name" name="id" width="30%" />
+            <DataTable.Column label="Desciption" name="description" width="50%" />
             <DataTable.Column width="20%" />
 
             {data.items.map(item => (
@@ -54,8 +55,10 @@ export default function BlueprintsTable({
                         )}{' '}
                         
                     {item.id}
-                        
 
+                    </DataTable.Data>
+
+                    <DataTable.Data>{item.description}
                     </DataTable.Data>
 
                     <DataTable.Data className="center aligned rowActions">
