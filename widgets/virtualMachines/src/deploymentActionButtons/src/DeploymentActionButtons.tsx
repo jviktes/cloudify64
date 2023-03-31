@@ -396,6 +396,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         if (workflow.name=="revoke_app_admin_account" ||  workflow.name=="revoke_sys_admin_account" ||  workflow.name=="revoke_service_account" || workflow.name=="revoke_user_account") {
             return fetchedDeploymentStateComplete.itemVM.display_name;
         }
+        else if (workflow.name=="remove_disk") {
+            return fetchedDeploymentStateComplete.itemVM.display_name;
+        }
         else {
             return currentDeploymentId;
         }
