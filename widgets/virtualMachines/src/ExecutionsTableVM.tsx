@@ -26,6 +26,17 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
         super(props);
     }
 
+    getStatusHtml = (item:any) => {
+        //TODO:
+        if (item?.status_display=="failed") {
+            return <span style={{ color: 'red' }}>item?.status_display</span>
+        }
+        if (item?.status_display=="Completed") {
+            return <span style={{ color: 'green' }}>item?.status_display</span>
+        }
+        item?.status_display;
+    }
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const {data } = this.props;
@@ -58,8 +69,6 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
         );
     }
 }
-
-
 
 ExecutionsTableVM.propTypes = {
     // eslint-disable-next-line react/forbid-prop-types

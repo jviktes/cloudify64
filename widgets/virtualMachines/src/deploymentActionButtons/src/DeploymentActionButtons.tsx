@@ -467,6 +467,16 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return _toolTipText;
     }
 
+    //TODO:
+    //"Action button tooltip when previous action failed (red button)
+    // Let us display the following structured information instead of the last error event, which obviously contains some stack trace etc.:
+    // Failed execution name: [failed workflow name]
+    // Failed execution ID: [execution ID]
+    // Deployment ID: [deployment ID where the workflow was executed from]
+    // Created at: [time of execution / start]"
+    const getFormattedError=(item:any) => {
+            return item;
+    }
     const renderWorkMenu=()=>{
         //for loading icon only:
         let _lastGeneralExecution = getLastGeneralExecution();
@@ -503,7 +513,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
         if (_lastCurrentStatus==eVMStates.Error) {
-            return (<WorkflowsMenu
+            return (<div><WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
                     <Button
@@ -515,7 +525,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     />
                 }
                 onClick={setWorkflow}
-            />)
+            /><Icon name="help circle" title={getFormattedError(_computedTooTip)}></Icon></div>)
         }
         if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke) {
             return (<WorkflowsMenu
