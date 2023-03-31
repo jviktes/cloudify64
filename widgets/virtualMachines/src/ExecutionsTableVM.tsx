@@ -36,11 +36,11 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
                 <div><span style={{fontWeight:"bold"}}>Executions</span></div>
                 <DataTable>
 
-                    <DataTable.Column label="status_display" name="status_display"/>
-                    <DataTable.Column label="status_display" name="status_display" />
-                    <DataTable.Column label="created_at" name="created_at" />
-                    <DataTable.Column label="created_by" name="created_by" />
-                    <DataTable.Column label="deployment_id" name="deployment_id"/>
+                    <DataTable.Column label="Status" name="status_display"/>
+                    <DataTable.Column label="Workflow" name="workflow_id" />
+                    <DataTable.Column label="Created" name="created_at" />
+                    <DataTable.Column label="Creator" name="created_by" />
+                    <DataTable.Column label="Deployment ID" name="deployment_id"/>
 
                     {_.map(data, item => (      
                                       
