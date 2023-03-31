@@ -34,9 +34,11 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
     }
 
     getExtraDiskInfo = (item:any)=> {
-        let _extraData = "Host caching: "+item.host_caching + "Disk label: " + item.label;
-        return _extraData;
+        let _extraData = {"Host caching": item.host_caching, "Disk label": item.label};
+        let strPrettyJson = JSON.stringify(_extraData, null, 2);
+        return strPrettyJson;
     }
+    
     getTableLabelForMountPoint = (_vmData:any) => {
         if (_vmData?.os.indexOf("Windows")!=-1) {
             return ("Disk letter");
