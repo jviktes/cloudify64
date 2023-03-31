@@ -1,6 +1,5 @@
 import type { FunctionComponent } from 'react';
 import { Icon } from 'semantic-ui-react';
-import { emptyState } from '../../../../../app/reducers/managerReducer';
 import { eVMStates } from '../../eVMStates';
 import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
@@ -9,7 +8,7 @@ import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any};
 
 interface DeploymentActionButtonsProps {
-    //deploymentId?: string | null;
+ 
     fetchedDeploymentStateComplete: FetchedDeploymentStateComplete;
     toolbox: Stage.Types.Toolbox;
     redirectToParentPageAfterDelete: boolean;
@@ -20,7 +19,6 @@ interface DeploymentActionButtonsProps {
 }
 
 const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> = ({
-    //deploymentId,
     fetchedDeploymentStateComplete,
     toolbox,
     currentDeployment,
@@ -545,7 +543,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     deploymentId={getDeploymnetIdBasedOnStatus(workflow)}
                     deploymentName={getDeploymnetNameBasedOnStatus(fetchedDeploymentStateComplete.itemVM.display_name)}
                     workflow={workflow}
-                    parametresModal={currentDeploymentId}
+                    parametresModal={parametresModal}
                     onHide={resetWorkflow}
                     toolbox={toolbox} 
                 />

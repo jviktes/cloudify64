@@ -38,7 +38,7 @@ export function getDetails (item:any){
                 //     }
                 // }
 
-                  var _workflow = item.executionAllData[0].items.filter(obj => {
+                  var _workflow = item.executionAllData[0].items.filter((obj: { workflow_id: string; }) => {
                     return obj.workflow_id === "create_deployment_environment"
                   })
 

@@ -114,7 +114,6 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
                                     <DeploymentActionButtons
                                             buttonTitle='Disk actions'
-                                            //deploymentId={item.name}
                                             fetchedDeploymentStateComplete={menuData}
                                             toolbox={toolbox}
                                             currentDeployment = {item}
