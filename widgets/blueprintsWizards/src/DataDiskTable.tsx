@@ -269,7 +269,7 @@ export function DataDiskTable({
         }
 
     };
-
+    //TODO: return windows
     const getOperationtype = () => {
         //console.log(osInfo);
         if (osInfo == undefined || osInfo.default == undefined) { return null; }
@@ -365,12 +365,20 @@ export function DataDiskTable({
 
         console.log("ValidateDataAllDisks...");
         //console.log(nextButtonState);
+        
         //hledani stejnych mountpoint:
         _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
             _disk.error={};
             let errors = [];
             if (_disk.mountpoint == null || getDiskMountingPointValue(_disk.mountpoint) == "") {
-                errors.push({text:"Mounting point may not be blank.", element:"mountpoint"});
+                if (getOperationtype() == "windows"){
+                    errors.push({text:"Disk letter may not be blank.", element:"mountpoint"});
+                }
+                else {
+                    errors.push({text:"Mounting point may not be blank.", element:"mountpoint"});
+                }
+                
+
             }
             if (_disk.label == null || _disk.label == ""){
                 errors.push({text:"Label may not be blank.", element:"label"});
