@@ -5,7 +5,7 @@ import { Workflow } from '../executeWorkflow';
 import ExecuteWorkflowModal from '../executeWorkflow/ExecuteWorkflowModal';
 import WorkflowsMenu from '../executeWorkflow/WorkflowsMenu';
 
-type FetchedDeploymentStateComplete = { stateSummaryForDeployments:[],itemVM: any; workflows: Workflow[],childDeployment_Id:any};
+type FetchedDeploymentStateComplete  = { stateSummaryForDeployments:[],itemVM: any, workflows: Workflow[],childDeployment_Id:any};
 
 interface DeploymentActionButtonsProps {
  
@@ -35,8 +35,18 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     const getLastGeneralExecution =() => {
             let combinedExecutions = [];
 
+
+        try {
+            if (fetchedDeploymentStateComplete.itemVM.executionAllData[0]==undefined) {
+                return null;
+            }
+            } catch (error) {
+                return null;
+        }
+
             let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
             combinedExecutions=_vmExecutions;
+
             if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
                 fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
                     let _execs = [];
