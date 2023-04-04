@@ -503,6 +503,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     const getFormattedError=(item:any) => {
             return item;
     }
+    const copyToPaste =(errortext:any) => {
+        navigator.clipboard.writeText(errortext);
+        return;
+    }
     const renderWorkMenu=()=>{
         //for loading icon only:
         let _lastGeneralExecution = getLastGeneralExecution();
@@ -551,7 +555,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     />
                 }
                 onClick={setWorkflow}
-            /><Icon name="help circle" title={getFormattedError(_computedTooTip)}></Icon></div>)
+            /><Button onClick={() => copyToPaste(_computedTooTip)}><Icon name="help circle" title="Click to copy full error text"></Icon></Button></div>)
         }
         if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke) {
             return (<WorkflowsMenu
