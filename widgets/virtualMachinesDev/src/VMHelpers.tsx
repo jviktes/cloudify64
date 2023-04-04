@@ -83,10 +83,31 @@ export function _getIPAdress (inputJson:any){
 }
 export function _getCPU (deployment:any,_azure_size:any){
     try {
+        
+        let _wfname="";
+        if (deployment?.os.indexOf("Windows")!=-1) {
+            _wfname = "resize_windows_vm";
+        }
+        if (deployment?.os.indexOf("RHEL")!=-1) {
+            _wfname = "resize_rhel_vm";
+        }
+        //maybe old version of blueprits:
+        if (_wfname=="") {
+            _wfname = "resize_vm";
+        }
 
         var _workflow = deployment.workflows.filter((obj: { name: string; }) => {
-            return obj.name === "resize_windows_vm"
+            return obj.name === _wfname
           })
+
+        //maybe old version of blueprits:
+        if (_workflow==null) {
+            _wfname = "resize_vm";
+            _workflow = deployment.workflows.filter((obj: { name: string; }) => {
+                return obj.name === _wfname
+            })
+        }
+
         //console.log(vm_size); //(2 CPU, 8GB RAM, max 4 data disks)
         let _list_of_azure_sizes = _workflow[0].parameters.size.constraints[0].valid_values;
 
@@ -111,10 +132,27 @@ export function _getCPU (deployment:any,_azure_size:any){
 export function _getRAM (deployment:any,_azure_size:any){
     try {
 
-        var _workflow = deployment.workflows.filter((obj: { name: string; }) => {
-            return obj.name === "resize_windows_vm"
-          })
-          let _list_of_azure_sizes = _workflow[0].parameters.size.constraints[0].valid_values;
+        let _wfname="";
+        if (deployment?.os.indexOf("Windows")!=-1) {
+            _wfname = "resize_windows_vm";
+        }
+        if (deployment?.os.indexOf("RHEL")!=-1) {
+            _wfname = "resize_rhel_vm";
+        }
+
+        let _workflow = deployment.workflows.filter((obj: { name: string; }) => {
+            return obj.name === _wfname
+        })
+
+        //maybe old version of blueprits:
+        if (_workflow==null) {
+            _wfname = "resize_vm";
+            _workflow = deployment.workflows.filter((obj: { name: string; }) => {
+                return obj.name === _wfname
+            })
+        }
+
+       let _list_of_azure_sizes = _workflow[0].parameters.size.constraints[0].valid_values;
 
           let _index = -1;  
           for (let index = 0; index < _list_of_azure_sizes.length; index++) {
