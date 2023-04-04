@@ -35,7 +35,7 @@ export default function BlueprintsTable({
             noDataMessage={noDataMessage}
         >
             <DataTable.Column label="Name" name="id" width="30%" />
-            <DataTable.Column label="Desciption" name="description" width="50%" />
+            <DataTable.Column label="Description" name="description" width="50%" />
             <DataTable.Column width="20%" />
 
             {data.items.map(item => (
