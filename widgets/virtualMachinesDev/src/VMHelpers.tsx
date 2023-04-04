@@ -101,7 +101,7 @@ export function _getCPU (deployment:any,_azure_size:any){
           })
 
         //maybe old version of blueprits:
-        if (_workflow==null) {
+        if (_workflow==null || _workflow.length==0) {
             _wfname = "resize_vm";
             _workflow = deployment.workflows.filter((obj: { name: string; }) => {
                 return obj.name === _wfname
@@ -145,7 +145,7 @@ export function _getRAM (deployment:any,_azure_size:any){
         })
 
         //maybe old version of blueprits:
-        if (_workflow==null) {
+        if (_workflow==null || _workflow.length==0) {
             _wfname = "resize_vm";
             _workflow = deployment.workflows.filter((obj: { name: string; }) => {
                 return obj.name === _wfname
