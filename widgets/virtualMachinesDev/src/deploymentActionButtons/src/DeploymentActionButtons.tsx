@@ -414,6 +414,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
     }
 
+
     const getToolTip =(_lastGeneralExecution:any, _status:eVMStates) => {
         let _toolTipText = "Actions";
 
@@ -459,7 +460,22 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 break;
             case eVMStates.Error:
                 _toolTipText = "Error in task";
-                _toolTipText = _toolTipText + "(" +_lastGeneralExecution.error+ ")";
+
+                // "Action button tooltip when previous action failed (red button)
+                // Let us display the following structured information instead of the last error event, which obviously contains some stack trace etc.:
+                //   Failed execution name: [failed workflow name]
+                //   Failed execution ID: [execution ID]
+                //   Deployment ID: [deployment ID where the workflow was executed from]
+                //   Created at: [time of execution / start]"
+
+                let errJSON = {};
+                let _idExection = _lastGeneralExecution["id"];
+                let _deploymentId = _lastGeneralExecution["deployment_id"];
+                let _created_at = _lastGeneralExecution.created_at;
+                errJSON = {"Failed execution name":_lastGeneralExecution.workflow_id,"Failed execution ID":{_idExection}, "Deployment ID": {_deploymentId},"Created at": {_created_at}};
+                
+                _toolTipText = _toolTipText + "(" +JSON.stringify(errJSON, null, 2); ")";
+
                 break;
             case eVMStates.WaitingToApproval:
                 _toolTipText = "Waiting to approval";
