@@ -63,7 +63,13 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     const [isLoading, setLoading, unsetLoading] = useBoolean();
     const [dryRun, setDryRun, clearDryRun] = useInput(false);
     const [isFileLoading, setFileLoading, unsetFileLoading] = useBoolean();
-    const [force, setForce, clearForce] = useInput(false);
+
+    const [force, setForce, clearForce] = useInput(false); 
+    //TODO: zde se nastavuje defautni hodnota force na false
+    if (workflow=="uninstall") {
+        setForce(false);
+    }
+
     const [queue, setQueue, clearQueue] = useInput(false);
     const [schedule, setSchedule, clearSchedule] = useInput(false);
     const [scheduledTime, setScheduledTime, clearScheduleTime] = useInput('');
@@ -73,7 +79,9 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     const workflowName = getWorkflowName(workflow);
 
     function setWorkflowParams(workflowResource: Workflow) {
+
         setBaseWorkflowParams(workflowResource.parameters);
+
         console.log(parametresModal);
         setUserWorkflowParams(
             _.mapValues(workflowResource.parameters, parameterData =>
@@ -245,8 +253,10 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                     <DeploymentIdContext.Provider value={contextDeploymentId}>
                         <ExecuteWorkflowInputs
                             toolbox={toolbox}
+
                             baseWorkflowInputs={baseWorkflowParams}
                             userWorkflowInputsState={userWorkflowParams}
+
                             onYamlFileChange={handleYamlFileChange}
                             onWorkflowInputChange={onWorkflowInputChange}
                             fileLoading={isFileLoading}

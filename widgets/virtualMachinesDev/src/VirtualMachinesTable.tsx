@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
 import { IdPopup } from '../../../app/components/shared';
-import DeploymentActionButtons from '../src/deploymentActionButtons/src/DeploymentActionButtons';
+import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
 import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
@@ -274,7 +274,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         let _dataPAM: any[]= [];
         try {
             data.forEach((element: { [x: string]: any; display_name: any; executionAllData: any; }) => {
-                if(element["blueprint_id"].indexOf("CyberArk-Account")!=-1) {
+                if((element["blueprint_id"].indexOf("CyberArk-Account")!=-1) || (element["blueprint_id"].indexOf("JEA-Service-Account")!=-1 )) {
                     let _diksObj = element["inputs"];
                     _diksObj.name = element.display_name;
                     _diksObj.executionAllData = element.executionAllData;

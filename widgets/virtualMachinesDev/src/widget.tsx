@@ -5,10 +5,10 @@ import { result } from 'lodash';
 import VirtualMachinesTable from './VirtualMachinesTable';
 
 Stage.defineWidget({
-    id: 'virtual-machines',
-    name: 'Virtual machines',
-    // id: 'virtual-machines-dev',
-    // name: 'Virtual machines development',
+    // id: 'virtual-machines',
+    // name: 'Virtual machines',
+    id: 'virtual-machines-dev',
+    name: 'Virtual machines development (v1.32)',
     description: 'Virtual machines management',
     initialWidth: 32,
     initialHeight: 32,
