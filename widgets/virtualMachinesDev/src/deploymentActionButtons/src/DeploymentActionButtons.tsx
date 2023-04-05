@@ -555,7 +555,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     />
                 }
                 onClick={setWorkflow}
-            /><Button onClick={() => copyToPaste(_computedTooTip)}><Icon name="help circle" title="Click to copy full error text"></Icon></Button></div>)
+            /><Button basic compact icon="copy" onClick={() => copyToPaste(_computedTooTip)}></Button></div>)
         }
         if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke) {
             return (<WorkflowsMenu
