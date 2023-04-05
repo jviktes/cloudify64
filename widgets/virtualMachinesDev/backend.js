@@ -16,14 +16,15 @@ module.exports = async function(r) {
         const params = { ...req.query };
         console.log(params);
         let _searchParam = params._search;
-
+        let _sortParam = params._sort;
         let rawData = [];
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
 
         return helper.Manager.doPost('/searches/deployments', {
             params: {
                 _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
-                _search:_searchParam
+                _search:_searchParam,
+                _sort:_sortParam,
             },
             body: { filter_rules: filterRules },
             ...commonManagerRequestOptions

@@ -5,10 +5,10 @@ import { result } from 'lodash';
 import VirtualMachinesTable from './VirtualMachinesTable';
 
 Stage.defineWidget({
-    // id: 'virtual-machines',
-    // name: 'Virtual machines',
-    id: 'virtual-machines',
-    name: 'Virtual machines (v1.34)',
+    //  id: 'virtual-machines',
+    //  name: 'Virtual machines (v1.35)',
+    id: 'virtual-machines-dev',
+    name: 'Virtual machines development (v1.36)',
     description: 'Virtual machines management',
     initialWidth: 32,
     initialHeight: 32,
@@ -20,19 +20,15 @@ Stage.defineWidget({
     permission: Stage.GenericConfig.CUSTOM_WIDGET_PERMISSIONS.CUSTOM_ALL,
     initialConfiguration: [
         Stage.GenericConfig.POLLING_TIME_CONFIG(30),
+        Stage.GenericConfig.PAGE_SIZE_CONFIG(5),
     ],
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
         //console.log("fetchData");
-
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
-        
         params.tenant = tenantName;
-        //console.log("params:");
-        //console.log(params);
         let _results = toolbox.getWidgetBackend().doGet('get_vm_deployments', { params });
-        //toolbox.getEventBus().trigger('deployments:regularRefresh');
         return _results;
     },
 
@@ -44,8 +40,13 @@ Stage.defineWidget({
     },
 
     render(widget, data, error, toolbox) {
+        const { Loading } = Stage.Basic;
+        if (_.isEmpty(data)) {
+            return <Loading />;
+        }
         const formattedData = {
-            items: data
+            items: data.items,
+            total: _.get(data, 'metadata.pagination.total', 0),
         };
         //console.log(formattedData);
         return <div style={{outerWidth:"100%"}}><VirtualMachinesTable widget={widget} data={formattedData} toolbox={toolbox} /></div>;

@@ -1,4 +1,4 @@
-# Virtual mcahines
+# Virtual machines
 
 Displays virtual machines.
 

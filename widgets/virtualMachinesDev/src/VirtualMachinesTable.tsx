@@ -345,22 +345,24 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                 <DataTable
                     className="table-scroll-vm"
+                    pageSize={widget.configuration.pageSize}
+                    totalSize={data.total}
                     fetchData={this.fetchGridData}
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
                     searchable
                 >
 
-                    <DataTable.Column label="Name" name="labels"/>
+                    <DataTable.Column label="Name" name="display_name"/>
                     <DataTable.Column label="OS" name="os" />
-                    <DataTable.Column label="IP" name="ip" />
+                    <DataTable.Column label="IP" name="capabilities" />
                     <DataTable.Column label="CPUs" name="cpus" />
                     <DataTable.Column label="RAM (GiB)" name="ram" />
                     <DataTable.Column label="Azure size" name="azure_size" />
                     <DataTable.Column label="Azure location" name="azure_location" />
                     <DataTable.Column label="Environment" name="environment" />
                     <DataTable.Column label="" name="" />
-                    <DataTable.Column label="Actions" name="actions" />
+                    <DataTable.Column label="Actions" />
                     {/* <DataTable.Column label="" name="config" name="class" /> */}
                     {_.map(data.items, item => (    
                                         
