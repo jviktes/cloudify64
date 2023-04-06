@@ -9,25 +9,6 @@ import type { BaseWorkflowInputs, OnCheckboxChange, OnDateInputChange, UserWorkf
 
 const t = Stage.Utils.getT('widgets.common.deployments.execute');
 
-// function renderActionCheckbox(name: string, checked: boolean, onChange: OnCheckboxChange) {
-//     const { Checkbox } = Stage.Basic.Form;
-//     return (
-//         <Checkbox
-//             name={name}
-//             toggle
-//             label={t(`actions.${name}.label`)}
-//             help={t(`actions.${name}.help`)}
-//             checked={checked}
-//             onChange={onChange}
-//         />
-//     );
-// }
-
-// function renderCheckboxField(name: string, checked: boolean, onChange: OnCheckboxChange) {
-//     const { Field } = Stage.Basic.Form;
-//     return <Field>{renderActionCheckbox(name, checked, onChange)}</Field>;
-// }
-
 export interface CommonExecuteWorflowProps {
     baseWorkflowInputs: BaseWorkflowInputs;
     userWorkflowInputsState: UserWorkflowInputsState;
@@ -76,7 +57,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
             <InputFields
                 inputs={baseWorkflowInputs}
                 onChange={onWorkflowInputChange}
-                inputsState={userWorkflowInputsState}
+                inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
                 errorsState={errors}
                 toolbox={toolbox}
                 // hidden={true}

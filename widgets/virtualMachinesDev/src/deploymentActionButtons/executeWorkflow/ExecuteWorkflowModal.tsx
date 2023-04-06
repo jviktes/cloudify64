@@ -83,11 +83,36 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         setBaseWorkflowParams(workflowResource.parameters);
 
         console.log(parametresModal);
-        setUserWorkflowParams(
-            _.mapValues(workflowResource.parameters, parameterData =>
-                getInputFieldInitialValue(parameterData.default, parameterData.type)
-            )
-        );
+        if (workflowResource.name=="remove_disk") {
+            let _remappadValues= {lun:parametresModal.lun};
+            setUserWorkflowParams(_remappadValues);
+        }
+        else if (workflowResource.name=="revoke_user_account") {
+            let _remappadValues= {account_role:parametresModal.role,user_id:parametresModal.user_id};
+            setUserWorkflowParams(_remappadValues);
+        }
+        else if (workflowResource.name=="revoke_service_account") {
+            let _remappadValues= {user_id:parametresModal.user_id};
+            setUserWorkflowParams(_remappadValues);
+        }
+
+        else if (workflowResource.name=="revoke_app_admin_account") {
+            let _remappadValues= {account_role:parametresModal.role,user_id:parametresModal.user_id};
+            setUserWorkflowParams(_remappadValues);
+        }
+        else if (workflowResource.name=="revoke_sys_admin_account") {
+            let _remappadValues= {user_id:parametresModal.user_id};
+            setUserWorkflowParams(_remappadValues);
+        }
+
+        else {
+            setUserWorkflowParams(
+                _.mapValues(workflowResource.parameters, parameterData =>
+                    getInputFieldInitialValue(parameterData.default, parameterData.type)
+                )
+            );
+        }
+
     }
 
     useOpenProp(open, () => {
