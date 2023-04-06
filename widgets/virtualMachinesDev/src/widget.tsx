@@ -20,7 +20,7 @@ Stage.defineWidget({
     permission: Stage.GenericConfig.CUSTOM_WIDGET_PERMISSIONS.CUSTOM_ALL,
     initialConfiguration: [
         Stage.GenericConfig.POLLING_TIME_CONFIG(30),
-        Stage.GenericConfig.PAGE_SIZE_CONFIG(5),
+        Stage.GenericConfig.PAGE_SIZE_CONFIG(10),
     ],
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
