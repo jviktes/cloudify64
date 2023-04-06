@@ -238,7 +238,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     };
 
     refreshData() {
-        console.log("VirtualMachines refreshData...");
+        //console.log("VirtualMachines refreshData...");
 
         const { data, toolbox } = this.props;
 
