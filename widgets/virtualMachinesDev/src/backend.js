@@ -19,7 +19,7 @@ module.exports = async function(r) {
         let _sortParam = params._sort;
         let _size = params._size;
         let _offset = params._offset;
-        //let rawData = [];
+
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
 
         return helper.Manager.doPost('/searches/deployments', {
@@ -34,7 +34,6 @@ module.exports = async function(r) {
             ...commonManagerRequestOptions
         })
             .then(data => {
-                //rawData = data.items;
 
                 //nacteni detailu (os, apod.), TODO: nactou se vsechny? pokud ne, zajima me asi jen:
                 //create_deployment_environment a posledni bezici
@@ -54,7 +53,6 @@ module.exports = async function(r) {
                             }
                         });
                     }); 
-                    //return rawData;
                     //dotazy na capabilites:
                     const capabilitesPromises = _.map(data.items, deployment => 
                         helper.Manager.doGet(`/deployments/${deployment.id}/capabilities`, commonManagerRequestOptions)

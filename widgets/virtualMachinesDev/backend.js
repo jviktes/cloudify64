@@ -17,7 +17,9 @@ module.exports = async function(r) {
         console.log(params);
         let _searchParam = params._search;
         let _sortParam = params._sort;
-        let rawData = [];
+        let _size = params._size;
+        let _offset = params._offset;
+
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
 
         return helper.Manager.doPost('/searches/deployments', {
@@ -25,23 +27,24 @@ module.exports = async function(r) {
                 _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
                 _search:_searchParam,
                 _sort:_sortParam,
+                _size:_size,
+                _offset:_offset,
             },
             body: { filter_rules: filterRules },
             ...commonManagerRequestOptions
         })
             .then(data => {
-                rawData = data.items;
 
                 //nacteni detailu (os, apod.), TODO: nactou se vsechny? pokud ne, zajima me asi jen:
                 //create_deployment_environment a posledni bezici
-                const executionsPromises = _.map(rawData, deployment => 
+                const executionsPromises = _.map(data.items, deployment => 
                     helper.Manager.doGet(`/executions?deployment_id=${deployment.id}`, commonManagerRequestOptions)
                 );
-                return Promise.all([rawData, ...executionsPromises]); 
+                return Promise.all([data, ...executionsPromises]); 
                 })
-                .then(([rawData, ...executionsPromises]) => {
+                .then(([data, ...executionsPromises]) => {
 
-                    rawData.forEach(_vm => {
+                    data.items.forEach(_vm => {
                         //sparovani rawData(=vm) s executionsDaty, executionData potrebuju pro create_deployment_environment a nacteni detailu os, ram apod.
                         _vm.executionAllData = [];
                         executionsPromises.forEach(exObj => {
@@ -50,16 +53,15 @@ module.exports = async function(r) {
                             }
                         });
                     }); 
-                    //return rawData;
                     //dotazy na capabilites:
-                    const capabilitesPromises = _.map(rawData, deployment => 
+                    const capabilitesPromises = _.map(data.items, deployment => 
                         helper.Manager.doGet(`/deployments/${deployment.id}/capabilities`, commonManagerRequestOptions)
                     );
-                    return   Promise.all([rawData, ...capabilitesPromises]);   
+                    return   Promise.all([data, ...capabilitesPromises]);   
                 })
-                .then(([rawData, ...capabilitesPromises]) => {
+                .then(([data, ...capabilitesPromises]) => {
 
-                    rawData.forEach(_vm => {
+                    data.items.forEach(_vm => {
                         //sparovani rawData(=vm) s capabilitesDaty
                         _vm.capabilities = [];
                         capabilitesPromises.forEach(exObj => {
@@ -68,7 +70,7 @@ module.exports = async function(r) {
                             }
                         });
                     }); 
-                    return rawData; 
+                    return data; 
                 })
                 .then(data => res.send(data))
                 .catch(error => next(error));
