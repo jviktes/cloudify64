@@ -151,20 +151,17 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
                 if (_workFlowItem?.name=="revoke_app_admin_account"){
                     if (vmData?.role=="aadminbu") {
-                        //Revoke app admin account
                         outWorks.push(_workFlowItem);
                     }
                 }
                 if (_workFlowItem?.name=="revoke_sys_admin_account"){
                     if (vmData?.role=="sadminbu") {
-                        //Revoke app admin account
                         outWorks.push(_workFlowItem);
                     }
                 }
                 try {
                     if (_workFlowItem.name=="revoke_service_account"){
-                        if (vmData.id_blueprint_id.indexOf("JEA-Service-Account")!=-1) {
-                            //Revoke app admin account
+                        if (vmData?.role.toUpperCase()=="ADMINISTRATOR") {
                             outWorks.push(_workFlowItem);
                         }
                     } 
@@ -173,9 +170,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 }
                 try {
                     if (_workFlowItem.name=="revoke_user_account"){
-                        if (vmData.id_blueprint_id.indexOf("JEA-Account")!=-1) {
-                            //Revoke app admin account
-                            
+                        if (vmData?.role.toUpperCase()=="REMOTEDESKTOPUSER") {
                             outWorks.push(_workFlowItem);
                         }
                     }
