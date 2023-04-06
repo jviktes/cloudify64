@@ -65,10 +65,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     const [isFileLoading, setFileLoading, unsetFileLoading] = useBoolean();
 
     const [force, setForce, clearForce] = useInput(false); 
-    //TODO: zde se nastavuje defautni hodnota force na false
-    if (workflow=="uninstall") {
-        setForce(false);
-    }
+
 
     const [queue, setQueue, clearQueue] = useInput(false);
     const [schedule, setSchedule, clearSchedule] = useInput(false);
@@ -82,6 +79,11 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
         setBaseWorkflowParams(workflowResource.parameters);
 
+        //TODO: zde se nastavuje defautni hodnota force na false
+        if (workflow?.name=="uninstall") {
+            setForce(true);
+        }
+        
         console.log(parametresModal);
         if (workflowResource.name=="remove_disk") {
             let _remappadValues= {lun:parametresModal.lun};
