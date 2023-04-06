@@ -380,11 +380,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
     const getDeploymnetIdBasedOnStatus = (workflow:any)=> {
 
-        //pokud je stav WaitingToApproval, pak se vraci jiny deployment:
-        //let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
-        //let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
-
         if (workflow.name=="revoke_app_admin_account" ||  workflow.name=="revoke_sys_admin_account" ||  workflow.name=="revoke_service_account" || workflow.name=="revoke_user_account") {
+            return fetchedDeploymentStateComplete.itemVM.id;
+        }
+        else if (workflow.name=="remove_disk") {
             return fetchedDeploymentStateComplete.itemVM.id;
         }
         else {
@@ -394,9 +393,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     
     const getDeploymnetNameBasedOnStatus = (workflow:any)=> {
 
-        //pokud je stav WaitingToApproval, pak se vraci jiny deployment:
-        //let _lastCurrentExecution = getCurrentLastExecution(currentDeploymentId);
-        //let  _lastCurrentStatus = getStatus(_lastCurrentExecution);
 
         if (workflow.name=="revoke_app_admin_account" ||  workflow.name=="revoke_sys_admin_account" ||  workflow.name=="revoke_service_account" || workflow.name=="revoke_user_account") {
             return fetchedDeploymentStateComplete.itemVM.display_name;
@@ -579,7 +575,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 <ExecuteWorkflowModal
                     open
                     deploymentId={getDeploymnetIdBasedOnStatus(workflow)}
-                    deploymentName={getDeploymnetNameBasedOnStatus(fetchedDeploymentStateComplete.itemVM.display_name)}
+                    deploymentName={getDeploymnetNameBasedOnStatus(workflow)}
                     workflow={workflow}
                     parametresModal={parametresModal}
                     onHide={resetWorkflow}

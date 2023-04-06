@@ -92,7 +92,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             setUserWorkflowParams(_remappadValues);
         }
         else if (workflowResource.name=="revoke_service_account") {
-            let _remappadValues= {user_id:parametresModal.user_id};
+            let _remappadValues= {service_account_name:parametresModal.user_id};
             setUserWorkflowParams(_remappadValues);
         }
 
