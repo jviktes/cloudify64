@@ -322,6 +322,38 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         return combinedExecutions;
     }
+
+    copyToPaste = (item:any) => {
+        const { toolbox } = this.props;
+        const manager = toolbox.getManager();
+        const tenantName=manager.getSelectedTenant();
+
+        let _vmInformation = {};
+        let _vmInformationStr = "";
+        //prepare data:
+        getDetails(item);
+
+        // item.ip=_ip;
+        // item.cpus=_cpus;
+        // item.ram=_ram;
+        // item.azure_size=_azure_size;
+        // item.azure_location=_azure_location;
+        // item.environment=_environment;
+        // item.os=_os;
+        // item.display_name=_display_name;
+
+        _vmInformation = {"VM name":item.display_name,"Tenant":tenantName, "Azure size":item.azure_size,"Environment":item.environment}, 
+
+        _vmInformationStr = JSON.stringify(_vmInformation, null, 2);
+
+        //navigator.clipboard.writeText(_vmInformationStr);
+        let _subject = "Report problem with "+ item.display_name;
+        let _body = _vmInformationStr;
+
+        window.open('mailto:test@example.com?subject='+_subject+'&body='+_body);
+        return;
+    }
+
     setHoveredExecution(idToCheck) {
         const { hoveredExecution } = this.state;
         if (hoveredExecution !== idToCheck) {
@@ -392,6 +424,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>
                                     {this.getExpandedButton(item)}
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
+                                    <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToPaste(item)}></Button>
                                     </DataTable.Data>
                                 <DataTable.Data>
 
