@@ -212,7 +212,24 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         }
 
     }
+    getAccount = (item:any) => {
 
+        try {
+            var _blueprint = item.executionAllData[0].items.filter((obj: { workflow_id: string; }) => {
+                return obj.workflow_id === "create_deployment_environment"
+            })
+    
+            if (_blueprint[0]["blueprint_id"].indexOf("JEA-Service-Account")!=-1){ 
+                return item?.service_account_name;
+            }
+            else {
+                return item?.user_id;
+            }
+        } catch (error) {
+            return "";
+        }
+
+    }
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { toolbox, widget,data,menuData } = this.props;
@@ -235,7 +252,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                       
                             <DataTable.Row>
 
-                                <DataTable.Data>{item?.user_id}</DataTable.Data>
+                                <DataTable.Data>{this.getAccount(item)}</DataTable.Data>
                                 <DataTable.Data>{item?.role}</DataTable.Data>
                                 <DataTable.Data>{this.getPAMStatus(item)}</DataTable.Data>
                                 <DataTable.Data>{this.getRequestor(item)}</DataTable.Data>

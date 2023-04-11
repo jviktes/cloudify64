@@ -79,7 +79,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
 
                 if(_deployment["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
-                    
                     _result = true;
                 }
                 if(_deployment["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
@@ -144,6 +143,12 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         //    Approve / reject request (applies to * waiting requests)
         // Revoke (applies to Grant approved / Grant implemented requests)
 
+        //
+        var _blueprint = vmData.executionAllData[0].items.filter((obj: { workflow_id: string; }) => {
+            return obj.workflow_id === "create_deployment_environment"
+          })
+
+
         let workflows=item.workflows;
         for (const key in workflows) {
             if (Object.prototype.hasOwnProperty.call(workflows, key)) {
@@ -159,9 +164,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                         outWorks.push(_workFlowItem);
                     }
                 }
+
                 try {
                     if (_workFlowItem.name=="revoke_service_account"){
-                        if (vmData?.role.toUpperCase()=="ADMINISTRATOR") {
+                        if (_blueprint[0]["blueprint_id"].indexOf("JEA-Service-Account")!=-1){
                             outWorks.push(_workFlowItem);
                         }
                     } 
@@ -170,7 +176,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 }
                 try {
                     if (_workFlowItem.name=="revoke_user_account"){
-                        if (vmData?.role.toUpperCase()=="REMOTEDESKTOPUSER") {
+                        if (_blueprint[0]["blueprint_id"].indexOf("JEA-Account")!=-1){
                             outWorks.push(_workFlowItem);
                         }
                     }
