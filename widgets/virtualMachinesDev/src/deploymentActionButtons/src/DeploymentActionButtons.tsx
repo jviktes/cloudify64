@@ -217,7 +217,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return outWorks;
     };
 
-
     const workFlowsVM=(item:any)=> {
         let outWorks = [];
         let workflows=item.workflows;
@@ -265,7 +264,18 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 //TODO pouze pro Linux:
                 if (item?.os.indexOf("RHEL")!=-1) {
                     if (_workFlowItem.name=="request_app_admin_account"){
-                        outWorks.push(_workFlowItem);
+                        //condition for not plainOS
+                        let _regex = 'RHEL[0-9\.]*\-[\w,0-9,\.]+\-v[0-9,\.*]*';
+                        const myRe = new RegExp(_regex, 'g');
+                        const regResults = myRe.exec(item.blueprint_id);
+                        //console.log(regResults);
+
+                        if (regResults!=null) {
+                            outWorks.push(_workFlowItem);
+                        }
+
+
+                        
                     }
 
                     if (_workFlowItem.name=="request_sys_admin_account"){
