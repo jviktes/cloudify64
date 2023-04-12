@@ -324,7 +324,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
 
     copyToPaste = (item:any) => {
-        const { toolbox } = this.props;
+        const { toolbox,widget } = this.props;
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
 
@@ -349,8 +349,13 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         //navigator.clipboard.writeText(_vmInformationStr);
         let _subject = "Report problem with "+ item.display_name;
         let _body = _vmInformationStr;
+        let _email = widget.configuration.supportEmail;
 
-        window.open('mailto:test@example.com?subject='+_subject+'&body='+_body);
+        if (_email==null || _email==undefined) {
+            _email = "email@emial.com";
+        }
+
+        window.open('mailto:'+_email+'?subject='+_subject+'&body='+_body);
         return;
     }
 

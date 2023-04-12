@@ -21,7 +21,14 @@ Stage.defineWidget({
     initialConfiguration: [
         Stage.GenericConfig.POLLING_TIME_CONFIG(30),
         Stage.GenericConfig.PAGE_SIZE_CONFIG(10),
+        {
+            id: 'supportEmail',
+            name: 'Support email',
+            default: "support@greycorbel.com",
+            type: Stage.Basic.GenericField.STRING_TYPE
+        },
     ],
+
     //inicializace widgetu - nacteni VM:
     fetchData(widget, toolbox,params) {
         //console.log("fetchData");
