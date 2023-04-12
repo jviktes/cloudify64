@@ -342,11 +342,11 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         // item.os=_os;
         // item.display_name=_display_name;
 
-        _vmInformation = _vmInformation+"VM name: "+item.display_name+"\n";
-        _vmInformation = _vmInformation+"Tenant: "+tenantName+"\n";
-        _vmInformation = _vmInformation+"Azure size: "+item.azure_size+"\n";
-        _vmInformation = _vmInformation+"Environment: "+item.environment+"\n";
-        _vmInformation = _vmInformation+"Azure location: "+item._azure_location+"\n";
+        _vmInformation = _vmInformation+"VM name: "+item.display_name+"%0A";
+        _vmInformation = _vmInformation+"Tenant: "+tenantName+"%0A";
+        _vmInformation = _vmInformation+"Azure size: "+item.azure_size+"%0A";
+        _vmInformation = _vmInformation+"Environment: "+item.environment+"%0A";
+        _vmInformation = _vmInformation+"Azure location: "+item.azure_location+"%0A";
 
         //navigator.clipboard.writeText(_vmInformationStr);
         let _subject = "Report problem with "+ item.display_name;
