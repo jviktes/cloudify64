@@ -276,6 +276,11 @@ export default function InputFields({
                 if (inputsState["business_unit"]!= null && inputsState["business_unit"].length==0) {
                     isError = true;
                 }
+
+                if (inputsState["os_disk_type"]!= null) {
+                    isError = true;
+                }
+
             } catch (error) {
                 console.log(error);
             }
@@ -294,6 +299,36 @@ export default function InputFields({
             }
         }
 
+    }
+
+    const enableDisableNextButtonForOSDisk=(inputsState: any)=>{
+        let isError = false;
+        console.log("os_disk_type - enableDisableNextButtonForOSDisk");
+
+        let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
+        
+
+        let vm_size = inputsState["vm_size"];
+        vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
+
+        const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
+
+        if (inputsState["os_disk_type"]=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+            isError = true;
+        }
+
+        if (isError) {
+            //pokud je chyba a tlacitko je enabled, pak volam disablovani:
+            if (_nextButtonState==false) {
+                toolbox.getEventBus().trigger('blueprint:disableNextButton');
+            }
+        }
+        else {
+            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+            if (_nextButtonState==true) {
+                toolbox.getEventBus().trigger('blueprint:enableNextButton');
+            }
+        }
     }
 
     const htmlRenderErrorState = (_input:any) => {
@@ -502,6 +537,73 @@ export default function InputFields({
                         </div>
             }
             
+            if (input.name=="os_disk_type") {
+
+                //enableDisableNextButtonForOSDisk(inputsState);
+
+                const DataDiskOptions = [
+                    { text: 'Standard HDD', name: 'Standard HDD', value: 'Standard HDD' },
+                    { text: 'Standard SSD', name: 'Standard SSD', value: 'Standard SSD' },
+                    { text: 'Premium SSD', name: 'Premium SSD', value: 'Premium SSD' },
+                ];
+
+                let vm_size = inputsState["vm_size"];
+                vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
+    
+                const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
+
+                const htmlRenderErrorState = (_value: any) => {
+
+                    let _htmlResult = null;
+
+                    if (_value=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+                        _htmlResult = <p style={{ color: 'red'}}>{"VM size not allowed premium SSD"}</p>;
+                    }
+                    return _htmlResult;
+
+                };
+
+                const onItemChange = (e: any, _value: any) => {
+                    console.log("onItemChange os_disk_type");
+                    console.log("os_disk_type e.target:" + e);
+            
+                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'os_disk_type', _value);
+
+                    let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
+        
+                    let isErrorInDisk = false;
+                    if (_value=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+                        isErrorInDisk = true;
+                    }
+
+                    if (isErrorInDisk) {
+                        //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
+                        if (_nextButtonState==false) {
+                            toolbox.getEventBus().trigger('blueprint:disableNextButton');
+                        }
+                    }
+                    else {
+                        //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
+                        if (_nextButtonState==true) {
+                            toolbox.getEventBus().trigger('blueprint:enableNextButton');
+                        }
+                    }
+
+                    // ValidateDataAllDisks(dataDisks);
+                    // enableDisableNextButton(dataDisks);
+                };
+                return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
+                    <Form.Dropdown
+                        name="os_disk_type"
+                        selection
+                        options={DataDiskOptions}
+                        value={value}
+                        onChange={(e, { value }) => onItemChange(e.target,value)}
+                    />
+                    {htmlRenderErrorState(value)}
+                    </div>
+            }
+
             //business_service: 
             if (input.name=="business_service") {
 

@@ -89,6 +89,7 @@ export function DataDiskTable({
         { text: 'Standard SSD', name: 'Standard SSD', value: 'Standard SSD' },
         { text: 'Premium SSD', name: 'Premium SSD', value: 'Premium SSD' },
     ];
+    
     const DiskSizeOptions = [
         { text: '4GB', name: '4GB', value: 4 },
         { text: '8GB', name: '8GB', value: 8 },
@@ -367,7 +368,9 @@ export function DataDiskTable({
         //console.log(nextButtonState);
         
         //hledani stejnych mountpoint:
-        _dataDisks.forEach((_disk: { mountpoint: any; label:any, error:any, key:any}) => {
+        _dataDisks.forEach((_disk: {
+            disk_type: string; mountpoint: any; label:any, error:any, key:any
+            }) => {
             _disk.error={};
             let errors = [];
             if (_disk.mountpoint == null || getDiskMountingPointValue(_disk.mountpoint) == "") {
@@ -377,8 +380,6 @@ export function DataDiskTable({
                 else {
                     errors.push({text:"Mounting point may not be blank.", element:"mountpoint"});
                 }
-                
-
             }
             if (_disk.label == null || _disk.label == ""){
                 errors.push({text:"Label may not be blank.", element:"label"});
@@ -390,6 +391,18 @@ export function DataDiskTable({
                     errors.push({text:"Mount point must be unique across all disks.", element:"mountpoint"});
                 }
             });
+
+            //validace disku podle SSD a vm_size:
+
+            let vm_size = vmInfo;
+            vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
+
+            const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
+
+            if (_disk.disk_type=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+                errors.push({text:"VM size not allowed premium SSD.", element:"disk_type"});
+            }
+            
             _disk.error=  errors;
         });
         
@@ -454,7 +467,7 @@ export function DataDiskTable({
                                 options={DataDiskOptions}
                                 value={item.disk_type}
                                 onChange={(e, { value }) => onItemChange(e.target, item, "disk_type", value)} />
-                            
+                            {htmlRenderErrorState(item.error,"disk_type")}
                         </DataTable.Data>
                         <DataTable.Data style={{ width: '10%', verticalAlign: 'baseline' }}>
                             <Form.Dropdown
