@@ -1,6 +1,6 @@
-// @ts-nocheck File not migrated fully to TS
+//// @ts-nocheck File not migrated fully to TS
 import PropTypes from 'prop-types';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 import { IdPopup } from '../../../app/components/shared';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
@@ -328,8 +328,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
 
-        let _vmInformation = {};
-        let _vmInformationStr = "";
+        let _vmInformation = "";
+
         //prepare data:
         getDetails(item);
 
@@ -342,13 +342,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         // item.os=_os;
         // item.display_name=_display_name;
 
-        _vmInformation = {"VM name":item.display_name,"Tenant":tenantName, "Azure size":item.azure_size,"Environment":item.environment}, 
-
-        _vmInformationStr = JSON.stringify(_vmInformation, null, 2);
+        _vmInformation = _vmInformation+"VM name: "+item.display_name+"\n";
+        _vmInformation = _vmInformation+"Tenant: "+tenantName+"\n";
+        _vmInformation = _vmInformation+"Azure size: "+item.azure_size+"\n";
+        _vmInformation = _vmInformation+"Environment: "+item.environment+"\n";
+        _vmInformation = _vmInformation+"Azure location: "+item._azure_location+"\n";
 
         //navigator.clipboard.writeText(_vmInformationStr);
         let _subject = "Report problem with "+ item.display_name;
-        let _body = _vmInformationStr;
+        let _body = _vmInformation;
         let _email = widget.configuration.supportEmail;
 
         if (_email==null || _email==undefined) {
@@ -370,6 +372,16 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         if (hoveredExecution === idToCheck) {
             this.setState({ hoveredExecution: null });
         }
+    }
+    getExtraVMnfo = (item:any)=> {
+
+        try {
+            let _extraData = "Blueprint: "+ item.blueprint_id;
+            return _extraData;
+        } catch (error) {
+            return "Blueprint: Uknown";
+        }
+
     }
     render() {
         /* eslint-disable no-console, no-process-exit */
@@ -415,7 +427,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 >
                                 {getDetails(item)}
 
-                                <DataTable.Data><IdPopup  id={item.id} selected={hoveredExecution === item.id} />{item.display_name}</DataTable.Data>
+                                <DataTable.Data><IdPopup  id={item.id} selected={hoveredExecution === item.id} />{item.display_name}
+                                <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon>
+                                </DataTable.Data>
 
                                 <DataTable.Data>{item.os}</DataTable.Data>
                                 <DataTable.Data>{item.ip}</DataTable.Data>
