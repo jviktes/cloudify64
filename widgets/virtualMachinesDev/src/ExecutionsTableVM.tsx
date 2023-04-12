@@ -1,4 +1,4 @@
-// @ts-nocheck File not migrated fully to TS
+//// @ts-nocheck File not migrated fully to TS
 import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
 import { Button, Icon, Item } from 'semantic-ui-react';
@@ -6,6 +6,7 @@ import { identity } from 'lodash';
 import { castArray } from 'lodash';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
+import { ExecutionStatus } from '../../../app/components/shared';
 
 interface ExecutionsTableVMProps {
     data: {
@@ -24,17 +25,6 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
 
     constructor(props: ExecutionsTableVMProps) {
         super(props);
-    }
-
-    getStatusHtml = (item:any) => {
-        //TODO:
-        if (item?.status_display=="failed") {
-            return <span style={{ color: 'red' }}>item?.status_display</span>
-        }
-        if (item?.status_display=="Completed") {
-            return <span style={{ color: 'green' }}>item?.status_display</span>
-        }
-        item?.status_display;
     }
 
     render() {
@@ -56,7 +46,7 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
                     {_.map(data, item => (      
                                       
                             <DataTable.Row>
-                                <DataTable.Data>{item?.status_display}</DataTable.Data>
+                                <DataTable.Data>{<ExecutionStatus execution={item}/>}</DataTable.Data>
                                 <DataTable.Data>{item?.workflow_id}</DataTable.Data>
                                 <DataTable.Data>{item?.created_at}</DataTable.Data>
                                 <DataTable.Data>{item?.created_by}</DataTable.Data>
