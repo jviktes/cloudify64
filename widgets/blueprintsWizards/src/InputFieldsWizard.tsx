@@ -301,36 +301,6 @@ export default function InputFields({
 
     }
 
-    const enableDisableNextButtonForOSDisk=(inputsState: any)=>{
-        let isError = false;
-        console.log("os_disk_type - enableDisableNextButtonForOSDisk");
-
-        let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
-        
-
-        let vm_size = inputsState["vm_size"];
-        vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
-
-        const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
-
-        if (inputsState["os_disk_type"]=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
-            isError = true;
-        }
-
-        if (isError) {
-            //pokud je chyba a tlacitko je enabled, pak volam disablovani:
-            if (_nextButtonState==false) {
-                toolbox.getEventBus().trigger('blueprint:disableNextButton');
-            }
-        }
-        else {
-            //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
-            if (_nextButtonState==true) {
-                toolbox.getEventBus().trigger('blueprint:enableNextButton');
-            }
-        }
-    }
-
     const htmlRenderErrorState = (_input:any) => {
         let _htmlResult = null;
 
@@ -533,13 +503,11 @@ export default function InputFields({
                 
                 return <div className="field">
                             <label style={{ display: "inline-block" }}>{input.display_label}</label>
-                            <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]} nextButtonState={nextButtonState}></DataDiskTable>
+                            <DataDiskTable diskData={input} vmInfo={inputsState["vm_size"]} osInfo={inputs["os_type"]} osDiskInfo={allDeploymentInputs["os_disk_type"]} toolbox={toolbox} inputStates={JSON.parse(inputsState[input.name])} swInfo={allDeploymentInputs["service_names"]} nextButtonState={nextButtonState}></DataDiskTable>
                         </div>
             }
             
             if (input.name=="os_disk_type") {
-
-                //enableDisableNextButtonForOSDisk(inputsState);
 
                 const DataDiskOptions = [
                     { text: 'Standard HDD', name: 'Standard HDD', value: 'Standard HDD' },
@@ -564,34 +532,10 @@ export default function InputFields({
                 };
 
                 const onItemChange = (e: any, _value: any) => {
-                    console.log("onItemChange os_disk_type");
                     console.log("os_disk_type e.target:" + e);
-            
-                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'os_disk_type', _value);
-
-                    let _nextButtonState = nextButtonState; //this.state.disableNextButton, pokud je true, pak je tlacitko disablovane
-        
-                    let isErrorInDisk = false;
-                    if (_value=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
-                        isErrorInDisk = true;
-                    }
-
-                    if (isErrorInDisk) {
-                        //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
-                        if (_nextButtonState==false) {
-                            toolbox.getEventBus().trigger('blueprint:disableNextButton');
-                        }
-                    }
-                    else {
-                        //pokud neni chyba, ale tlacitko je disablovane, pak volam enablovani:
-                        if (_nextButtonState==true) {
-                            toolbox.getEventBus().trigger('blueprint:enableNextButton');
-                        }
-                    }
-
-                    // ValidateDataAllDisks(dataDisks);
-                    // enableDisableNextButton(dataDisks);
+                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'os_disk_type', _value);                   
                 };
+                
                 return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
                     <Form.Dropdown
                         name="os_disk_type"

@@ -3,10 +3,11 @@ import { Icon } from 'semantic-ui-react';
 
 export function DataDiskTable({
     //diskData,
-    vmInfo, osInfo, swInfo, toolbox, inputStates,nextButtonState
+    vmInfo, osInfo, swInfo, toolbox, inputStates,nextButtonState,osDiskInfo
 }: {
     diskData: any;
     vmInfo: any;
+    osDiskInfo:any;
     osInfo: any;
     swInfo: any;
     toolbox: Stage.Types.Toolbox;
@@ -430,7 +431,18 @@ export function DataDiskTable({
             }
         });
 
-        if (isErrorInDisk) {
+        //kontrola i OS disku:
+        let isErrorInOSDisk = false;
+        let vm_size = vmInfo;
+        vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
+
+        const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
+        if (osDiskInfo=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+            isErrorInOSDisk = true;
+        }
+
+
+        if (isErrorInDisk || isErrorInOSDisk) {
             //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
             if (_nextButtonState==false) {
                 toolbox.getEventBus().trigger('blueprint:disableNextButton');
@@ -443,7 +455,7 @@ export function DataDiskTable({
             }
         }
     }
-
+    
     ValidateDataAllDisks(inputStates);
     enableDisableNextButton(inputStates);
 
