@@ -519,7 +519,7 @@ export default function InputFields({
                     let _htmlResult = null;
 
                     if (_value=='Premium SSD' && VM_Sizes_No_PremiumSSD.includes(vm_size)) {
-                        _htmlResult = <p style={{ color: 'red'}}>{"VM size not allowed premium SSD"}</p>;
+                        _htmlResult = <p style={{ color: 'red'}}>{"VM size does not allow Premium SSD"}</p>;
                     }
                     return _htmlResult;
 

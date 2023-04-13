@@ -353,7 +353,7 @@ export function DataDiskTable({
 
 
             if (_disk.disk_type=='Premium SSD' && VM_Sizes_No_PremiumSSD.includes(vm_size)) {
-                errors.push({text:"VM size not allowed premium SSD.", element:"disk_type"});
+                errors.push({text:"VM size does not allow Premium SSD", element:"disk_type"});
             }
             
             _disk.error=  errors;
