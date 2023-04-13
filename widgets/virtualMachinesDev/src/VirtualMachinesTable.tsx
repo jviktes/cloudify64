@@ -28,11 +28,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     constructor(props: VirtualMachinesDataProps) {
         super(props);
-        //console.log("VirtualMachinesTable ctor:");
         this.state = {
             detailedData: [],
             loading:false,
             lastLoadingDate:undefined,
+            lastLoadingDateItems:[],
+            loadingItems:[],
             showBackButton:false,
             hoveredExecution: null,
         };
@@ -43,9 +44,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { data, toolbox } = this.props;
         toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
 
-        //console.log("componentDidMount:"+JSON.stringify(data)); 
         {_.map(data.items, item => (        
-
             this.loadDetailedData(item)
         ))}
    }
@@ -59,43 +58,39 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 return;
             }
 
-            let isAfter30s = false;
-            if (this.state.lastLoadingDate==undefined) {
-                isAfter30s=true;
-            }
-            else {
-                if ((Date.now()-this.state.lastLoadingDate)>30000) {
-                    isAfter30s=true;
-                }
-            }
-            
-            if (this.state.loading==false && isAfter30s) {
-                //console.log("componentDidUpdate call loading:"); 
-                //spusteni volani celeho cyklu:
-                    //this.setState({ loading: true });
-                    if ( this.state.loading==false) {
-                        this.setState({ loading: true });
-                    }
 
-                    {_.map(this.props.data.items, item => (
-                        this.loadDetailedData(item)
-                    ))}
-                    //if (this.props.data.items.length!=undefined){
-                        this.setState({lastLoadingDate:Date.now()});
-                        this.setState({ loading: false });
-                    //}    
+                    this.props.data.items.forEach(item => {
+                        if (this.state.lastLoadingDateItems[item.id]==undefined || (Date.now()-this.state.lastLoadingDateItems[item.id]>30000)) {
 
 
-            }
-            
+             
+                            let lastLoadingDateItems=this.state.lastLoadingDateItems;
+                            let loadingItems = this.state.loadingItems;
+
+                            if (loadingItems[item.id]==undefined || loadingItems[item.id]==false) {
+
+                                loadingItems[item.id] = true;
+                                this.setState({loadingItems});
+
+                                this.loadDetailedData(item);
+
+                                loadingItems[item.id] = false;
+                                this.setState({loadingItems});
+
+                                lastLoadingDateItems[item.id] = Date.now();
+                                this.setState({lastLoadingDateItems});
+
+                            }
+
+                        }
+                    });
+  
         } catch (error) {
             console.log(error);
         }
     };
     //melo by vracet deploymenty s parrantem = executions
     loadDetailedData = async (_item:any) =>{
-
-
 
         try {
             //console.log("loadDetailedData:");
@@ -107,20 +102,17 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             if (_item==null) {
                 return null;
             }
-
-            let params = {};
-            params.tenant = tenantName;
-            params.id = _item.id;
-
-            if (params.id==null) {
+            if (_item.id==null) {
                 return null;
             }
-
             if (this.state==null) {
                 return;
             }
 
+            let params = {tenant:tenantName,id:_item.id};
+
             let detailedData=this.state.detailedData;
+
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
 
             detailedData[params.id] = _dataFromExternalSource;
