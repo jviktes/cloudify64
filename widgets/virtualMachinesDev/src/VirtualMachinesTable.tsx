@@ -44,7 +44,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { data, toolbox } = this.props;
         toolbox.getEventBus().on('deployments:refresh', this.refreshData, this);
 
-        {_.map(data.items, item => (        
+        {_.map(data.items, item => (   
             this.loadDetailedData(item)
         ))}
    }
@@ -63,22 +63,14 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                         if (this.state.lastLoadingDateItems[item.id]==undefined || (Date.now()-this.state.lastLoadingDateItems[item.id]>30000)) {
 
 
-             
-                            let lastLoadingDateItems=this.state.lastLoadingDateItems;
-                            let loadingItems = this.state.loadingItems;
+                            //let loadingItems = this.state.loadingItems;
 
-                            if (loadingItems[item.id]==undefined || loadingItems[item.id]==false) {
+                            if (this.state.loadingItems[item.id]==undefined || this.state.loadingItems[item.id]==false) {
 
-                                loadingItems[item.id] = true;
-                                this.setState({loadingItems});
+                                // loadingItems[item.id] = true;
+                                // this.setState({loadingItems});
 
                                 this.loadDetailedData(item);
-
-                                loadingItems[item.id] = false;
-                                this.setState({loadingItems});
-
-                                lastLoadingDateItems[item.id] = Date.now();
-                                this.setState({lastLoadingDateItems});
 
                             }
 
@@ -112,10 +104,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             let params = {tenant:tenantName,id:_item.id};
 
             let detailedData=this.state.detailedData;
+            let lastLoadingDateItems=this.state.lastLoadingDateItems;
+            let loadingItems = this.state.loadingItems;
+
+            loadingItems[params.id] = true;
+            this.setState({loadingItems});
 
             const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_vm_detailsData2', { params });
 
             detailedData[params.id] = _dataFromExternalSource;
+            loadingItems[params.id] = false;
+            lastLoadingDateItems[params.id] = Date.now();
+
+            this.setState({loadingItems});
+            this.setState({lastLoadingDateItems});
             this.setState({detailedData});
 
         } catch (error) {
@@ -383,7 +385,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version:1.38</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version:1.39</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}
