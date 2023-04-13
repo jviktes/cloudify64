@@ -9,6 +9,7 @@ import { DataDiskTable } from './DataDiskTable';
 import { CountrySelectField } from './CountrySelectField';
 import { RegionSelectField } from './RegionSelectField';
 import { SoftwareConfigurationTable } from './SoftwareConfigurationTable';
+import { DataDiskOptions, VM_Sizes_No_PremiumSSD } from './DataDiskOptions';
 //TODO - tranlations: import LocationLabels from './LocationLabels';
 
 function normalizeValue(input: Input, inputsState: Record<string, any>, dataType: DataType) {
@@ -509,22 +510,15 @@ export default function InputFields({
             
             if (input.name=="os_disk_type") {
 
-                const DataDiskOptions = [
-                    { text: 'Standard HDD', name: 'Standard HDD', value: 'Standard HDD' },
-                    { text: 'Standard SSD', name: 'Standard SSD', value: 'Standard SSD' },
-                    { text: 'Premium SSD', name: 'Premium SSD', value: 'Premium SSD' },
-                ];
-
                 let vm_size = inputsState["vm_size"];
                 vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
     
-                const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
 
                 const htmlRenderErrorState = (_value: any) => {
 
                     let _htmlResult = null;
 
-                    if (_value=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+                    if (_value=='Premium SSD' && VM_Sizes_No_PremiumSSD.includes(vm_size)) {
                         _htmlResult = <p style={{ color: 'red'}}>{"VM size not allowed premium SSD"}</p>;
                     }
                     return _htmlResult;
@@ -535,7 +529,7 @@ export default function InputFields({
                     console.log("os_disk_type e.target:" + e);
                     toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'os_disk_type', _value);                   
                 };
-                
+
                 return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
                     <Form.Dropdown
                         name="os_disk_type"

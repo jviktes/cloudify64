@@ -1,5 +1,6 @@
 import { DataTable } from 'cloudify-ui-components';
 import { Icon } from 'semantic-ui-react';
+import { DataDiskHostingCashOptions, DataDiskOptions, DiskSizeOptions, LetterDiskWindows, VM_Sizes_No_PremiumSSD } from './DataDiskOptions';
 
 export function DataDiskTable({
     //diskData,
@@ -85,56 +86,8 @@ export function DataDiskTable({
         return maxDiskCount;
     };
 
-    const DataDiskOptions = [
-        { text: 'Standard HDD', name: 'Standard HDD', value: 'Standard HDD' },
-        { text: 'Standard SSD', name: 'Standard SSD', value: 'Standard SSD' },
-        { text: 'Premium SSD', name: 'Premium SSD', value: 'Premium SSD' },
-    ];
-    
-    const DiskSizeOptions = [
-        { text: '4GB', name: '4GB', value: 4 },
-        { text: '8GB', name: '8GB', value: 8 },
-        { text: '16GB', name: '16GB', value: 16 },
-        { text: '32GB', name: '32GB', value: 32 },
-        { text: '64GB', name: '64GB', value: 64 },
-        { text: '128GB', name: '128GB', value: 128 },
-        { text: '256GB', name: '256GB', value: 256 },
-        { text: '512GB', name: '512GB', value: 512 },
-        { text: '1024GB', name: '1024GB', value: 1024 },
-        { text: '2048GB', name: '2048GB', value: 2048 },
-        { text: '4096GB', name: '4096GB', value: 4096 },
-        { text: '8192GB', name: '8192GB', value: 8192 },
-        { text: '16384GB', name: '16384GB', value: 16384 },
-        { text: '32767GB', name: '32767GB', value: 32767 },
-    ];
-    const DataDiskHostingCashOptions = [
-        { text: 'None', name: 'None', value: 'None' },
-        { text: 'ReadOnly', name: 'ReadOnly', value: 'ReadOnly' },
-        { text: 'ReadWrite', name: 'ReadWrite', value: 'ReadWrite' },
-    ];
 
-    const LetterDiskWindows = [
-        { text: 'G', name: 'G', value: 'G' },
-        { text: 'H', name: 'H', value: 'H' },
-        { text: 'I', name: 'I', value: 'I' },
-        { text: 'J', name: 'J', value: 'J' },
-        { text: 'K', name: 'K', value: 'K' },
-        { text: 'L', name: 'L', value: 'L' },
-        { text: 'M', name: 'M', value: 'M' },
-        { text: 'N', name: 'N', value: 'N' },
-        { text: 'O', name: 'O', value: 'O' },
-        { text: 'P', name: 'P', value: 'P' },
-        { text: 'Q', name: 'Q', value: 'Q' },
-        { text: 'R', name: 'R', value: 'R' },
-        { text: 'S', name: 'S', value: 'S' },
-        { text: 'T', name: 'T', value: 'T' },
-        { text: 'U', name: 'U', value: 'U' },
-        { text: 'V', name: 'V', value: 'V' },
-        { text: 'W', name: 'W', value: 'W' },
-        { text: 'X', name: 'X', value: 'X' },
-        { text: 'Y', name: 'Y', value: 'Y' },
-        { text: 'Z', name: 'Z', value: 'Z' },
-    ];
+
 
     //return value of service_name from service_names
     const getParameterName = (_items:any, parameterName: any) => {
@@ -398,9 +351,8 @@ export function DataDiskTable({
             let vm_size = vmInfo;
             vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
 
-            const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
 
-            if (_disk.disk_type=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+            if (_disk.disk_type=='Premium SSD' && VM_Sizes_No_PremiumSSD.includes(vm_size)) {
                 errors.push({text:"VM size not allowed premium SSD.", element:"disk_type"});
             }
             
@@ -436,8 +388,8 @@ export function DataDiskTable({
         let vm_size = vmInfo;
         vm_size = vm_size.substring(0,vm_size.indexOf("(")-1);
 
-        const vm_sizes_no_premium_SSD = ["Standard_B2ms","Standard_B2s", "Standard_B4ms", "Standard_B8ms"];
-        if (osDiskInfo=='Premium SSD' && vm_sizes_no_premium_SSD.includes(vm_size)) {
+        
+        if (osDiskInfo=='Premium SSD' && VM_Sizes_No_PremiumSSD.includes(vm_size)) {
             isErrorInOSDisk = true;
         }
 
@@ -455,7 +407,7 @@ export function DataDiskTable({
             }
         }
     }
-    
+
     ValidateDataAllDisks(inputStates);
     enableDisableNextButton(inputStates);
 
