@@ -3,34 +3,6 @@
   display: inline-table;
   table-layout: fixed;
   }
-  
-  /* .table-scroll-vm-subtables tr {
-    width: 50%;
-    display: inline-table;
-    table-layout: fixed;
-    } */
-
-  /*
-  .table-scroll table{
-  height:450px; 
-   display: block;
-  }
-
-  .table-scroll tbody{
-    overflow-y: scroll;
-    max-height: 400px;
-    position: absolute;
-  }
-
-  .table-scroll-details table{
-    height:auto; 
-    display: block;
-  }
-
-  .table-scroll-details tbody{
-    overflow-y: scroll;
-    position: relative;
-  } */
 
   .virtualMachineMainLayout {
     display: flex;

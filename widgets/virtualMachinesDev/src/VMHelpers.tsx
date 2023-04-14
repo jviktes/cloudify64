@@ -1,4 +1,3 @@
-
 export function getDetails (item:any){
         
     let _display_name = "";
@@ -20,36 +19,18 @@ export function getDetails (item:any){
                 _azure_size=_getAzureSize(_inputsCapabilities); 
                 _azure_location=_getLocation(_inputsCapabilities);
                 _environment=_getEnvironment(_inputsCapabilities);
-                //TODO:
                 _cpus=_getCPU(item, _azure_size);
                 _ram=_getRAM(item,_azure_size);
-
                 _display_name = item.id;
             }
 
             //let _index = -1;
             if (item.executionAllData[0].items!=null){
-                //hledani indexu ve vm, v execution pro create
-                // for (let index = 0; index < item.executionAllData[0].items.length; index++) {
-                //     const element = item.executionAllData[0].items[index];
-                //     if (element.workflow_id=="create_deployment_environment") {
-                //         _index=index;
-                //         break;
-                //     }
-                // }
-
                   var _workflow = item.executionAllData[0].items.filter((obj: { workflow_id: string; }) => {
                     return obj.workflow_id === "create_deployment_environment"
                   })
-
                 let _inputs = _workflow[0]["parameters"]["inputs"];
                 _os=_getOS(_inputs);
-                // if (_index!=-1) {
-                //     let _inputs = item.executionAllData[0].items[_index]["parameters"]["inputs"];
-                //      //_cpus=_getCPU(_inputs);
-                //      //_ram=_getRAM(_inputs);
-                //     _os=_getOS(_inputs);
-                // }
             }
 
     } catch (error) {
@@ -202,10 +183,3 @@ export function _getOS (inputJson:any){
         return "";
     }
 }
-// export function _getDataDisks(inputJson:any){
-//     try {
-//         return inputJson["data_disks"];
-//     } catch (error) {
-//         return "";
-//     }
-// };

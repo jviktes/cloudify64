@@ -1,4 +1,4 @@
-//// @ts-nocheck File not migrated fully to TS
+// @ts-nocheck File not migrated fully to TS
 import PropTypes, { bool } from 'prop-types';
 import type { Tests } from './types';
 import { Button, Icon, Item } from 'semantic-ui-react';

@@ -58,24 +58,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                 return;
             }
 
+            this.props.data.items.forEach(item => {
+                if (this.state.lastLoadingDateItems[item.id]==undefined || (Date.now()-this.state.lastLoadingDateItems[item.id]>30000)) {
 
-                    this.props.data.items.forEach(item => {
-                        if (this.state.lastLoadingDateItems[item.id]==undefined || (Date.now()-this.state.lastLoadingDateItems[item.id]>30000)) {
+                    if (this.state.loadingItems[item.id]==undefined || this.state.loadingItems[item.id]==false) {
+                        this.loadDetailedData(item);
+                    }
 
-
-                            //let loadingItems = this.state.loadingItems;
-
-                            if (this.state.loadingItems[item.id]==undefined || this.state.loadingItems[item.id]==false) {
-
-                                // loadingItems[item.id] = true;
-                                // this.setState({loadingItems});
-
-                                this.loadDetailedData(item);
-
-                            }
-
-                        }
-                    });
+                }
+            });
   
         } catch (error) {
             console.log(error);
@@ -237,7 +228,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         const { data, toolbox } = this.props;
 
         {_.map(data.items, item => (        
-
             this.loadDetailedData(item)
         ))}
 

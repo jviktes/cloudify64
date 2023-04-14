@@ -27,119 +27,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         this.state = this.initialState;
     }
 
-    // workFlowsPAMRequests=(item:any, vmData:any)=> {
-    //     let outWorks = [];
-    //     //    Approve / reject request (applies to * waiting requests)
-    //     // Revoke (applies to Grant approved / Grant implemented requests)
-
-    //     let workflows=item.workflows;
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-
-    //             if (_workFlowItem?.name=="revoke_app_admin_account"){
-    //                 if (vmData?.role=="aadminbu") {
-    //                     //Revoke app admin account
-    //                     outWorks.push(_workFlowItem);
-    //                 }
-    //             }
-    //             if (_workFlowItem?.name=="revoke_sys_admin_account"){
-    //                 if (vmData?.role=="sadminbu") {
-    //                     //Revoke app admin account
-    //                     outWorks.push(_workFlowItem);
-    //                 }
-    //             }
-    //             try {
-    //                 if (_workFlowItem.name=="revoke_service_account"){
-    //                     if (vmData.id_blueprint_id.indexOf("JEA-Service-Account")!=-1) {
-    //                         //Revoke app admin account
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                 } 
-    //             } catch (error) {
-    //                 //console.log(error);
-    //             }
-    //             try {
-    //                 if (_workFlowItem.name=="revoke_user_account"){
-    //                     if (vmData.id_blueprint_id.indexOf("JEA-Account")!=-1) {
-    //                         //Revoke app admin account
-    //                         outWorks.push(_workFlowItem);
-    //                     }
-    //                 }
-    //             } catch (error) {
-    //                 //console.log(error);
-    //             }    
-
-
-    //         }
-    //     }
-    //     return outWorks;
-    // };
-    // workFlowsVMWaitingToApproval=(item:any)=> {
-    //     let outWorks = [];
-    //     let workflows=item.workflows
-    //     for (const key in workflows) {
-    //         if (Object.prototype.hasOwnProperty.call(workflows, key)) {
-    //             const _workFlowItem = workflows[key];
-    //             if (_workFlowItem.name=="approve_or_reject"){
-    //                 outWorks.push(_workFlowItem);
-    //             }
-    //         }
-    //     }
-    //     return outWorks;
-    // };
-    // getDataForDeploymentId = (itemVM:any,item:any) => {
-    //     const {menuData} = this.props;
-
-    //     let returnMenuData = {};
-
-    //     returnMenuData.status='success';
-    //     returnMenuData.stateSummaryForDeployments=menuData.stateSummaryForDeployments;
-    //     returnMenuData.latestRunningExecution=menuData.latestRunningExecution;
-    //     returnMenuData.data = {
-    //         display_name: menuData?.data?.display_name,
-    //         workflows: [],
-    //         type:menuData?.data?.type,
-    //     };
-    //     returnMenuData.error= "";//menuData.latestRunningExecution?.Error;
-    //     returnMenuData.tooltip=menuData.latestRunningExecution?.Error; 
-
-    //     //vyberu posledni:
-    //     let _latestExec = returnMenuData.stateSummaryForDeployments[item.name].executions.reduce((a, b) => (a.created_at > b.created_at ? a : b));
-    //     returnMenuData.error= _latestExec.error;
-    //     //TODO?
-    //     if (_latestExec?.status_display== "failed")
-    //     {
-    //         if (returnMenuData?.error.toLowerCase().indexOf("breakpoint_plugin.resources.breakpoint.start")!=-1) 
-    //             {
-    //                 returnMenuData.status= 'waitingToApproval';
-    //             }
-    //     }
-
-    //     if (returnMenuData.status=='waitingToApproval') {
-    //         returnMenuData.data.workflows=this.workFlowsVMWaitingToApproval(itemVM)
-    //     }
-    //     else {
-    //         returnMenuData.data.workflows=this.workFlowsPAMRequests(itemVM,item)
-    //     }
-
-    //     //toto prebije vse:
-    //     if (menuData.status=="loading") {
-    //         returnMenuData.status= 'loading';
-    //     }
-    //     return returnMenuData;
-    // };
-
-    //TODO toto by melo byt vymisteno do DeploymentActionButtons:
-    // getDeploymnetIdBasedOnStatus = (vmData:any,deploymentItem:any)=> {
-    //     if (deploymentItem.status=='waitingToApproval') {
-    //         return deploymentItem.name;
-    //     }
-    //     else {
-    //         return vmData.id;
-    //     }
-    // }
-
     //show all data in tooltip as JSON:
     getExtraPAMInfo = (item:any)=> {
         let _extraData = JSON.stringify(item);
@@ -261,7 +148,6 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
                                     <DeploymentActionButtons
                                             buttonTitle='PAM actions'
-                                            //deploymentId={item.name}
                                             fetchedDeploymentStateComplete={menuData}
                                             currentDeployment = {item}
                                             currentDeploymentId = {item.deployment_id}
