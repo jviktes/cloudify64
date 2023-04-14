@@ -1,13 +1,9 @@
-// @ts-nocheck File not migrated fully to TS
+//// @ts-nocheck File not migrated fully to TS
 import type { FunctionComponent } from 'react';
 import InputFields from '../../../../common/src/inputs/InputFields';
-import InputsHelpIcon from '../../../../common/src/inputs/InputsHelpIcon';
 import { OnChange } from '../../../../common/src/inputs/types';
-import YamlFileButton from '../../../../common/src/inputs/YamlFileButton';
 
 import type { BaseWorkflowInputs, OnCheckboxChange, OnDateInputChange, UserWorkflowInputsState } from './types';
-
-const t = Stage.Utils.getT('widgets.common.deployments.execute');
 
 export interface CommonExecuteWorflowProps {
     baseWorkflowInputs: BaseWorkflowInputs;
@@ -35,23 +31,9 @@ interface ExecuteWorkflowInputsProps extends CommonExecuteWorflowProps {
 const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     baseWorkflowInputs,
     userWorkflowInputsState,
-    onYamlFileChange,
-    fileLoading,
     onWorkflowInputChange,
     errors,
-    toolbox,
-    force,
-    dryRun,
-    queue,
-    schedule,
-    scheduledTime,
-    onForceChange,
-    onDryRunChange,
-    onQueueChange,
-    onScheduleChange,
-    onScheduledTimeChange
-}) => {
-    const { Message, Form, Header, Divider, DateInput } = Stage.Basic;
+    toolbox}) => {
     return (
         <>
             <InputFields

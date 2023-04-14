@@ -1,7 +1,5 @@
-// @ts-nocheck File not migrated fully to TS
-//  fetchUrl: '[manager]/eventsVik[params]',
+//// @ts-nocheck File not migrated fully to TS
 /* eslint-disable no-console, no-process-exit */
-import { result } from 'lodash';
 import VirtualMachinesTable from './VirtualMachinesTable';
 
 Stage.defineWidget({

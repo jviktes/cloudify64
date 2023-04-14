@@ -1,12 +1,7 @@
-// @ts-nocheck File not migrated fully to TS
-import PropTypes, { bool } from 'prop-types';
-import type { Tests } from './types';
-import { Button, Icon, Item } from 'semantic-ui-react';
-import { identity } from 'lodash';
-import { castArray } from 'lodash';
+//// @ts-nocheck File not migrated fully to TS
+import PropTypes from 'prop-types';
+import { Icon } from 'semantic-ui-react';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
-import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
-import { Workflow } from '../../common/src/executeWorkflow';
 
 interface DataDisksTableVMProps {
     data: {
@@ -30,13 +25,11 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
 
     constructor(props: DataDisksTableVMProps) {
         super(props);
-        this.state = this.initialState;
+        this.state = DataDisksTableVM.initialState;
     }
 
     getExtraDiskInfo = (item:any)=> {
         let _extraData = "Host caching: "+ item.host_caching +"\nDisk label: "+ item.label;
-        //let strPrettyJson = JSON.stringify(_extraData, null, 2);
-
         return _extraData;
     }
     
@@ -134,7 +127,7 @@ export default class DataDisksTableVM extends React.Component<DataDisksTableVMPr
     }
 }
 
-DataDisksTableVM.propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.array
-};
+// DataDisksTableVM.propTypes = {
+//     // eslint-disable-next-line react/forbid-prop-types
+//     data: PropTypes.array
+// };

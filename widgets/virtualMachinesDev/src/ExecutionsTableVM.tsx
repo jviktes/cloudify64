@@ -1,11 +1,5 @@
-// @ts-nocheck File not migrated fully to TS
-import PropTypes, { bool } from 'prop-types';
-import type { Tests } from './types';
-import { Button, Icon, Item } from 'semantic-ui-react';
-import { identity } from 'lodash';
-import { castArray } from 'lodash';
-import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
-import { dataSortingKeys } from '../../tokens/src/TokensTable.consts';
+//// @ts-nocheck File not migrated fully to TS
+import PropTypes from 'prop-types';
 import { ExecutionStatus } from '../../../app/components/shared';
 
 interface ExecutionsTableVMProps {
@@ -60,7 +54,7 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
     }
 }
 
-ExecutionsTableVM.propTypes = {
-    // eslint-disable-next-line react/forbid-prop-types
-    data: PropTypes.array
-};
+// ExecutionsTableVM.propTypes = {
+//     // eslint-disable-next-line react/forbid-prop-types
+//     data: PropTypes.array
+// };

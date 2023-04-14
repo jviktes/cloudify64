@@ -78,10 +78,10 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         if (fetchedDeploymentStateComplete.stateSummaryForDeployments!=undefined) {
             fetchedDeploymentStateComplete.stateSummaryForDeployments.forEach(_deployment => {
 
-                if(_deployment["blueprint_id"].toUpperCase().indexOf("JEA-")!=-1) {
+                if(String(_deployment["blueprint_id"]).toUpperCase().indexOf("JEA-")!=-1) {
                     _result = true;
                 }
-                if(_deployment["blueprint_id"].toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
+                if(String(_deployment["blueprint_id"]).toUpperCase().indexOf("CYBERARK-ACCOUNT")!=-1) {
                     _result = true;
                 }  
             });

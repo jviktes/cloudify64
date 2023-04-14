@@ -24,7 +24,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     constructor(props: RequestsTableVMProps) {
         super(props);
-        this.state = this.initialState;
+        this.state = RequestsTableVM.initialState;
     }
 
     //show all data in tooltip as JSON:
