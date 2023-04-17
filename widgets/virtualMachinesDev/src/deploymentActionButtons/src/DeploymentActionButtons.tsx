@@ -265,17 +265,14 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 if (item?.os.indexOf("RHEL")!=-1) {
                     if (_workFlowItem.name=="request_app_admin_account"){
                         //condition for not plainOS
-                        let _regex = 'RHEL[0-9\.]*\-[\w,0-9,\.]+\-v[0-9,\.*]*';
-                        const myRe = new RegExp(_regex, 'g');
-                        const regResults = myRe.exec(item.blueprint_id);
-                        //console.log(regResults);
-
-                        if (regResults!=null) {
-                            outWorks.push(_workFlowItem);
-                        }
-
-
+                        //let _regex = 'RHEL[0-9\.]*\-[\w,0-9,\.]+\-v[0-9,\.*]*';
+                        //const myRe = new RegExp(_regex, 'g');
+                        //const regResults = myRe.exec(item.blueprint_id);
                         
+                        //if (regResults!=null) {
+                            outWorks.push(_workFlowItem);
+                        //}
+
                     }
 
                     if (_workFlowItem.name=="request_sys_admin_account"){
