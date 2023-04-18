@@ -25,20 +25,31 @@ const IdPopupCustomised: FunctionComponent<IdPopupCustomisedProps> = ({ buttonPo
                 <Label style={{ opacity: selected ? '1' : '0.2' }}>{i18n.t('shared.idPopup.label')}</Label>
             </Popup.Trigger>
             <Popup.Content>
-                <div className="noWrap" style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="noWrap" style={{ display: 'content', alignItems: 'center' }}>
                     {buttonPosition === 'left' ? (
                         <>
-                            <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={id} />
-                            <strong style={{ marginLeft: 5 }}>{id}</strong>
+                            <div>
+                                <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={id} />
+                                <strong style={{ marginLeft: 5 }}>VM name: {id}</strong>
+                                
+                            </div>
 
-                            <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={data} />
-                            <strong style={{ marginLeft: 5 }}>{data}</strong>
-
+                            <div>
+                                <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={data} />
+                                <strong style={{ marginLeft: 5 }}>Blueprint: {data}</strong>
+                            </div>
                         </>
                     ) : (
                         <>
-                            <strong style={{ marginRight: 5 }}>{data}</strong>
-                            <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={data} />
+                            <div>
+                                <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={id} />
+                                <strong style={{ marginRight: 5 }}>VM name: {id}</strong>
+                               
+                            </div>
+                            <div>
+                                <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={data} />
+                                <strong style={{ marginRight: 5 }}>Blueprint: {data}</strong>
+                            </div>
                         </>
                     )}
                 </div>
