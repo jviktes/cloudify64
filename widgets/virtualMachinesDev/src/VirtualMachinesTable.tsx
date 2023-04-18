@@ -1,12 +1,12 @@
 //// @ts-nocheck File not migrated fully to TS
 import PropTypes from 'prop-types';
 import { Button, Icon } from 'semantic-ui-react';
-import { IdPopup } from '../../../app/components/shared';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
 import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
 import { getDetails } from './VMHelpers';
+import IdPopupCustomised from './IdPopupCustomised';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -464,7 +464,10 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 >
                                 {getDetails(item)}
 
-                                <DataTable.Data><IdPopup  id={item.id} selected={hoveredExecution === item.id} />{item.display_name}
+                                <DataTable.Data>
+
+                                <IdPopupCustomised id={item.id} data={this.getParrentBlueprint(item)} selected={hoveredExecution === item.id} />{item.display_name}
+
                                 <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon>
                                 </DataTable.Data>
 
