@@ -8,6 +8,7 @@ export function getDetails (item:any){
     let _azure_location="";
     let _environment="";
     let _os="";
+    let _isUnistalled = false;
 
     try {
         
@@ -33,6 +34,21 @@ export function getDetails (item:any){
                 _os=_getOS(_inputs);
             }
 
+            if (item.executionAllData[0].items!=null){
+
+                item.executionAllData[0].items.sort(function(a,b){
+                    return new Date(b.created_at) - new Date(a.created_at);
+                  });
+
+                let lastExec = item.executionAllData[0].items[0];
+
+                if (lastExec!=null) {
+                    if (lastExec.workflow_id === "uninstall" && lastExec.status_display=="completed") {
+                        _isUnistalled = true;
+                    }
+                }
+          }
+
     } catch (error) {
         console.log(error);
     }
@@ -45,6 +61,7 @@ export function getDetails (item:any){
     item.environment=_environment;
     item.os=_os;
     item.display_name=_display_name;
+    item.isUnistalled = _isUnistalled;
 };
 
 export function _getLocation (inputJson:any) {
