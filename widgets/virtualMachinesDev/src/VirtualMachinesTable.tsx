@@ -36,6 +36,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             loadingItems:[],
             showBackButton:false,
             hoveredExecution: null,
+            rootBlueprintsData:[],
         };
     }
 
@@ -47,6 +48,9 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         {_.map(data.items, item => (   
             this.loadDetailedData(item)
         ))}
+
+        this.loadRootBlueprint();
+
    }
 
     componentDidUpdate(prevProps: Readonly<VirtualMachinesDataProps>, prevState: Readonly<{}>, snapshot?: any): void {
@@ -116,6 +120,19 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         }
 
     };
+
+    loadRootBlueprint = async () => {
+        const { toolbox } = this.props;
+        const manager = toolbox.getManager();
+        const tenantName=manager.getSelectedTenant();
+        const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_loadRootBlueprint', {});
+
+        let rootBlueprintsData=this.state.rootBlueprintsData;
+        rootBlueprintsData = _dataFromExternalSource;
+        this.setState({rootBlueprintsData});
+
+    }
+
 
     //itemVM = hlavni VM
     getMenuData = (itemVM:any,detailedData:any, deploymentId:any) => {
@@ -357,16 +374,52 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             this.setState({ hoveredExecution: null });
         }
     }
+
+    getParrentBlueprint = (item:any)=> {
+
+        try {
+            let _rootBlueprintsData = this.state.rootBlueprintsData;
+    
+            if  (_rootBlueprintsData.length==0) {
+                return "";
+            }
+    
+            //tady vybrat podle GUID z labelu:
+            let _labels = item["labels"];
+    
+            var _blueprintRoot = _labels.filter((obj: {key: string; name: string; }) => {
+                return obj.key === "csys-obj-parent"
+            })
+            if (_blueprintRoot.length>0) {
+                let _guid = _blueprintRoot[0].value;
+    
+                var _blueprintRootPrettyName = _rootBlueprintsData.filter((obj: {id: any;key: string; name: string; }) => {
+                    return obj.id === _guid;
+                })
+    
+                return _blueprintRootPrettyName[0].blueprint_id;
+            }
+            else {
+                return "";
+            }
+        } catch (error) {
+            return "";
+        }
+        
+    }
+
     getExtraVMnfo = (item:any)=> {
 
         try {
-            let _extraData = "Blueprint: "+ item.blueprint_id;
+            let blueprintId = this.getParrentBlueprint(item);
+            let _extraData = "Blueprint: "+ blueprintId;
             return _extraData;
         } catch (error) {
             return "Blueprint: Uknown";
         }
 
     }
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -428,7 +481,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     {this.getExpandedButton(item)}
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
                                     <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToPaste(item)}></Button>
-                                    </DataTable.Data>
+                                </DataTable.Data>
+
                                 <DataTable.Data>
 
                                     <DeploymentActionButtons
@@ -439,7 +493,8 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         currentDeployment={item}
                                         currentDeploymentId={item.id}
                                         redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 
-                                        parametresModal={item}/>
+                                        parametresModal={item}
+                                        rootBlueprintName={this.getParrentBlueprint(item)}/>
                                 </DataTable.Data>
                                 {/* 
                                 <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>

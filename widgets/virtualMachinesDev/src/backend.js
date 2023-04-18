@@ -146,7 +146,39 @@ module.exports = async function(r) {
             .then(data => res.send(data))
             .catch(error => next(error));
     });
+    //get root (parrent) blueprint info:
+    r.register('get_loadRootBlueprint', 'GET', (req, res, next, helper) => {
+        const _ = require('lodash');
+        console.log('get_loadRootBlueprint...');
+        const { headers } = req;
+        const commonManagerRequestOptions = {
+            headers: {
+                tenant: headers.tenant,
+                cookie: headers.cookie
+            }
+        };
 
+        let filterRules = [];
+        let obj_filterA = {"key":"csys-obj-type","values":["environment"],"operator":"any_of","type":"label"};
+        filterRules.push(obj_filterA);
+        let obj_filterB = {"key":"csys-obj-parent","values":[],"operator":"is_null","type":"label"};
+        filterRules.push(obj_filterB);
+
+        return helper.Manager.doPost('/searches/deployments', {
+            params: {
+                _include: 'id,display_name,labels,blueprint_id,environment_type',
+            },
+            body: { filter_rules: filterRules },
+            ...commonManagerRequestOptions
+        })
+        .then(data => {
+            rawData = data.items;
+            return Promise.all(rawData);
+        })
+        .then(data => res.send(data))
+        .catch(error => next(error));
+});
+    
 
 /////////////
 
@@ -322,7 +354,7 @@ module.exports = async function(r) {
             .catch(error => next(error));
     });
     
-    }
+}
 
 
                   // rawData = [
