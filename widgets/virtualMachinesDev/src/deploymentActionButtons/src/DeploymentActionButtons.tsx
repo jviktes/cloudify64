@@ -320,7 +320,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             else if (internalStatus == "waitingToApproval") {
                 return eVMStates.WaitingToApproval; //'waitingToApproval';
             }
-            else if (internalStatus == "completed" || internalStatus == "terminated" ) {
+            else if (internalStatus == "completed" || internalStatus == "terminated" || internalStatus == "cancelled" ) {
                 return eVMStates.Success;// 'success';
             }
             else {
