@@ -1,5 +1,6 @@
 //// @ts-nocheck File not migrated fully to TS
 import type { FunctionComponent } from 'react';
+import { VM_Sizes_No_PremiumSSD } from '../../../../blueprintsWizards/src/DataDiskOptions';
 import FileActions from '../../../../common/src/actions/FileActions';
 import DeploymentActions from '../../../../common/src/deployments/DeploymentActions';
 import { OnChange } from '../../../../common/src/inputs/types';
@@ -33,6 +34,7 @@ export interface ExecuteWorkflowModalProps {
     workflow: Workflow | string;
     open: boolean;
     parametresModal:any;
+    vmSize:any;
 }
 
 const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
@@ -45,7 +47,8 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     toolbox,
     workflow,
     open,
-    parametresModal
+    parametresModal,
+    vmSize,
 }) => {
     if (_.isString(workflow) && !(_.isString(deploymentId) && deploymentId)) {
         throw Error(
@@ -78,14 +81,90 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     function setWorkflowParams(workflowResource: Workflow) {
 
-        setBaseWorkflowParams(workflowResource.parameters);
+        //uprava disku, aby se nemohli vybrat premiove pokud k tomu neni vm_size:
+        if (workflow?.name=="add_disk") {
+
+            let canBePremiumDisks=VM_Sizes_No_PremiumSSD.includes(vmSize.azure_size);
+
+            try {
+                let _baseWorkflowParams = workflowResource.parameters;
+                if (canBePremiumDisks){
+                    _baseWorkflowParams.disk_type.constraints = [
+                                    {
+                                        "valid_values": [
+                                            "Standard HDD",
+                                            "Standard SSD",
+                                            //"Premium SSD"
+                                        ]
+                                    }
+                    ]
+                }
+                else {
+                    _baseWorkflowParams.disk_type.constraints = [
+                                    {
+                                        "valid_values": [
+                                            "Standard HDD",
+                                            "Standard SSD",
+                                            "Premium SSD"
+                                        ]
+                                    }
+                    ]
+                }
+
+                setBaseWorkflowParams(_baseWorkflowParams);
+                
+            } catch (error) {
+                
+            }
+        }
+        else {
+            setBaseWorkflowParams(workflowResource.parameters);
+        }
+        
 
         //TODO: zde se nastavuje defautni hodnota force na false
         if (workflow?.name=="uninstall") {
             setForce(true);
         }
         
-        console.log(parametresModal);
+
+
+        // {
+        //         "disk_size": {
+        //             "default": 32,
+        //             "description": "Standard disk size / SKU of selected Disk type.\n",
+        //             "type": "integer"
+        //         },
+        //         "disk_type": {
+        //             "default": "Standard SSD",
+        //             "description": "Type of the data disk\n",
+        //             "type": "string",
+        //             "constraints": [
+        //                 {
+        //                     "valid_values": [
+        //                         "Standard HDD",
+        //                         "Standard SSD",
+        //                         "Premium SSD"
+        //                     ]
+        //                 }
+        //             ]
+        //         },
+        //         "host_caching": {
+        //             "default": "None",
+        //             "description": "Host caching configuration for the data disk.\n",
+        //             "constraints": [
+        //                 {
+        //                     "valid_values": [
+        //                         "None",
+        //                         "ReadOnly",
+        //                         "ReadWrite"
+        //                     ]
+        //                 }
+        //             ]
+        //         }
+        //     }
+
+        //console.log(parametresModal);
         if (workflowResource.name=="remove_disk") {
             let _remappadValues= {lun:parametresModal.lun};
             setUserWorkflowParams(_remappadValues);
