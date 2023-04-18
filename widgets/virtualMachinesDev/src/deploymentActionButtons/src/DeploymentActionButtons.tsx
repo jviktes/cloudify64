@@ -35,7 +35,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     const [workflow, setWorkflow, resetWorkflow] = useResettableState<Workflow | null>(null);
 
     const getLastGeneralExecution =() => {
-            let combinedExecutions = [];
+    let combinedExecutions = [];
 
 
         try {
@@ -594,6 +594,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     parametresModal={parametresModal}
                     onHide={resetWorkflow}
                     toolbox={toolbox} 
+                    vmSize={fetchedDeploymentStateComplete.itemVM}
                 />
             )}
         </div>
