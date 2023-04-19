@@ -22,7 +22,7 @@ const IdPopupCustomised: FunctionComponent<IdPopupCustomisedProps> = ({ buttonPo
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
         >
             <Popup.Trigger>
-                <Label style={{ opacity: selected ? '1' : '0.2' }}>{i18n.t('shared.idPopup.label')}</Label>
+                <Label style={{ opacity: selected ? '1' : '0.2' }}>ID</Label>
             </Popup.Trigger>
             <Popup.Content>
                 <div className="noWrap" style={{ display: 'content', alignItems: 'center' }}>
