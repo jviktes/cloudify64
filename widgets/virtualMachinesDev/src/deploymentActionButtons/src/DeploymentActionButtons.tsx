@@ -290,6 +290,26 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return outWorks;
     };
 
+    const workFlowsVMInstallCancelled=(item:any)=> {
+        let outWorks = [];
+        let workflows=item.workflows;
+
+        for (const key in workflows) {
+            if (Object.prototype.hasOwnProperty.call(workflows, key)) {
+                const _workFlowItem = workflows[key];
+
+                if (_workFlowItem.name=="uninstall"){
+                    _workFlowItem.isDisabled = hasVMPAMRequests();
+                    if (_workFlowItem.isDisabled==true) {
+                        _workFlowItem.tooltip = "Virtual machine has PAMs, please delete them before running unistall";
+                    }
+                    outWorks.push(_workFlowItem);
+                }
+            }
+        }
+        return outWorks;
+    };
+
     const getStatus = (lastGeneralExecution:any) => {
 
         if (lastGeneralExecution!=null) {
@@ -319,6 +339,9 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             }
             else if (internalStatus == "waitingToApproval") {
                 return eVMStates.WaitingToApproval; //'waitingToApproval';
+            }
+            else if (internalStatus == "cancelled" && lastGeneralExecution.workflow_id=="install") {
+                return eVMStates.InstallCancelled;
             }
             else if (internalStatus == "completed" || internalStatus == "terminated" || internalStatus == "cancelled" ) {
                 return eVMStates.Success;// 'success';
@@ -370,7 +393,14 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             let deploymentType = getDeploymenttype(_lastCurrentExecution);
 
             if (deploymentType=="vm") {
-                 workflows=workFlowsVM(fetchedDeploymentStateComplete.itemVM);
+                if (_lastCurrentStatus==eVMStates.InstallCancelled){
+                    workflows=workFlowsVMInstallCancelled(fetchedDeploymentStateComplete.itemVM);
+                }
+                else {
+                    workflows=workFlowsVM(fetchedDeploymentStateComplete.itemVM);
+                }
+                 
+
             }
             if (deploymentType=="dataDisks") {
                 workflows=workFlowsDataDisks(fetchedDeploymentStateComplete.itemVM);
@@ -529,7 +559,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
 
         let _computedWorkFlows = getWorkFlows(_lastCurrentExecution,_lastCurrentStatus);
         
-        if (_lastCurrentStatus==eVMStates.Success) {
+        if (_lastCurrentStatus==eVMStates.Success ) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
@@ -562,7 +592,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                 onClick={setWorkflow}
             /><Button basic compact title="Copy error information" color="red" icon="copy" onClick={() => copyToPaste(_computedTooTip)}></Button></div>)
         }
-        if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke) {
+        if (_lastCurrentStatus==eVMStates.WaitingToApproval || _lastCurrentStatus==eVMStates.WaitingToRevoke || _lastCurrentStatus==eVMStates.InstallCancelled) {
             return (<WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
