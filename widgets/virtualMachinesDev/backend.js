@@ -21,7 +21,8 @@ module.exports = async function(r) {
         let _offset = params._offset;
 
         let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-
+        //TODO filter for unistalled VM...
+        
         return helper.Manager.doPost('/searches/deployments', {
             params: {
                 _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
@@ -70,7 +71,34 @@ module.exports = async function(r) {
                             }
                         });
                     }); 
-                    return data; 
+
+
+                //filter for unistall VM:
+
+                // for (let index = 0; index < data.items.length; index++) {
+                //     const item = data.items[index];
+                //     let _isUnistalled = false;
+                //     if (item.executionAllData[0].items!=null){
+
+                //         item.executionAllData[0].items.sort(function(a,b){
+                //             return new Date(b.created_at) - new Date(a.created_at);
+                //           });
+        
+                //         let lastExec = item.executionAllData[0].items[0];
+        
+                //         if (lastExec!=null) {
+                //             if (lastExec.workflow_id === "uninstall" && lastExec.status_display=="completed") {
+                //                 _isUnistalled = true;
+                //             }
+                //         }
+                //         if (_isUnistalled) {
+                //             //odmazani:
+                //             data.items.splice(index, 1);
+                //         }
+                //   }
+                // }
+
+                return data; 
                 })
                 .then(data => res.send(data))
                 .catch(error => next(error));
@@ -122,7 +150,6 @@ module.exports = async function(r) {
                         }
                     });
                 }); 
-                //return rawData;
 
                 //dotazy na capabilites:
                 const capabilitesPromises = _.map(rawData, deployment => 
@@ -141,12 +168,45 @@ module.exports = async function(r) {
                         }
                     });
                 }); 
+
                 return rawData; 
             })
             .then(data => res.send(data))
             .catch(error => next(error));
     });
+    //get root (parrent) blueprint info:
+    r.register('get_loadRootBlueprint', 'GET', (req, res, next, helper) => {
+        const _ = require('lodash');
+        console.log('get_loadRootBlueprint...');
+        const { headers } = req;
+        const commonManagerRequestOptions = {
+            headers: {
+                tenant: headers.tenant,
+                cookie: headers.cookie
+            }
+        };
 
+        let filterRules = [];
+        let obj_filterA = {"key":"csys-obj-type","values":["environment"],"operator":"any_of","type":"label"};
+        filterRules.push(obj_filterA);
+        let obj_filterB = {"key":"csys-obj-parent","values":[],"operator":"is_null","type":"label"};
+        filterRules.push(obj_filterB);
+
+        return helper.Manager.doPost('/searches/deployments', {
+            params: {
+                _include: 'id,display_name,labels,blueprint_id,environment_type',
+            },
+            body: { filter_rules: filterRules },
+            ...commonManagerRequestOptions
+        })
+        .then(data => {
+            rawData = data.items;
+            return Promise.all(rawData);
+        })
+        .then(data => res.send(data))
+        .catch(error => next(error));
+});
+    
 
 /////////////
 
@@ -322,7 +382,7 @@ module.exports = async function(r) {
             .catch(error => next(error));
     });
     
-    }
+}
 
 
                   // rawData = [

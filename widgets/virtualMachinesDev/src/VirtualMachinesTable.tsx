@@ -1,6 +1,6 @@
 //// @ts-nocheck File not migrated fully to TS
 import PropTypes from 'prop-types';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import DeploymentActionButtons from './deploymentActionButtons/src/DeploymentActionButtons';
 import DataDisksTableVM from './DataDisksTableVM';
 import ExecutionsTableVM from './ExecutionsTableVM';
@@ -123,16 +123,12 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     loadRootBlueprint = async () => {
         const { toolbox } = this.props;
-        const manager = toolbox.getManager();
-        const tenantName=manager.getSelectedTenant();
         const _dataFromExternalSource = await toolbox.getWidgetBackend().doGet('get_loadRootBlueprint', {});
-
         let rootBlueprintsData=this.state.rootBlueprintsData;
         rootBlueprintsData = _dataFromExternalSource;
         this.setState({rootBlueprintsData});
 
     }
-
 
     //itemVM = hlavni VM
     getMenuData = (itemVM:any,detailedData:any, deploymentId:any) => {
@@ -157,7 +153,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         if (el.style.display === 'none') {
             el.style.display = '';
             el.style.backgroundColor = '#e0e0e0';
-            elMain.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#AAAAAA'; ;
         } else {
             el.style.display = 'none';
             el.style.backgroundColor = '';
@@ -225,7 +221,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         if (el.style.display === 'none') {
             el.style.display = '';
             el.style.backgroundColor = '#e0e0e0';
-            elMain.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#AAAAAA';
         } else {
             el.style.display = 'none';
             el.style.backgroundColor = '';
@@ -420,6 +416,79 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     }
 
+    renderRowData = (item:any) => {
+        //render row for uninstalled or active VM
+        const { toolbox, widget } = this.props;
+        const { DataTable} = Stage.Basic;
+        const {hoveredExecution} = this.state;
+
+        if (item.isUnistalled==false) {
+            return <DataTable.Row 
+            key={`${item.id}_main`}
+            id={`${item.id}_main`}
+            onMouseOver={() => this.setHoveredExecution(item.id)}
+            onFocus={() => this.setHoveredExecution(item.id)}
+            onMouseOut={() => this.unsetHoveredExecution(item.id)}>
+            
+            <DataTable.Data>
+                <IdPopupCustomised id={item.id} data={this.getParrentBlueprint(item)} selected={hoveredExecution === item.id} />
+                {/* <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon> */}
+            </DataTable.Data>
+    
+            <DataTable.Data>
+                {item.display_name}
+            </DataTable.Data>
+
+            <DataTable.Data>{item.os}</DataTable.Data>
+            <DataTable.Data>{item.ip}</DataTable.Data>
+            <DataTable.Data>{item.cpus}</DataTable.Data>
+            <DataTable.Data>{item.ram}</DataTable.Data>
+            <DataTable.Data>{item.azure_size}</DataTable.Data>
+            <DataTable.Data>{item.azure_location}</DataTable.Data>
+            <DataTable.Data>{item.environment}</DataTable.Data>
+    
+            <DataTable.Data>
+                {this.getExpandedButton(item)}
+                <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
+                <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToPaste(item)}></Button>
+            </DataTable.Data>
+    
+            <DataTable.Data>
+                
+                <DeploymentActionButtons
+                    buttonTitle='Actions'
+                    //deploymentId={item.id}
+                    fetchedDeploymentStateComplete={this.getMenuData(item, this.state.detailedData[item.id], item.id)}
+                    toolbox={toolbox}
+                    currentDeployment={item}
+                    currentDeploymentId={item.id}
+                    redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 
+                    parametresModal={item}
+                    rootBlueprintName={this.getParrentBlueprint(item)}/>
+            </DataTable.Data>
+    
+            </DataTable.Row>
+        } 
+        else {
+            return <DataTable.Row 
+            key={`${item.id}_main`}
+            id={`${item.id}_main`}
+            style={{backgroundColor: '#c9c8c8' }}
+            >
+            
+            <DataTable.Data>
+            </DataTable.Data>
+    
+            <DataTable.Data>
+                {item.display_name}
+            </DataTable.Data>
+
+            <DataTable.Data colSpan={10}>The virtual machine has been decommissioned. This record will be deleted by a regular maintenance job.</DataTable.Data>
+            </DataTable.Row>
+        }
+
+    }
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { data, toolbox, widget } = this.props;
@@ -438,7 +507,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     sortAscending={widget.configuration.sortAscending}
                     searchable
                 >
-
+                    <DataTable.Column label="ID">
                     <DataTable.Column label="Name" name="display_name"/>
                     <DataTable.Column label="OS" name="capabilities" />
                     <DataTable.Column label="IP" name="capabilities" />
@@ -449,29 +518,29 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     <DataTable.Column label="Environment" name="capabilities" />
                     <DataTable.Column label="" name="" />
                     <DataTable.Column label="Actions" />
-                    {/* <DataTable.Column label="" name="config" name="class" /> */}
-                    {_.map(data.items, item => (    
-                                        
-                            <DataTable.RowExpandable key={item.id} 
+                
+                    {_.map(data.items, item => (          
+                            <DataTable.RowExpandable key={item.id} >
 
-                            >
-                            <DataTable.Row 
+                            {getDetails(item)}
+
+                            {this.renderRowData(item)}
+
+                            {/* <DataTable.Row 
                                 key={`${item.id}_main`}
                                 id={`${item.id}_main`}
                                 onMouseOver={() => this.setHoveredExecution(item.id)}
                                 onFocus={() => this.setHoveredExecution(item.id)}
                                 onMouseOut={() => this.unsetHoveredExecution(item.id)}
+                                
                                 >
-                                {getDetails(item)}
-
+                                
                                 <DataTable.Data>
-
-                                <IdPopupCustomised id={item.id} data={this.getParrentBlueprint(item)} selected={hoveredExecution === item.id} />{item.display_name}
-
-                                <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon>
+                                    <IdPopupCustomised id={item.id} data={this.getParrentBlueprint(item)} selected={hoveredExecution === item.id} />{item.display_name}
+                                    <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon>
                                 </DataTable.Data>
 
-                                <DataTable.Data>{item.os}</DataTable.Data>
+                                <DataTable.Data>{item.os} {String(item.isUnistalled)}</DataTable.Data>
                                 <DataTable.Data>{item.ip}</DataTable.Data>
                                 <DataTable.Data>{item.cpus}</DataTable.Data>
                                 <DataTable.Data>{item.ram}</DataTable.Data>
@@ -479,7 +548,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 <DataTable.Data>{item.azure_location}</DataTable.Data>
                                 <DataTable.Data>{item.environment}</DataTable.Data>
 
-                             
                                 <DataTable.Data>
                                     {this.getExpandedButton(item)}
                                     <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
@@ -487,7 +555,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 </DataTable.Data>
 
                                 <DataTable.Data>
-
+                                    
                                     <DeploymentActionButtons
                                         buttonTitle='Actions'
                                         //deploymentId={item.id}
@@ -499,18 +567,15 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         parametresModal={item}
                                         rootBlueprintName={this.getParrentBlueprint(item)}/>
                                 </DataTable.Data>
-                                {/* 
-                                <DataTable.Data><Icon name="settings" link onClick={() => this.showCurrentSettings(item)} /></DataTable.Data>
-                                 */}
 
-                            </DataTable.Row>
+                            </DataTable.Row> */}
 
                             <DataTable.Row
                                 key={`${item.id}_ext`}
                                 style={{ display: 'none' }}
                                 id={`${item.id}_ext`}>
                                     <DataTable.Data colSpan={11}>
-                                        <div className='virtualMachineMainLayout'>
+                                        <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)}toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
@@ -522,12 +587,16 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                 style={{ display: 'none' }}
                                 id={`${item.id}_executions`}>
                                     <DataTable.Data colSpan={11}>
-                                            <div style={{width:"100%"}}><ExecutionsTableVM widget={widget} vmData={item} data={this.getExecutionData(item,this.state.detailedData[item.id])} toolbox={toolbox} ></ExecutionsTableVM></div>
+                                        <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
+                                                <div style={{width:"100%"}}><ExecutionsTableVM widget={widget} vmData={item} data={this.getExecutionData(item,this.state.detailedData[item.id])} toolbox={toolbox} ></ExecutionsTableVM></div>
+                                        </div>
                                     </DataTable.Data>
+                                    
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>
-                    ))}
+                        )
+                    )}
                 </DataTable>
             </div>
         );
