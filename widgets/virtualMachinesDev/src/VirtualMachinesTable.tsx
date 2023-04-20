@@ -507,7 +507,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     sortAscending={widget.configuration.sortAscending}
                     searchable
                 >
-                    <DataTable.Column label="ID">
+                    <DataTable.Column label="ID"/>
                     <DataTable.Column label="Name" name="display_name"/>
                     <DataTable.Column label="OS" name="capabilities" />
                     <DataTable.Column label="IP" name="capabilities" />
