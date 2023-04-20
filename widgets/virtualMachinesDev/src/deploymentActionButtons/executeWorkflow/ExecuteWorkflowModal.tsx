@@ -90,24 +90,25 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                 let _baseWorkflowParams = workflowResource.parameters;
                 if (canBePremiumDisks){
                     _baseWorkflowParams.disk_type.constraints = [
-                                    {
-                                        "valid_values": [
-                                            "Standard HDD",
-                                            "Standard SSD",
-                                            //"Premium SSD"
-                                        ]
-                                    }
+                         {
+                         "valid_values": 
+                            [
+                            "Standard HDD",
+                            "Standard SSD"
+                            ]
+                         }
                     ]
                 }
                 else {
                     _baseWorkflowParams.disk_type.constraints = [
-                                    {
-                                        "valid_values": [
-                                            "Standard HDD",
-                                            "Standard SSD",
-                                            "Premium SSD"
-                                        ]
-                                    }
+                         {
+                         "valid_values": 
+                            [
+                                "Standard HDD",
+                                "Standard SSD",
+                                "Premium SSD"
+                            ]
+                         }
                     ]
                 }
 
@@ -125,45 +126,11 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         //TODO: zde se nastavuje defautni hodnota force na false
         if (workflow?.name=="uninstall") {
             setForce(true);
+            //toto nefunguje:
+            //let _remappadValues= {ignore_failure:true};
+            //setUserWorkflowParams(_remappadValues);
         }
         
-
-
-        // {
-        //         "disk_size": {
-        //             "default": 32,
-        //             "description": "Standard disk size / SKU of selected Disk type.\n",
-        //             "type": "integer"
-        //         },
-        //         "disk_type": {
-        //             "default": "Standard SSD",
-        //             "description": "Type of the data disk\n",
-        //             "type": "string",
-        //             "constraints": [
-        //                 {
-        //                     "valid_values": [
-        //                         "Standard HDD",
-        //                         "Standard SSD",
-        //                         "Premium SSD"
-        //                     ]
-        //                 }
-        //             ]
-        //         },
-        //         "host_caching": {
-        //             "default": "None",
-        //             "description": "Host caching configuration for the data disk.\n",
-        //             "constraints": [
-        //                 {
-        //                     "valid_values": [
-        //                         "None",
-        //                         "ReadOnly",
-        //                         "ReadWrite"
-        //                     ]
-        //                 }
-        //             ]
-        //         }
-        //     }
-
         //console.log(parametresModal);
         if (workflowResource.name=="remove_disk") {
             let _remappadValues= {lun:parametresModal.lun};
