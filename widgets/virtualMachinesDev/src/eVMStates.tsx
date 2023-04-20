@@ -5,6 +5,7 @@ export enum eVMStates {
     WaitingToApproval = 'waitingToApproval',
     WaitingToRevoke= 'waitingToRevoke',
     InstallCancelled='installCancelled',
+    InstallFailed = 'installFailed',
     Default = 'default',
 }
 

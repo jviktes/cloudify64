@@ -309,6 +309,37 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         }
         return outWorks;
     };
+    const isInstallationFailed = ()=>{
+
+try {
+            let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
+    
+            var _workflowCreateDeploymentEnvironment = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+            return obj.workflow_id === "create_deployment_environment"
+            })
+            if (_workflowCreateDeploymentEnvironment[0].status_display=="failed") {
+            return true;
+            }
+    
+            var _workflowInstall = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+                return obj.workflow_id === "install"
+                })
+                if (_workflowInstall[0].status_display=="failed") {
+                return true;
+                }
+    
+            var _workflowIscaleuplist = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+                return obj.workflow_id === "scaleuplist"
+                })
+                if (_workflowIscaleuplist[0].status_display=="failed") {
+                return true;
+                }
+    } catch (error) {
+        return false;
+    }
+
+        return false;
+    }
 
     const getStatus = (lastGeneralExecution:any) => {
 
@@ -334,14 +365,21 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             else if (internalStatus=="pending" || internalStatus=="started" || internalStatus=="queued") {
                 return eVMStates.Loading;//'loading';
             }
-            else if (internalStatus == "failed") {
-                return eVMStates.Error;//'error';   
-            }
+
             else if (internalStatus == "waitingToApproval") {
                 return eVMStates.WaitingToApproval; //'waitingToApproval';
             }
             else if (internalStatus == "cancelled" && lastGeneralExecution.workflow_id=="install") {
                 return eVMStates.InstallCancelled;
+            }
+            //pokud instalace selze na jednom ze 3 prvnich krocich:
+            else if (isInstallationFailed()) 
+            {
+                return eVMStates.InstallFailed;
+            }
+            //az ted resit fail obecne:
+            else if (internalStatus == "failed") {
+                return eVMStates.Error;//'error';   
             }
             else if (internalStatus == "completed" || internalStatus == "terminated" || internalStatus == "cancelled" ) {
                 return eVMStates.Success;// 'success';
@@ -393,7 +431,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
             let deploymentType = getDeploymenttype(_lastCurrentExecution);
 
             if (deploymentType=="vm") {
-                if (_lastCurrentStatus==eVMStates.InstallCancelled){
+                if (_lastCurrentStatus==eVMStates.InstallCancelled || _lastCurrentStatus==eVMStates.InstallFailed){
                     workflows=workFlowsVMInstallCancelled(fetchedDeploymentStateComplete.itemVM);
                 }
                 else {
@@ -528,16 +566,6 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         return _toolTipText;
     }
 
-    //TODO:
-    //"Action button tooltip when previous action failed (red button)
-    // Let us display the following structured information instead of the last error event, which obviously contains some stack trace etc.:
-    // Failed execution name: [failed workflow name]
-    // Failed execution ID: [execution ID]
-    // Deployment ID: [deployment ID where the workflow was executed from]
-    // Created at: [time of execution / start]"
-    const getFormattedError=(item:any) => {
-            return item;
-    }
     const copyToPaste =(errortext:any) => {
         navigator.clipboard.writeText(errortext);
         return;
@@ -577,7 +605,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
         if (_lastCurrentStatus==eVMStates.Loading) {
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
-        if (_lastCurrentStatus==eVMStates.Error) {
+        if (_lastCurrentStatus==eVMStates.Error || _lastCurrentStatus==eVMStates.InstallFailed) {
             return (<div><WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
