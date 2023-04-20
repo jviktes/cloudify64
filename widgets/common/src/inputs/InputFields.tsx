@@ -85,6 +85,7 @@ export default function InputFields({
                     error={errorsState[input.name]}
                     toolbox={toolbox}
                     dataType={dataType}
+                    
                 />
             );
         })

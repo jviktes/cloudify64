@@ -70,7 +70,6 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     const [force, setForce, clearForce] = useInput(false); 
 
-
     const [queue, setQueue, clearQueue] = useInput(false);
     const [schedule, setSchedule, clearSchedule] = useInput(false);
     const [scheduledTime, setScheduledTime, clearScheduleTime] = useInput('');
@@ -122,17 +121,15 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             setBaseWorkflowParams(workflowResource.parameters);
         }
         
-
         //TODO: zde se nastavuje defautni hodnota force na false
         if (workflow?.name=="uninstall") {
             setForce(true);
             //toto nefunguje:
-            //let _remappadValues= {ignore_failure:true};
-            //setUserWorkflowParams(_remappadValues);
+            let _remappadValues= {ignore_failure:true};
+            setUserWorkflowParams(_remappadValues);
         }
-        
         //console.log(parametresModal);
-        if (workflowResource.name=="remove_disk") {
+        else if (workflowResource.name=="remove_disk") {
             let _remappadValues= {lun:parametresModal.lun};
             setUserWorkflowParams(_remappadValues);
         }
@@ -226,7 +223,8 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             unsetLoading,
             clearErrors,
             onExecute,
-            onHide
+            onHide,
+            workflowName
         }).catch((err: Errors) => {
             if (typeof err === 'string') {
                 setErrors({ errors: err });
@@ -345,6 +343,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                             onQueueChange={onQueueChange}
                             onScheduleChange={onScheduleChange}
                             onScheduledTimeChange={onScheduledTimeChange}
+                            workflowName={workflowName}
                         />
                     </DeploymentIdContext.Provider>
                 </Form>

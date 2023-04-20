@@ -13,6 +13,7 @@ export interface CommonExecuteWorflowProps {
     queue: boolean;
     schedule: boolean;
     scheduledTime: string;
+    workflowName:string,
 }
 
 interface ExecuteWorkflowInputsProps extends CommonExecuteWorflowProps {
@@ -26,6 +27,8 @@ interface ExecuteWorkflowInputsProps extends CommonExecuteWorflowProps {
     onScheduleChange: OnCheckboxChange;
     onScheduledTimeChange: OnDateInputChange;
     toolbox: Stage.Types.Toolbox;
+    workflowName:string;
+    
 }
 
 const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
@@ -33,19 +36,26 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     userWorkflowInputsState,
     onWorkflowInputChange,
     errors,
-    toolbox}) => {
-    return (
-        <>
-            <InputFields
-                inputs={baseWorkflowInputs}
-                onChange={onWorkflowInputChange}
-                inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
-                errorsState={errors}
-                toolbox={toolbox}
-                // hidden={true}
-            />
-        </>
-    );
+    toolbox,
+    workflowName}) => {
+    if (workflowName=="uninstall") {
+        return;
+    }
+    else {
+        return (
+            <>
+                <InputFields
+                    inputs={baseWorkflowInputs}
+                    onChange={onWorkflowInputChange}
+                    inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
+                    errorsState={errors}
+                    toolbox={toolbox}
+                    //hidden={true}
+                />
+            </>
+        );
+    }
+
 };
 
 export default React.memo(ExecuteWorkflowInputs);
