@@ -2,6 +2,7 @@
 import PropTypes from 'prop-types';
 import { Form } from 'semantic-ui-react';
 import { ExecutionStatus } from '../../../app/components/shared';
+import { forEach } from 'lodash';
 
 interface ExecutionsTableVMProps {
     data: {
@@ -22,7 +23,7 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
 
     static initialState = {
         executionRowVisibility:[],
-        executionIdFilter:{},
+        executionIdFilter:"*",
     };
     constructor(props: ExecutionsTableVMProps) {
         super(props);
@@ -35,40 +36,62 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
         this.setState({executionIdFilter:_value});
     };
 
-    // prepareDataToShow= (items:any)=> {
-    //     if (this.state.executionIdFilter!=null) {
-    //         return items.some(item => item.deployment_id == this.state.executionIdFilter);
-    //     }
-    //     else {
-    //         return items;
-    //     }    
-    // }
+    prepareDataToShow= (items:any)=> {
+        let _output = [];
+        if (this.state.executionIdFilter!="*") {
+            items.forEach(_item => {
+                if (_item.deployment_id==this.state.executionIdFilter) {
+                    _output.push(_item);
+                }
+            });
+            //return items.some(item => item[0].deployment_id == this.state.executionIdFilter);
+
+        }
+        else {
+            _output =  items;
+        }    
+        return _output;
+    }
+    renderDropDown = (_uniqueDeploymentIdsOptions:any) => {
+        const {data } = this.props;
+        if (data.length==0) {
+            return;
+        }
+        else {
+            return (
+                <Form.Dropdown
+                name="disk_type"
+                selection
+                options={_uniqueDeploymentIdsOptions}
+                value={this.state.executionIdFilter}
+                onChange={(e, { value }) => this.onItemChange(e.target, value)} />
+    
+            )
+        }
+
+    }
 
     render() {
         /* eslint-disable no-console, no-process-exit */
         const {data } = this.props;
         const { DataTable } = Stage.Basic;
 
+        const uniques = [...new Set(data.map(item => item.deployment_id))];
+        const UniqueDeploymentidOptions = [];
 
-        // const uniques = [...new Set(data.map(item => item.deployment_id))];
-        // const UniqueDeploymentidOptions = [];
+        UniqueDeploymentidOptions.push({text: "*", name: "*", value: "*"}); //all items
 
-        // uniques.forEach(element => {
-        //     UniqueDeploymentidOptions.push({text: element, name: element, value: element});
-        // });
+        uniques.forEach(element => {
+            UniqueDeploymentidOptions.push({text: element, name: element, value: element});
+        });
 
-        // let dataToShow = this.prepareDataToShow(data);
+        let dataToShow = this.prepareDataToShow(data);
 
         return (
             <div>
                 <div><span style={{fontWeight:"bold"}}>Executions</span></div>
 
-                {/* <Form.Dropdown
-                                name="disk_type"
-                                selection
-                                options={UniqueDeploymentidOptions}
-                                value={UniqueDeploymentidOptions[0].value}
-                                onChange={(e, { value }) => this.onItemChange(e.target, value)} /> */}
+                {this.renderDropDown(UniqueDeploymentidOptions)}
 
                 <DataTable>
 
@@ -78,10 +101,9 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
                     <DataTable.Column label="Creator" name="created_by" />
                     <DataTable.Column label="Deployment ID" name="deployment_id">
                         
-
                     </DataTable.Column>
 
-                    {_.map(data, item => (      
+                    {_.map(dataToShow, item => (      
                                       
                             <DataTable.Row>
                                 <DataTable.Data>{<ExecutionStatus execution={item}/>}</DataTable.Data>
@@ -98,8 +120,3 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
         );
     }
 }
-
-// ExecutionsTableVM.propTypes = {
-//     // eslint-disable-next-line react/forbid-prop-types
-//     data: PropTypes.array
-// };
