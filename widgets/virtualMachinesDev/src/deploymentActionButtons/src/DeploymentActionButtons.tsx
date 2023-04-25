@@ -492,6 +492,7 @@ try {
         let _toolTipText = "Actions";
 
         switch (_status) {
+
             case eVMStates.Loading:
                 if (_lastGeneralExecution==null || fetchedDeploymentStateComplete.stateSummaryForDeployments==undefined) {
                     return "Loading..."
@@ -531,16 +532,14 @@ try {
              case eVMStates.Success:
                 _toolTipText = "Actions";
                 break;
+            case eVMStates.InstallFailed:
+                _toolTipText = "Installation failed";
+                break;
+            case eVMStates.InstallCancelled:
+                _toolTipText = "Installation cancelled";
+                break;
             case eVMStates.Error:
                 _toolTipText = "Error in task";
-
-                // "Action button tooltip when previous action failed (red button)
-                // Let us display the following structured information instead of the last error event, which obviously contains some stack trace etc.:
-                //   Failed execution name: [failed workflow name]
-                //   Failed execution ID: [execution ID]
-                //   Deployment ID: [deployment ID where the workflow was executed from]
-                //   Created at: [time of execution / start]"
-
                 let errJSON = {};
                 let _idExection = _lastGeneralExecution["id"];
                 let _deploymentId = _lastGeneralExecution["deployment_id"];
@@ -605,7 +604,22 @@ try {
         if (_lastCurrentStatus==eVMStates.Loading) {
             return (<Icon name="spinner" loading disabled title={_computedTooTip} />)
         }
-        if (_lastCurrentStatus==eVMStates.Error || _lastCurrentStatus==eVMStates.InstallFailed) {
+        if (_lastCurrentStatus==eVMStates.Error) {
+            return (<div><WorkflowsMenu
+                workflows={_computedWorkFlows}
+                trigger={
+                    <Button
+                        className="executeWorkflowButton icon"
+                        color="red"
+                        icon="cogs"
+                        disabled={false}
+                        title={_computedTooTip}
+                    />
+                }
+                onClick={setWorkflow}
+            /><Button basic compact title="Copy error information" color="red" icon="copy" onClick={() => copyToPaste(_computedTooTip)}></Button></div>)
+        }
+        if (_lastCurrentStatus==eVMStates.InstallFailed) {
             return (<div><WorkflowsMenu
                 workflows={_computedWorkFlows}
                 trigger={
