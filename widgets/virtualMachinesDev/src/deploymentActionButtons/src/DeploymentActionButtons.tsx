@@ -311,7 +311,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     };
     const isInstallationFailed = ()=>{
 
-try {
+    try {
             let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
     
             var _workflowCreateDeploymentEnvironment = _vmExecutions.filter((obj: { workflow_id: string; }) => {
@@ -339,6 +339,62 @@ try {
     }
 
         return false;
+    }
+
+    const getInstallationFailedError =() => {
+
+        let _toolTipText = "Error in task";
+        let errJSON = {};
+
+        let _idExection = "";
+        let _deploymentId = "";
+        let _created_at = "";
+        let _failedExecution="";
+
+        //error can be in 3 specific workflow:
+
+
+        try {
+            let _vmExecutions = fetchedDeploymentStateComplete.itemVM.executionAllData[0].items;
+    
+            var _workflowCreateDeploymentEnvironment = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+            return obj.workflow_id === "create_deployment_environment"
+            })
+            if (_workflowCreateDeploymentEnvironment[0].status_display=="failed") {
+                _idExection = _workflowCreateDeploymentEnvironment[0].id;
+                _deploymentId = _workflowCreateDeploymentEnvironment[0].deployment_id;
+                _created_at = _workflowCreateDeploymentEnvironment[0].created_at;
+                _failedExecution=_workflowCreateDeploymentEnvironment;
+            }
+    
+            var _workflowInstall = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+                return obj.workflow_id === "install"
+                })
+                if (_workflowInstall[0].status_display=="failed") {
+                    _idExection = _workflowInstall[0].id;
+                    _deploymentId = _workflowInstall[0].deployment_id;
+                    _created_at = _workflowInstall[0].created_at;
+                    _failedExecution=_workflowInstall;
+                }
+    
+            var _workflowIscaleuplist = _vmExecutions.filter((obj: { workflow_id: string; }) => {
+                return obj.workflow_id === "scaleuplist"
+                })
+                if (_workflowIscaleuplist[0].status_display=="failed") {
+                    _idExection = _workflowIscaleuplist[0].id;
+                    _deploymentId = _workflowIscaleuplist[0].deployment_id;
+                    _created_at = _workflowIscaleuplist[0].created_at;
+                    _failedExecution=_workflowIscaleuplist;
+                }
+    } catch (error) {
+        return ;
+    }
+
+        errJSON = {"Failed execution name":_failedExecution.workflow_id,"Failed execution ID":{_idExection}, "Deployment ID": {_deploymentId},"Created at": {_created_at}};
+        
+
+        _toolTipText = _toolTipText + "(" +JSON.stringify(errJSON, null, 2); ")";
+        return _toolTipText;
     }
 
     const getStatus = (lastGeneralExecution:any) => {
@@ -533,7 +589,7 @@ try {
                 _toolTipText = "Actions";
                 break;
             case eVMStates.InstallFailed:
-                _toolTipText = "Installation failed";
+                _toolTipText =String(getInstallationFailedError());
                 break;
             case eVMStates.InstallCancelled:
                 _toolTipText = "Installation cancelled";
