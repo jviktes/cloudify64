@@ -104,7 +104,7 @@ export default class ExecutionsTableVM extends React.Component<ExecutionsTableVM
                     <DataTable.Column label="Workflow" name="workflow_id" />
                     <DataTable.Column label="Created" name="created_at" />
                     <DataTable.Column label="Creator" name="created_by" />
-                    <DataTable.Column label={this.renderDropDown(UniqueDeploymentidOptions)} name="deployment_id">
+                    <DataTable.Column label={this.renderDropDown(UniqueDeploymentidOptions)}>
                         
                     </DataTable.Column>
 
