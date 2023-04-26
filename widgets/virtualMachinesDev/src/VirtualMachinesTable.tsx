@@ -320,7 +320,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         return combinedExecutions;
     }
 
-    copyToPaste = (item:any) => {
+    copyToEmail = (item:any) => {
         const { toolbox,widget } = this.props;
         const manager = toolbox.getManager();
         const tenantName=manager.getSelectedTenant();
@@ -340,6 +340,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         // item.display_name=_display_name;
 
         _vmInformation = _vmInformation+"VM name: "+item.display_name+"%0A";
+        _vmInformation = _vmInformation+"Parrent deployment name: "+this.getParrentDeploymentId(item)+"%0A";
         _vmInformation = _vmInformation+"Tenant: "+tenantName+"%0A";
         _vmInformation = _vmInformation+"Azure size: "+item.azure_size+"%0A";
         _vmInformation = _vmInformation+"Environment: "+item.environment+"%0A";
@@ -404,6 +405,38 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
     }
 
+    getParrentDeploymentId = (item:any)=> {
+
+        try {
+            let _rootBlueprintsData = this.state.rootBlueprintsData;
+    
+            if  (_rootBlueprintsData.length==0) {
+                return "";
+            }
+    
+            //tady vybrat podle GUID z labelu:
+            let _labels = item["labels"];
+    
+            var _blueprintRoot = _labels.filter((obj: {key: string; name: string; }) => {
+                return obj.key === "csys-obj-parent"
+            })
+            if (_blueprintRoot.length>0) {
+                let _guid = _blueprintRoot[0].value;
+    
+                var _blueprintRootPrettyName = _rootBlueprintsData.filter((obj: {id: any;key: string; name: string; }) => {
+                    return obj.id === _guid;
+                })
+    
+                return _blueprintRootPrettyName[0].display_name;
+            }
+            else {
+                return "";
+            }
+        } catch (error) {
+            return "";
+        }
+        
+    }
     getExtraVMnfo = (item:any)=> {
 
         try {
@@ -450,7 +483,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             <DataTable.Data>
                 {this.getExpandedButton(item)}
                 <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
-                <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToPaste(item)}></Button>
+                <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToEmail(item)}></Button>
             </DataTable.Data>
     
             <DataTable.Data>
