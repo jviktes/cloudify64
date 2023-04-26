@@ -205,9 +205,95 @@ module.exports = async function(r) {
         })
         .then(data => res.send(data))
         .catch(error => next(error));
+
 });
     
+r.register('get_vm_run_unistall_polling', 'GET', (req, res, next, helper) => {
+    const _ = require('lodash');
+    console.log('get_vm_run_unistall_polling...');
+    const { headers } = req;
+    const commonManagerRequestOptions = {
+        headers: {
+            tenant: headers.tenant,
+            cookie: headers.cookie
+        }
+    };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
+    let _id = params.id;
+    //let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
+    let _includesReqestString = `/deployments/${_id}`;
+    
+    //tady musim nacist labels:
+    return helper.Manager.doGet(_includesReqestString, {
+        //body: { filter_rules: filterRules },
+        ...commonManagerRequestOptions
+    })
+    .then(data => {
+        //rawData = data.items[0];
+        let _strLabels = "";
+        try {
+            let labels = data.labels;
 
+            //labels.push({run_audit_date:new Date().toLocaleString().replace(',','')});
+            labels.push({key:"run_audit_date",value:"pokus"});
+
+            //{key: "obj-type", value: "terraform", created_at: "2023-04-25T06:43:27.369Z", creator_id: 24}
+
+            let objLabels = {"labels":labels};
+            strLabels = JSON.stringify(objLabels);
+            return objLabels;
+            // const _promises = 
+            // helper.Manager.doPatch(_includesReqestString, {
+            //     ...commonManagerRequestOptions,
+            //     body: { _strLabels }
+            // });
+            // return Promise.all(_promises)
+            // .then((_promises) => {
+            //     //return _promises; 
+            //     return _strLabels;
+            // });
+        } catch (error) {
+            
+        }
+        return _strLabels;
+
+    })
+    .then(data => res.send(data))
+    .catch(error => next(error));
+
+});
+
+
+r.register('get_vm_run_unistall_polling2', 'GET', (req, res, next, helper) => {
+    const _ = require('lodash');
+    console.log('get_vm_run_unistall_polling2...');
+    const { headers } = req;
+    const commonManagerRequestOptions = {
+        headers: {
+            tenant: headers.tenant,
+            cookie: headers.cookie
+        }
+    };
+    // parsing parametres:
+    const params = { ...req.query };
+    console.log(params);
+    let _id = params.id;
+
+    let _includesReqestString = `/deployments/${_id}`;
+    
+    let _objLabels = {"labels":[{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}]};
+    let strLabels=JSON.stringify(_objLabels);
+    //tady musim nacist labels:
+    return helper.Manager.doPatch(_includesReqestString, {
+                 ...commonManagerRequestOptions,
+        body: { strLabels}
+    })
+    .then(data => res.send(data))
+    .catch(error => next(error));
+
+});
 /////////////
 
     r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {
@@ -230,7 +316,7 @@ module.exports = async function(r) {
         
         // let filterRules = [{"type":"label","key":"csys-obj-type","operator":"is_not","values" : ["environment"]},{"type": "label", "key":"csys-obj-parent", "operator": "any_of", "values" : ["xa12415401047"]}];
         // filterRules = [];
-    
+        
         let _includesReqestString = `/executions?_size=1&deployment_id=${_id}`;
     
         return helper.Manager.doGet(_includesReqestString, {
