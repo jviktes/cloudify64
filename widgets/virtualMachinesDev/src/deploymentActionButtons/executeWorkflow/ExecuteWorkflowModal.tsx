@@ -218,14 +218,15 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                 const tenantName=manager.getSelectedTenant();
                 let params = {tenant:tenantName,id:deploymentId};
                 //TODO problemy s awaitem?
-                //const labelsUpdated = toolbox.getWidgetBackend().doGet('get_vm_run_unistall_polling2', {params});
-                //let _objLabels = {"labels":[{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}]};
-                let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}];
-                let labels=_objLabels;//JSON.stringify(_objLabels);
+                const labelsUpdated = toolbox.getWidgetBackend().doGet('get_vm_run_unistall_polling2', {params});
 
-                manager.doPatch(`/deployments/${deploymentId}`, { body: { labels } });
+                // //let _objLabels = {"labels":[{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}]};
+                // let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}];
+                // let labels=_objLabels;//JSON.stringify(_objLabels);
 
-                //console.log(labelsUpdated);
+                // manager.doPatch(`/deployments/${deploymentId}`, { body: { labels } });
+
+                console.log(labelsUpdated);
             } catch (error) {
                 
             }

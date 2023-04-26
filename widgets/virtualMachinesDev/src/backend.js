@@ -268,7 +268,7 @@ r.register('get_vm_run_unistall_polling', 'GET', (req, res, next, helper) => {
 
 r.register('get_vm_run_unistall_polling2', 'GET', (req, res, next, helper) => {
     const _ = require('lodash');
-    console.log('get_vm_run_unistall_polling2...');
+    console.log('get_vm_run_unistall_polling...');
     const { headers } = req;
     const commonManagerRequestOptions = {
         headers: {
@@ -280,15 +280,30 @@ r.register('get_vm_run_unistall_polling2', 'GET', (req, res, next, helper) => {
     const params = { ...req.query };
     console.log(params);
     let _id = params.id;
-
     let _includesReqestString = `/deployments/${_id}`;
     
-    let _objLabels = {"labels":[{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}]};
-    let strLabels=JSON.stringify(_objLabels);
     //tady musim nacist labels:
-    return helper.Manager.doPatch(_includesReqestString, {
-                 ...commonManagerRequestOptions,
-        body: { strLabels}
+    return helper.Manager.doGet(_includesReqestString, {
+        ...commonManagerRequestOptions
+    })
+    .then(data => {
+       
+        //let _strLabels = "";
+        try {
+            let labels = data.labels;
+            let _date = String(new Date().toLocaleString().replace(',',''));
+            labels.push({"run_audit_date":_date});
+
+            let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"run_audit_date":_date}];
+            labels = _objLabels;
+            helper.Manager.doPatch(_includesReqestString, {
+                ...commonManagerRequestOptions,
+                body: { labels }
+            });
+        } catch (error) {
+            
+        }
+
     })
     .then(data => res.send(data))
     .catch(error => next(error));
