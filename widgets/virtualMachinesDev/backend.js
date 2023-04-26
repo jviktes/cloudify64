@@ -287,19 +287,26 @@ r.register('get_vm_run_unistall_polling2', 'GET', (req, res, next, helper) => {
         ...commonManagerRequestOptions
     })
     .then(data => {
-       
-        //let _strLabels = "";
         try {
-            let labels = data.labels;
             let _date = String(new Date().toLocaleString().replace(',',''));
-            labels.push({"run_audit_date":_date});
+            let labels = [];//= data.labels;
 
-            let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"run_audit_date":_date}];
-            labels = _objLabels;
+            data.labels.forEach(_lab => {
+                let _objLab = {};
+                _objLab[_lab.key] = _lab.value;
+                labels.push(_objLab);
+            });
+            labels.push({"run_audit_date2":_date});
+
+            // let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"}];
+            // _objLabels.push({"run_audit_date1":_date});
+            //labels = _objLabels;
+
             helper.Manager.doPatch(_includesReqestString, {
                 ...commonManagerRequestOptions,
                 body: { labels }
             });
+            return data.labels;
         } catch (error) {
             
         }
