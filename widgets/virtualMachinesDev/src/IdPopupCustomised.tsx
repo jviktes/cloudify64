@@ -36,7 +36,7 @@ const IdPopupCustomised: FunctionComponent<IdPopupCustomisedProps> = ({ buttonPo
 
                             <div>
                                 <CopyToClipboardButton content={i18n.t('shared.idPopup.copyButton')} text={data} />
-                                <strong style={{ marginLeft: 5 }}>Blueprint: {data}</strong>
+                                <strong style={{ marginLeft: 5 }}>Product: {data}</strong>
                             </div>
                         </>
                     ) : (
