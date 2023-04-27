@@ -20,9 +20,14 @@ module.exports = async function(r) {
         let _size = params._size;
         let _offset = params._offset;
 
-        let filterRules = [{"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"}];
-        //TODO filter for unistalled VM...
-        
+        let filterRules = [];
+        //filter for Single machine only:
+        let obj_filterSingleMachines = {"key":"blueprint_id","values":["Single-VM"],"operator":"contains","type":"attribute"};
+        filterRules.push(obj_filterSingleMachines);
+        //filter for unistalled machines:
+        let obj_filterUnistall = {"type":"label","key":"vm_unistalled","operator":"is_null",values:[]};
+        filterRules.push(obj_filterUnistall);
+
         return helper.Manager.doPost('/searches/deployments', {
             params: {
                 _include: 'id,display_name,workflows,labels,site_name,blueprint_id,latest_execution_status,deployment_status,environment_type,latest_execution_total_operations,latest_execution_finished_operations,sub_services_count,sub_services_status,sub_environments_count,sub_environments_status',
@@ -75,28 +80,44 @@ module.exports = async function(r) {
 
                 //filter for unistall VM:
 
-                // for (let index = 0; index < data.items.length; index++) {
-                //     const item = data.items[index];
-                //     let _isUnistalled = false;
-                //     if (item.executionAllData[0].items!=null){
+                for (let index = 0; index < data.items.length; index++) {
+                    const item = data.items[index];
+                    let _isUnistalled = false;
+                    if (item.executionAllData[0].items!=null){
 
-                //         item.executionAllData[0].items.sort(function(a,b){
-                //             return new Date(b.created_at) - new Date(a.created_at);
-                //           });
+                        item.executionAllData[0].items.sort(function(a,b){
+                            return new Date(b.created_at) - new Date(a.created_at);
+                          });
         
-                //         let lastExec = item.executionAllData[0].items[0];
+                        let lastExec = item.executionAllData[0].items[0];
         
-                //         if (lastExec!=null) {
-                //             if (lastExec.workflow_id === "uninstall" && lastExec.status_display=="completed") {
-                //                 _isUnistalled = true;
-                //             }
-                //         }
-                //         if (_isUnistalled) {
-                //             //odmazani:
-                //             data.items.splice(index, 1);
-                //         }
-                //   }
-                // }
+                        if (lastExec!=null) {
+                            if (lastExec.workflow_id === "uninstall" && lastExec.status_display=="completed") {
+                                _isUnistalled = true;
+                            }
+                        }
+                        if (_isUnistalled) {
+                            //TOOD: odmazani:
+                            //data.items.splice(index, 1);
+                            //await helper.Manager.doDelete(`/deployments/${item.deployment_id}`, { params: { force: 'true' } });
+
+                            //prepare labels:
+                            let labels = [];
+                            item.labels.forEach(_lab => {
+                                let _objLab = {};
+                                _objLab[_lab.key] = _lab.value;
+                                labels.push(_objLab);
+                            });
+                            labels.push({"vm_unistalled":"true"});
+                            //add label vm_unistalled:
+                            let _includesReqestString = `/deployments/${item.id}`;
+                            helper.Manager.doPatch(_includesReqestString, {
+                                ...commonManagerRequestOptions,
+                                body: { labels }
+                            });
+                        }
+                  }
+                }
 
                 return data; 
                 })
@@ -208,6 +229,9 @@ module.exports = async function(r) {
 
 });
     
+
+///////////// ONLY FO TESTING ////
+
 r.register('get_vm_run_unistall_polling', 'GET', (req, res, next, helper) => {
     const _ = require('lodash');
     console.log('get_vm_run_unistall_polling...');
@@ -316,7 +340,6 @@ r.register('get_vm_run_unistall_polling2', 'GET', (req, res, next, helper) => {
     .catch(error => next(error));
 
 });
-/////////////
 
     r.register('get_vm_detailsData', 'GET', (req, res, next, helper) => {
         const _ = require('lodash');
