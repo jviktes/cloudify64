@@ -2,9 +2,9 @@
 
 ## Introduction
 
-Widget "Virtual machines" provides management for working with virtual machines in a single view.  
+Widget "Virtual machines" provides management for working with Virtual Machines (VM) in a single view.  
 
-There is a basic table with virtual machines with several columns. 
+There is a basic table with VM with several columns: 
 
  - "ID" with one button. After mouse over there are two icons for easy copying of Virtual machine name and blueprint name
  - "Name" for "Virtual machine" name
@@ -23,9 +23,9 @@ There is a basic table with virtual machines with several columns.
 
 Clicking on the icons <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAAAtCAYAAABRXm6KAAAABHNCSVQICAgIfAhkiAAAABl0RVh0U29mdHdhcmUAZ25vbWUtc2NyZWVuc2hvdO8Dvz4AAAApdEVYdENyZWF0aW9uIFRpbWUAU3SgMjYuoGR1Ym5hoDIwMjMsoDEwOjA0OjI3ZOUO2QAABLpJREFUeJztm9FLI0ccx787idmYmLiuXk57MRqIXhF60RxnuIc7bSmF0oPeW6FPfWmf2odC33qPvYeDQh/u+tK/oh5caym0B5bCWdCLovS0EKO0sU2U3U2yMWmy0wevsWtMXOsOc+J+ILDz22H3m/1mZ34zkxEopRQO3CC8BZx3HAM447ZakeYewtj6ErSYAmoqS03HIkg3QaKfQui52XROL5dR0AqoVqswOLeuXlFEt9QNryi2rCNY6QNo7iHqy+/YKs4OXBPfmUzQy2XkcnmOio7m4sVQSxMsNUHG1gNbBdmFkf7MVNa0Aicl7VGU1i2GpSaIKnO2ibETWlwylSuVCicl7fm7Wm2KlUolaJp2xjthzn2RVQ73RaVSCfl8Hl1dXWfcgDOKpmmQZRmBQMAxgAd7e3vo7OwE4IwDuOF273e/jgGccQzgjGMAZyxPRZwUof9dCMGrB4FKFkbm8/1j4gOJfAR4QvtlWgdVfgbNfc1KzrFQSpHJZLC4uIDMRgblchm9fb2IxWJIJK5CkiQm92VmAHnpPQi+WKNM9d+A5wYIgTjIhbcBsf/gvDiAOicDdF3H48c/IvU0ZYrv5Hewk9/BUmoJU1NTGJ+YgCAItt6bmQEAAFoDVZ+AVv8CKtmDcCEFIzcDeEIQPCEI3UmmMtqh6zpmZ7/Fs1+fNWJX4lcg98hIb6Qbb8Ps7Cwq1SqSyaStJjA2gIJqCzA2vzDHDR3Gxj0AAIl8DCE4yVRGO1ZXV0wPHwDi8XGEw2EY1EBmI9OILy4sYHh4GP39/Ycv879h1wnT+v6nXjqmXg0An2njYrGI9fV1y/UVRcHa2hrsXERk9gbUF9+0VM/Yug9j6z4rGW1RVRXZP7LHV/wPf25vo1KpwOv12qLhXKehqqK0nUF1EVdTrFAsQtd12zScawN8fv+R8Xq9DgC4NjmJt27daszbAIDXK6Kjo8M2DcwMIEOfgMTuAoHxtvUE+XWQkXsglz5gJaUlPl8n5F65Kf7No0dYXVkBIQSjo6OIDEUa5wKBIDwej20a2A3Eet+AIA6Aqr+AFp62rtf1CsiF26DaPPD7V6zkHIkk9SAcDmN3Z9cUVxQFMzMzyG5nQQRiypIikQjENmu8J4VtGvqC4/F4EI+PYzOzCUVRms7PP5k3lS+/fBkjIyO2amDbBxAfXLG7cF9fhit+MMoVgtfgSnwP9/VlkEvvAwK/30E4HMbU9LSpnT+KwcFBTE+/Cp/PZ+v92X3zmgIYVrKFOmDooByXF8fGxiDLMn6am2saF4iiiEQigclk0vaHD1j8W0rth/a/Dp64Xys3jjObW6e+3u7uLnK5HFRVRSgUQigUsuXBD0UGG8fpdBrRaBTAOe8DjkKWZchyc2bEinM9DngRcAzgjGMAZxwDOOMYwIlarQbAMYALXq8X5fJ++ny201BXkLcCSxxewgwGg8jn83C5XNbeAEG6wUTYaRECcVPZzkkyOzk8e+r3+9HX1wdVVa0ZQAY/ZCLstJDoHVM5GAxwUtIeSepuivn9fgwMDFibigD+3aL0ALSQAuqa7SJPgiDdAIneablFSXu+RYn3BlBRFCHZsUXJgR1OFsQZxwDOOAZwxjGAM44BnPkHeKOP1B+Vc8IAAAAASUVORK5CYII="/>
 
-advanced information about data disk, PAM request or Execution history are shown:
+advanced information about data disk, PAM request or Execution history are shown/hide.
 
- Data disks table
+ Data disks table:
  - "Name"
  - "Disk letter"
  - "LUN"
@@ -33,7 +33,7 @@ advanced information about data disk, PAM request or Execution history are shown
  - "Disk size (GiB)"
  - "Actions"
 
- PAM requests table
+ PAM requests table:
  - "Account name"
  - "Role"
  - "Status"
@@ -100,9 +100,19 @@ Contains actions for revocation:
 
 
     Important note: Uninstall is available only if there is no PAM requests on the VM.
+    
     Important notes: 
     Approve or reject actions can contains breakpoint in the execution. When there is an active breakpoint then user can approve or reject request by actions:
     - Approve or reject
 
 
+## Settings
+
+Refresh interval
+Data of the widget will be refreshed per provided interval time in seconds
+
+Support email
+ - default email for sending trouble email to support
+
+ 
 
