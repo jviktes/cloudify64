@@ -1,8 +1,9 @@
 import { DataTable } from 'cloudify-ui-components';
 
 export function SoftwareConfigurationTable({
-    toolbox, inputStates,nextButtonState
+    toolbox, inputStates,nextButtonState,display_label
 }: {
+    display_label:any;
     diskData: any;
     vmInfo: any;
     osInfo: any;
@@ -197,24 +198,6 @@ export function SoftwareConfigurationTable({
                 />
                 )
             }
-            // if (_item.type == "check_box") {
-            //     const isSelected = (_item: any) => {
-            //         if (_item.)
-            //         const _isSelected = inputStates.includes(_gsnItemData);
-            //         return _isSelected;
-            //     };
-            //     return (<Form.Input
-            //         type="checkbox"
-            //         name={_item.key}
-            //         key={_item.key}
-            //         id={_item.key}
-            //         //value={_item.default}
-            //         onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
-            //         checked={isSelected(_item)} 
-            //         disabled={_item.read_only}
-            //     />)
-
-            // }
             return (<Form.Input
                 type="text"
                 name={_item.key}
@@ -234,6 +217,18 @@ export function SoftwareConfigurationTable({
             return getParameterName(_item)
         }
     } 
+    const areItemsGroupBy = (swItems:any) => {
+        let res = false;
+        swItems.forEach((obj: any) => {
+            if (obj.group_name!=null) {
+                
+                res = true;
+            }
+        });
+       
+        return res;
+
+    }
 
     const htmlRenderErrorState = (_error: any) => {
         let _htmlResult = null;
@@ -251,30 +246,78 @@ export function SoftwareConfigurationTable({
          return (<div style={{overflow: "visible",padding:"10px"}}>This product has no additional software configurations</div>)  
     }
     else {
-        return (
-            
-            <div>
-                        
-                        <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
-                        <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
-                        <DataTable.Column label="Value" name="input_value" width='10%' />
+        let _areItemsGroupBy = areItemsGroupBy(inputStates);
+        if (_areItemsGroupBy==false) {
 
-                        {_.map(inputStates, item => (
-                                <DataTable.Row key={item.key+item.key} >
+            return (
+            
+                <div>
+                                    <div className="field"><label style={{ display: "inline-block" }}>{display_label}</label></div>
+                                    <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
     
-                                    <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
-                                    </DataTable.Data>
+                                            {/* <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
+                                            <DataTable.Column label="Value" name="input_value" width='10%' /> */}
     
+                                            {_.map(inputStates, item => (
+    
+                                                    <DataTable.Row key={item.key+item.key} >
+                        
+                                                        <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
+                                                        </DataTable.Data>
+                        
+                                                        <DataTable.Data style={{ width: '10%' }}>
+                                                            {returnHtmlInput(item)}
+                                                            {htmlRenderErrorState(item.error)}
+                                                        </DataTable.Data>
+                        
+                                                    </DataTable.Row>
+                                            ))}
+                                    </DataTable>
+                </div>
+            );
+
+        }
+        else {
+            const grouped = _.groupBy(inputStates, item => item.group_name);
+            console.log(grouped);
+
+            return <div>
+                   
+                        <DataTable className="agentsGsnCountries table-scroll-gsn" style={{border:'none'}} noDataMessage={"This product has no additional software configurations"}>
+                            {_.map(grouped, (group, groupName)  => (
+                                <DataTable.Row >
+                                    
                                     <DataTable.Data style={{ width: '10%' }}>
-                                        {returnHtmlInput(item)}
-                                        {htmlRenderErrorState(item.error)}
+
+                                                    <div className="field"><label style={{ display: "inline-block" }}>{groupName}</label></div>
+                                                    <DataTable className="agentsGsnCountries table-scroll-gsn" noDataMessage={"This product has no additional software configurations"}>
+                                                    
+                                                    {/* <DataTable.Column label="Parameter" name="parameter_name" width='10%' />
+                                                    <DataTable.Column label="Value" name="input_value" width='10%' /> */}
+
+                                                    {_.map(group, item => (
+
+                                                            <DataTable.Row key={item.key+item.key} >
+
+                                                                <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
+                                                                </DataTable.Data>
+
+                                                                <DataTable.Data style={{ width: '10%' }}>
+                                                                    {returnHtmlInput(item)}
+                                                                    {htmlRenderErrorState(item.error)}
+                                                                </DataTable.Data>
+
+                                                            </DataTable.Row>
+                                                    ))}
+                                                </DataTable>
                                     </DataTable.Data>
-    
+
                                 </DataTable.Row>
-                        ))}
+                            ))}
                         </DataTable>
-            </div>
-        );
+                    
+                </div>
+        }
     }
 
 }
