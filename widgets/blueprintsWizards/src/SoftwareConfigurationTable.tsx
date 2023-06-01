@@ -138,7 +138,7 @@ export function SoftwareConfigurationTable({
         if (Object.prototype.hasOwnProperty.call(_item, key)) {
             var _key = key.toString();
             //TODO: tady mi to hazi divnou chybu pro !==
-            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key' || _key== 'limitations')
+            if (_key=='required' || _key=='default' || _key=='type' || _key=='default'  || _key=='read_only' || _key=='key' || _key== 'limitations' || _key== 'group_name')
             { 
                 //const element = _item[key];
                 //console.log(element);
@@ -196,7 +196,25 @@ export function SoftwareConfigurationTable({
                     disabled={_item.read_only}
                 />
                 )
-            }  
+            }
+            // if (_item.type == "check_box") {
+            //     const isSelected = (_item: any) => {
+            //         if (_item.)
+            //         const _isSelected = inputStates.includes(_gsnItemData);
+            //         return _isSelected;
+            //     };
+            //     return (<Form.Input
+            //         type="checkbox"
+            //         name={_item.key}
+            //         key={_item.key}
+            //         id={_item.key}
+            //         //value={_item.default}
+            //         onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+            //         checked={isSelected(_item)} 
+            //         disabled={_item.read_only}
+            //     />)
+
+            // }
             return (<Form.Input
                 type="text"
                 name={_item.key}
