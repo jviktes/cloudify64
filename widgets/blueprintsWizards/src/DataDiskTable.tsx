@@ -17,6 +17,7 @@ export function DataDiskTable({
 }) {
 
     const { Form } = Stage.Basic;
+
     const onItemChange = (e: any, _item: any, _typeProperty: any, _value: any) => {
         console.log("onItemChange DataDisk:" + _item);
         console.log("DataDisk e.target:" + e);
@@ -57,7 +58,7 @@ export function DataDiskTable({
         console.log("AddDisk");
         let dataDisks = inputStates;
 
-        if (dataDisks.length < GetDiskCountLimit()) {
+        if (selectOnlyServiceConfirmedDisks(dataDisks).length < GetDiskCountLimit()) {
             let newDisk = { "key": uniqueID(), "disk_type": "Standard HDD", "disk_size": 16, "host_caching": "None", "mountpoint": [{ "path": "" }], "label": [], "error": "" };
             dataDisks.push(newDisk);
             toolbox.getEventBus().trigger('blueprint:setDeploymentIputs', 'data_disks', JSON.stringify(dataDisks));
@@ -110,7 +111,7 @@ export function DataDiskTable({
         try {
             if (_valueLabel[0].hasOwnProperty("get_input")) {
                 if (swInfo != null) {
-                    console.log(swInfo);
+                    //console.log(swInfo);
                     let _swInfoParsed = JSON.parse(swInfo);
                     
                     let _parNameValue=getParameterName(_swInfoParsed,_valueLabel[0].get_input[2]);
@@ -122,7 +123,7 @@ export function DataDiskTable({
             try {
                 if (_valueLabel.hasOwnProperty("get_input")) {
                     if (swInfo != null) {
-                        console.log(swInfo);
+                        //console.log(swInfo);
                         let _swInfoParsed = JSON.parse(swInfo);
                         let _parNameValue=getParameterName(_swInfoParsed,_valueLabel.get_input[2]);
                         return _parNameValue;
@@ -216,7 +217,7 @@ export function DataDiskTable({
                 title={txtTooltip} />
         </div>;
 
-        if (disks.length >= diskLimit) {
+        if (selectOnlyServiceConfirmedDisks(disks).length >= diskLimit) {
             return htmlButtonLimitReached;
         }
         else {
@@ -411,6 +412,39 @@ export function DataDiskTable({
     ValidateDataAllDisks(inputStates);
     enableDisableNextButton(inputStates);
 
+    // const skipServiceDisk = (_dataDisk:any) => {
+    //     if (_dataDisk.disk_based_on_service!=null) {
+    //         //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+    //         let _swInfoParsed = JSON.parse(swInfo);
+    //         let _parNameValue=getParameterName(_swInfoParsed,_dataDisk.disk_based_on_service);
+    //         console.log(_parNameValue);
+    //     }
+    // }
+    //filtrace disku - disky s vazbou na intalaci se zde nezobrazuji:
+    const selectOnlyServiceConfirmedDisks = (_dataDisks:any) => {
+
+        // if (_dataDisk.disk_based_on_service!=null) {
+        //     //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+        //     let _swInfoParsed = JSON.parse(swInfo);
+        //     let _parNameValue=getParameterName(_swInfoParsed,_dataDisk.disk_based_on_service);
+        //     console.log(_parNameValue);
+        // }
+        let _filteredDisks: any[] = [];
+        _dataDisks.forEach((obj: any) => {
+            if (obj.disk_based_on_service!=null) {
+                //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+                let _swInfoParsed = JSON.parse(swInfo);
+                let _parNameValue=getParameterName(_swInfoParsed,obj.disk_based_on_service);
+                if (_parNameValue=="true") {
+                    _filteredDisks.push(obj);
+                }
+            }
+            else {
+                _filteredDisks.push(obj);
+            }
+        });
+        return _filteredDisks;
+    }
     return (
         <div>
             <DataTable className="agentsGsnCountries table-scroll-gsn">
@@ -421,9 +455,10 @@ export function DataDiskTable({
                 <DataTable.Column label="Disk label" name="disk_label" width='35%' />
                 <DataTable.Column label="" name="" width='5%' />
                 
-                {_.map(inputStates, item => (
-                    
+                {_.map(selectOnlyServiceConfirmedDisks(inputStates), item => (
+
                     <DataTable.Row key={JSON.stringify(item.key)}>
+                        
                         <DataTable.Data style={{ width: '10%', verticalAlign: 'baseline'}}>
                             <Form.Dropdown
                                 name="disk_type"
