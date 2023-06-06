@@ -88,7 +88,31 @@ export function DataDiskTable({
     };
 
 
+    //filtrace disku - disky s vazbou na intalaci se zde nezobrazuji:
+    const selectOnlyServiceConfirmedDisks = (_dataDisks:any) => {
 
+        // if (_dataDisk.disk_based_on_service!=null) {
+        //     //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+        //     let _swInfoParsed = JSON.parse(swInfo);
+        //     let _parNameValue=getParameterName(_swInfoParsed,_dataDisk.disk_based_on_service);
+        //     console.log(_parNameValue);
+        // }
+        let _filteredDisks: any[] = [];
+        _dataDisks.forEach((obj: any) => {
+            if (obj.disk_based_on_service!=null) {
+                //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+                let _swInfoParsed = JSON.parse(swInfo);
+                let _parNameValue=getParameterName(_swInfoParsed,obj.disk_based_on_service);
+                if (_parNameValue=="true") {
+                    _filteredDisks.push(obj);
+                }
+            }
+            else {
+                _filteredDisks.push(obj);
+            }
+        });
+        return _filteredDisks;
+    }
 
     //return value of service_name from service_names
     const getParameterName = (_items:any, parameterName: any) => {
@@ -102,7 +126,7 @@ export function DataDiskTable({
                     break;
                 }
         }
-        return _parameterValue;
+        return String(_parameterValue);
     }
 
     const getDiskLabelValue = (_valueLabel: any) => {
@@ -225,6 +249,14 @@ export function DataDiskTable({
         }
 
     };
+
+    const renderErrorMessageDiskOverLimit = (dataDisks: any, diskLimit: number) => {
+        if (selectOnlyServiceConfirmedDisks(dataDisks).length > diskLimit) { 
+            let txtTooltip = "Limits of " + diskLimit + " disks reached";
+            return <span style={{color:"red", float:"right", margin:"5px"}}>{txtTooltip}</span>
+        }
+    }
+
     //TODO: return windows
     const getOperationtype = () => {
         //console.log(osInfo);
@@ -394,8 +426,12 @@ export function DataDiskTable({
             isErrorInOSDisk = true;
         }
 
+        let isErrorInDiskCount = false;
+        if (selectOnlyServiceConfirmedDisks(dataDisks).length > GetDiskCountLimit()) { 
+            isErrorInDiskCount = true;
+        }
 
-        if (isErrorInDisk || isErrorInOSDisk) {
+        if (isErrorInDisk || isErrorInOSDisk || isErrorInDiskCount) {
             //poku je chyba v discich a tlacitko je enabled, pak volam disablovani:
             if (_nextButtonState==false) {
                 toolbox.getEventBus().trigger('blueprint:disableNextButton');
@@ -412,39 +448,6 @@ export function DataDiskTable({
     ValidateDataAllDisks(inputStates);
     enableDisableNextButton(inputStates);
 
-    // const skipServiceDisk = (_dataDisk:any) => {
-    //     if (_dataDisk.disk_based_on_service!=null) {
-    //         //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
-    //         let _swInfoParsed = JSON.parse(swInfo);
-    //         let _parNameValue=getParameterName(_swInfoParsed,_dataDisk.disk_based_on_service);
-    //         console.log(_parNameValue);
-    //     }
-    // }
-    //filtrace disku - disky s vazbou na intalaci se zde nezobrazuji:
-    const selectOnlyServiceConfirmedDisks = (_dataDisks:any) => {
-
-        // if (_dataDisk.disk_based_on_service!=null) {
-        //     //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
-        //     let _swInfoParsed = JSON.parse(swInfo);
-        //     let _parNameValue=getParameterName(_swInfoParsed,_dataDisk.disk_based_on_service);
-        //     console.log(_parNameValue);
-        // }
-        let _filteredDisks: any[] = [];
-        _dataDisks.forEach((obj: any) => {
-            if (obj.disk_based_on_service!=null) {
-                //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
-                let _swInfoParsed = JSON.parse(swInfo);
-                let _parNameValue=getParameterName(_swInfoParsed,obj.disk_based_on_service);
-                if (_parNameValue=="true") {
-                    _filteredDisks.push(obj);
-                }
-            }
-            else {
-                _filteredDisks.push(obj);
-            }
-        });
-        return _filteredDisks;
-    }
     return (
         <div>
             <DataTable className="agentsGsnCountries table-scroll-gsn">
@@ -518,6 +521,7 @@ export function DataDiskTable({
                 ))}
             </DataTable>
             {htmlRenderAddButton(inputStates, GetDiskCountLimit())}
+            {renderErrorMessageDiskOverLimit(inputStates, GetDiskCountLimit())}
             <div>Max data disks: {GetDiskCountLimit()}</div>
         </div>
     );
