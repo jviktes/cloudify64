@@ -152,7 +152,18 @@ export function SoftwareConfigurationTable({
         }
     }
     return _parameterName;
-}
+    }
+
+    const parsingValueBoolean = (_item:any)=> {
+        var _paramName = getParameterName(_item);
+        if (String(_item[_paramName]).toLowerCase()=="true") {
+            return true;
+        }
+        if (String(_item[_paramName]).toLowerCase()=="false") {
+            return false;
+        }
+        else return _item[_paramName];
+    }
 
     ValidateAllSWConfigs(inputStates);
 
@@ -198,6 +209,19 @@ export function SoftwareConfigurationTable({
                 />
                 )
             }
+
+            if (_item.type=="check_box") {
+                var _paramName = getParameterName(_item);
+                return (<div style={{width:"33%"}}><Form.Input
+                    name={_item.key}
+                    key={_item.key}
+                    id={_item.key}
+                    checked={parsingValueBoolean(_item)}
+                    onChange={(e, { checked }) => onItemChangeSW(e.target,_item,!checked)}
+                    type="Checkbox"
+                /></div>)
+            }
+
             return (<Form.Input
                 type="text"
                 name={_item.key}
@@ -265,7 +289,7 @@ export function SoftwareConfigurationTable({
                                                         <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
                                                         </DataTable.Data>
                         
-                                                        <DataTable.Data style={{ width: '10%' }}>
+                                                        <DataTable.Data style={{ width: '10%'}}>
                                                             {returnHtmlInput(item)}
                                                             {htmlRenderErrorState(item.error)}
                                                         </DataTable.Data>
@@ -302,7 +326,7 @@ export function SoftwareConfigurationTable({
                                                                 <DataTable.Data style={{ width: '10%' }}> {getItemLabel(item)}
                                                                 </DataTable.Data>
 
-                                                                <DataTable.Data style={{ width: '10%' }}>
+                                                                <DataTable.Data style={{ width: '10%'}}>
                                                                     {returnHtmlInput(item)}
                                                                     {htmlRenderErrorState(item.error)}
                                                                 </DataTable.Data>
