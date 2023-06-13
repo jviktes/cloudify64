@@ -15,16 +15,16 @@ export function SoftwareConfigurationTable({
 
     const { Form } = Stage.Basic;
 
-    const onItemChangeSW = (e: any, _item:any, _value:any)=> {
-        console.log("onItemChangeSW:" + _item);
-        console.log("onItemChangeSW e.target:" + e);
-        console.log("onItemChangeSW value:" + _value);
+    const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
+        //console.log("onItemChangeSW:" + _item);
+        //console.log("onItemChangeSW e.target:" + e);
+        //console.log("onItemChangeSW value:" + _value);
 
         let swConfigs = inputStates;
 
         var  _par= getParameterName(_item);
 
-        console.log("onItemChangeSW value:" + _par);
+        //console.log("onItemChangeSW value:" + _par);
 
         for (let index = 0; index < swConfigs.length; index++) {
             const element = swConfigs[index];
@@ -43,7 +43,7 @@ export function SoftwareConfigurationTable({
                 _item.error = null;
                 const myRe = new RegExp(_regex, 'g');
                 const regResults = myRe.exec(_value);
-                console.log(regResults);
+                //console.log(regResults);
                 if (regResults==null) {
                     if (_item.limitations[1]!=null && _item.limitations[1].hasOwnProperty("limitation_desciption")) {
                         _item.error= {text:_item.limitations[1].limitation_desciption};
@@ -61,7 +61,7 @@ export function SoftwareConfigurationTable({
 
     const ValidateAllSWConfigs=(_dataSWConfigs:any) => {
 
-        console.log("validateAllSWConfigs...");
+        //console.log("validateAllSWConfigs...");
         var _isErrorAnywhere = false;
         for (let index = 0; index < _dataSWConfigs.length; index++) {
             const _configItem = _dataSWConfigs[index];
@@ -75,7 +75,7 @@ export function SoftwareConfigurationTable({
                         var _paramName = getParameterName(_configItem);
                         var _paramValue = _configItem[_paramName];
                         const regResults = myRe.exec(_paramValue);
-                        console.log(regResults);
+                        //console.log(regResults);
                         if (regResults==null) {
                             if (_configItem.limitations[1]!=null && _configItem.limitations[1].hasOwnProperty("limitation_desciption")) {
                                 _configItem.error= {text:_configItem.limitations[1].limitation_desciption};
@@ -145,7 +145,7 @@ export function SoftwareConfigurationTable({
                 //console.log(element);
             }
             else {
-                console.log(_item[key]);
+                //console.log(_item[key]);
                 _parameterName = key;
                     break;
             }
@@ -219,6 +219,7 @@ export function SoftwareConfigurationTable({
                     checked={parsingValueBoolean(_item)}
                     onChange={(e, { checked }) => onItemChangeSW(e.target,_item,!checked)}
                     type="Checkbox"
+                    disabled={_item.read_only}
                 /></div>)
             }
 
@@ -303,7 +304,7 @@ export function SoftwareConfigurationTable({
         }
         else {
             const grouped = _.groupBy(inputStates, item => item.group_name);
-            console.log(grouped);
+            //console.log(grouped);
 
             return <div>
                    
