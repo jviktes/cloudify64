@@ -542,96 +542,165 @@ export default function InputFields({
                     </div>
             }
 
+            // if (input.name=="vm_size") {
+
+            //     const options: { key: any; value: any; text: any; }[] = [];
+
+            //     input.constraints[0].valid_values.forEach((value: any) => {
+            //         options.push({ key: value, value: value, text: value })
+            //     });
+
+            //     const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
+            //         setisOpen(false);
+            //         toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','vm_size',_value);
+            //     }
+
+            //     const [searchValue, setSearchValue] = React.useState('');
+            //     const [selectedOption, setSelectedOption] = React.useState('');
+
+            //     const [isOpen, setisOpen] = React.useState(false);
+
+            //     const dropdownRef = React.useRef(null);
+
+            //     const handleSearchChange = (_e: any, { value }: any) => {
+            //       setSearchValue(value);
+            //     };
+              
+            //     const handleSelectChange = (_e: any, { value }: any) => {
+            //       setSelectedOption(value);
+            //     };
+            //     const handleSearchInputBlur = () => {
+            //         setisOpen(false);
+            //     };
+            //     const handleClick = () => {
+            //         setisOpen(true);
+            //     };
+            //     const filteredOptions = options.filter((option) =>
+            //       option.text.toLowerCase().includes(searchValue.toLowerCase())
+            //     );
+            //     const handleSearchInputClick = () => {
+            //         //const select = document.getElementById("mySelect");
+            //         // if (dropdownRef.current) {
+            //         //     //dropdownRef.current.open();
+            //         //   }
+            //         setisOpen(true);
+            //           //select.size = 5;//select.getElementsByTagName("option").length;
+            //       };
+
+            //     return(<div>
+            //     <Form.Input
+            //     value={searchValue}
+            //     onChange={handleSearchChange}
+            //     placeholder="Search..."
+            //     onClick={handleSearchInputClick}
+            //     onBlur={handleSearchInputBlur}
+            //     />
+
+
+            //                             <Form.Dropdown
+            //                                 // name={_item.key}
+            //                                 // key={_item.key}
+            //                                 // id={_item.key}
+            //                                 ref={dropdownRef}
+            //                                 id="mySelect"
+            //                                 selection
+            //                                 options={filteredOptions}
+            //                                 value={value}
+            //                                 onChange={(e, { value }) => onItemChangeSW(e.target,input,value)}
+            //                                 open={isOpen}
+            //                                 onClick={handleClick}
+            //                                 onBlur={handleSearchInputBlur}
+                                            
+            //                             />
+
+            // </div>
+            // )}
             if (input.name=="vm_size") {
 
-                const options: { key: any; value: any; text: any; }[] = [];
 
-                input.constraints[0].valid_values.forEach((value: any) => {
-                    options.push({ key: value, value: value, text: value })
-                });
+                const options: string[] = [];
 
-                const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
-                    setisOpen(false);
+                input.constraints[0].valid_values.forEach((value: { value: string }) => {
+                    options.push(value);
+                  });
+
+                // const countries = [
+                //     'Afghanistan', 'Algeria', 'Argentina', 'Australia', 'Bangladesh', 'Belgium', 'Bhutan',
+                //     'Brazil', 'Canada', 'China', 'Denmark', 'Ethiopia', 'Finland', 'France', 'Germany',
+                //     'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Italy', 'Japan', 'Malaysia',
+                //     'Maldives', 'Mexico', 'Morocco', 'Nepal', 'Netherlands', 'Nigeria', 'Norway', 'Pakistan',
+                //     'Peru', 'Russia', 'Romania', 'South Africa', 'Spain', 'Sri Lanka', 'Sweden', 'Switzerland',
+                //     'Thailand', 'Turkey', 'Uganda', 'Ukraine', 'United States', 'United Kingdom', 'Vietnam'
+                //   ];
+                  
+                    const [selectedCountry, setSelectedCountry] = React.useState('');
+                    const [searchWord, setSearchWord] = React.useState('');
+                    const [isActive, setIsActive] = React.useState(false);
+
+                    const filteredCountries = options.filter((_country) =>
+                        _country.toLowerCase().includes(searchWord.toLowerCase())
+                    );
+
+                const onItemChangeSW = (_value:any)=> {
+                    setSelectedCountry(_value);
+                    setSearchWord('');
+                    setIsActive(false);
                     toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','vm_size',_value);
                 }
                 
-                const [searchValue, setSearchValue] = React.useState('');
-                const [selectedOption, setSelectedOption] = React.useState('');
-
-                const [isOpen, setisOpen] = React.useState(false);
-
-                const dropdownRef = React.useRef(null);
-
-                const handleSearchChange = (_e: any, { value }: any) => {
-                  setSearchValue(value);
-                };
-              
-                const handleSelectChange = (_e: any, { value }: any) => {
-                  setSelectedOption(value);
-                };
-                const handleSearchInputBlur = () => {
-                    setisOpen(false);
-                };
-                const handleClick = () => {
-                    setisOpen(true);
-                };
-                const filteredOptions = options.filter((option) =>
-                  option.text.toLowerCase().includes(searchValue.toLowerCase())
-                );
-                const handleSearchInputClick = () => {
-                    //const select = document.getElementById("mySelect");
-                    // if (dropdownRef.current) {
-                    //     //dropdownRef.current.open();
-                    //   }
-                    setisOpen(true);
-                      //select.size = 5;//select.getElementsByTagName("option").length;
+                  const handleSearchInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+                    setSearchWord(e.target.value);
                   };
-
-                return(<div>
-                <Form.Input
-                value={searchValue}
-                onChange={handleSearchChange}
-                placeholder="Search..."
-                onClick={handleSearchInputClick}
-                onBlur={handleSearchInputBlur}
-                />
-
-
-                                        <Form.Dropdown
-                                            // name={_item.key}
-                                            // key={_item.key}
-                                            // id={_item.key}
-                                            ref={dropdownRef}
-                                            id="mySelect"
-                                            selection
-                                            options={filteredOptions}
-                                            value={value}
-                                            onChange={(e, { value }) => onItemChangeSW(e.target,input,value)}
-                                            open={isOpen}
-                                            onClick={handleClick}
-                                            onBlur={handleSearchInputBlur}
-                                            
-                                        />
-
-            </div>
-            )}
-            // if (input.name=="vm_size") {
-            //     return(
-            //     <div>
-            //     <Form.Input
-            //     type="text"
-            //     id="searchInput"
-            //     />
-            //     <FormField
-            //         input={input}
-            //         value={value}
-            //         onChange={onChange}
-            //         error={errorsState[input.name]} 
-            //         toolbox={toolbox}
-            //         dataType={dataType}
-            //     />
-            //     </div>)
-            // }
+                
+                  const handleCountryClick = (country: React.SetStateAction<string>) => {
+                    setSelectedCountry(country);
+                    setSearchWord('');
+                    setIsActive(false);
+                  };
+                
+                  const handleDropdownToggle = () => {
+                    setIsActive(!isActive);
+                    setSelectedCountry('');
+                    setSearchWord('');
+                  };
+                  
+                    return (
+                      <div className={`wrapper ${isActive ? 'active' : ''}`}>
+                        <div className="select-btn" onClick={handleDropdownToggle}>
+                          <span>{selectedCountry || 'Select Country'}</span>
+                          <i className="uil uil-angle-down"></i>
+                        </div>
+                        <div className="contentModalDropdown">
+                          <div className="search">
+                            <i className="uil uil-search"></i>
+                            <input
+                              spellCheck="false"
+                              type="text"
+                              placeholder="Search"
+                              value={searchWord}
+                              onChange={handleSearchInputChange}
+                            />
+                          </div>
+                          <ul className="options">
+                            {filteredCountries.length ? (
+                              filteredCountries.map((country) => (
+                                <li
+                                  key={country}
+                                  className={selectedCountry === country ? 'selected' : ''}
+                                  onClick={() => onItemChangeSW(country)}
+                                >
+                                  {country}
+                                </li>
+                              ))
+                            ) : (
+                              <p style={{ marginTop: '10px' }}>Oops! Country not found</p>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    );
+                  
+            }
 
             //business_service: 
             if (input.name=="business_service") {
