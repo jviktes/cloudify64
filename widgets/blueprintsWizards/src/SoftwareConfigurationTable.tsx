@@ -197,17 +197,48 @@ export function SoftwareConfigurationTable({
                     
                 }
 
-                return (<Form.Dropdown
+                return (<div className="searchable-select">
+
+                        <Form.Dropdown
+                                            name={_item.key}
+                                            key={_item.key}
+                                            id={_item.key}
+                                            selection
+                                            options={dropDownValues}
+                                            value={_item[_paramName]}
+                                            onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+                                            disabled={_item.read_only}
+                                        />
+
+                {/* <select id="mySelect">
+                  <option value="">Select an option</option>
+                  <option value="option1">Option 1</option>
+                  <option value="option2">Option 2</option>
+                  <option value="option3">Option 3</option>
+                  <option value="option4">Option 4</option>
+                  <option value="option5">Option 5</option>
+                </select> */}
+                    <Form.Input
+                    type="text"
                     name={_item.key}
                     key={_item.key}
-                    id={_item.key}
-                    selection
-                    options={dropDownValues}
+                    id="searchInput"
                     value={_item[_paramName]}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
-                />
-                )
+                    /></div>)
+
+                // return (<Form.Dropdown
+                //     name={_item.key}
+                //     key={_item.key}
+                //     id={_item.key}
+                //     selection
+                //     options={dropDownValues}
+                //     value={_item[_paramName]}
+                //     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+                //     disabled={_item.read_only}
+                // />
+                // )
             }
 
             if (_item.type=="check_box") {
