@@ -197,48 +197,91 @@ export function SoftwareConfigurationTable({
                     
                 }
 
-                return (<div className="searchable-select">
-
-                        <Form.Dropdown
-                                            name={_item.key}
-                                            key={_item.key}
-                                            id={_item.key}
-                                            selection
-                                            options={dropDownValues}
-                                            value={_item[_paramName]}
-                                            onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
-                                            disabled={_item.read_only}
-                                        />
-
-                {/* <select id="mySelect">
-                  <option value="">Select an option</option>
-                  <option value="option1">Option 1</option>
-                  <option value="option2">Option 2</option>
-                  <option value="option3">Option 3</option>
-                  <option value="option4">Option 4</option>
-                  <option value="option5">Option 5</option>
-                </select> */}
-                    <Form.Input
-                    type="text"
+                return (<Form.Dropdown
                     name={_item.key}
                     key={_item.key}
-                    id="searchInput"
+                    id={_item.key}
+                    selection
+                    options={dropDownValues}
                     value={_item[_paramName]}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
-                    /></div>)
+                />
+                )
+            }
 
-                // return (<Form.Dropdown
-                //     name={_item.key}
-                //     key={_item.key}
-                //     id={_item.key}
-                //     selection
-                //     options={dropDownValues}
-                //     value={_item[_paramName]}
-                //     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
-                //     disabled={_item.read_only}
-                // />
-                // )
+            if (_item.type == "drop_down_list_searchable") {
+                var _paramName = getParameterName(_item);
+
+                const options: string[] = [];
+
+                let neco = _item.limitations[0].possible_values;
+
+                for (var prop in neco) {
+                    if (neco.hasOwnProperty(prop)) {
+                      options.push(prop);
+                    }
+                }
+
+                const [selectedVM, setSelectedVM] = React.useState(_item.default);
+                const [searchWord, setSearchWord] = React.useState('');
+                const [isActive, setIsActive] = React.useState(false);
+
+                const filteredCountries = options.filter((_country) =>
+                    _country.toLowerCase().includes(searchWord.toLowerCase())
+                );
+
+                const onItemChangeSW = (_value:any)=> {
+                    setSelectedVM(_value);
+                    setSearchWord('');
+                    setIsActive(false);
+                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs',_paramName,_value);
+                }
+                
+                  const handleSearchInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+                    setSearchWord(e.target.value);
+                  };
+                
+                  const handleDropdownToggle = () => {
+                    setIsActive(!isActive);
+                    setSelectedVM('');
+                    setSearchWord('');
+                  };
+                  
+                    return (
+                      <div className={`wrapper field ${isActive ? 'active' : ''}`}>
+                        <label style={{ display: "inline-block" }}>{_item.display_label}</label>
+                        <div className="ui selection dropdown select-btn" onClick={handleDropdownToggle}>
+                          <span>{selectedVM || 'Select item'}</span>
+                        </div>
+                        <div className="contentModalDropdown" style={{width:"52%"}}>
+                          <div className="search ui input">
+                            <input
+                              spellCheck="false"
+                              type="text"
+                              placeholder="Search"
+                              value={searchWord}
+                              onChange={handleSearchInputChange}
+                            />
+                          </div>
+                          <ul className="options visible menu transition">
+                            {filteredCountries.length ? (
+                              filteredCountries.map((vm) => (
+                                <li
+                                  key={vm}
+                                  className={selectedVM === vm ? 'selected' : ''}
+                                  onClick={() => onItemChangeSW(vm)}
+                                >
+                                  {vm}
+                                </li>
+                              ))
+                            ) : (
+                              <p style={{ marginTop: '10px' }}>Not found</p>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    );
             }
 
             if (_item.type=="check_box") {
