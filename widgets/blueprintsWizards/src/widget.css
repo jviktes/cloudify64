@@ -161,72 +161,73 @@
   color: #9f3a38 !important;
 }
 
-    ::selection{
-      color: #fff;
-      background: #4285f4;
-    }
+/* CSS for dropdown searchable: */
+::selection{
+  color: #fff;
+  background: #4285f4;
+}
 
-    .contentModalDropdown{
-      display: none;
-      background: #fff;
-      position: absolute;
-      z-index: 3000;
-      width: 99%;
-      cursor: pointer;
-    }
-    .wrapper.active .contentModalDropdown{
-      display: block;
-    }
-    .contentModalDropdown .search{
-      position: relative;
-    }
+.contentModalDropdown{
+  display: none;
+  background: #fff;
+  position: absolute;
+  z-index: 3000;
+  width: 99%;
+  cursor: pointer;
+}
+.wrapper.active .contentModalDropdown{
+  display: block;
+}
+.contentModalDropdown .search{
+  position: relative;
+}
 
-    .search input{
-      padding-top: 2xp;
-      padding-bottom: 2px;
-    }
-    .search input:focus{
-      padding-left: 42px;
-      border: 2px solid #4285f4;
-    }
-    .search input::placeholder{
-      color: #bfbfbf;
-    }
+.search input{
+  padding-top: 2xp;
+  padding-bottom: 2px;
+}
+.search input:focus{
+  padding-left: 42px;
+  border: 2px solid #4285f4;
+}
+.search input::placeholder{
+  color: #bfbfbf;
+}
 
-    .contentModalDropdown .options{
-      margin-top: 10px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-left: 10px;
-    }
-    .contentModalDropdown::-webkit-scrollbar{
-      width: 7px;
-    }
-    .contentModalDropdown::-webkit-scrollbar-track{
-      background: #f1f1f1;
-      border-radius: 25px;
-    }
-    .contentModalDropdown::-webkit-scrollbar-thumb{
-      background: #ccc;
-      border-radius: 25px;
-    }
+.contentModalDropdown .options{
+  margin-top: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-left: 10px;
+}
+.contentModalDropdown::-webkit-scrollbar{
+  width: 7px;
+}
+.contentModalDropdown::-webkit-scrollbar-track{
+  background: #f1f1f1;
+  border-radius: 25px;
+}
+.contentModalDropdown::-webkit-scrollbar-thumb{
+  background: #ccc;
+  border-radius: 25px;
+}
 
-    .options::-webkit-scrollbar-thumb:hover{
-      background: #b3b3b3;
-    }
-    .options {
-      list-style-type: none;
-    }
-    .options li{
+.options::-webkit-scrollbar-thumb:hover{
+  background: #b3b3b3;
+}
+.options {
+  list-style-type: none;
+}
+.options li{
 
-        padding-top:10px;
-        padding-left: 10px;
-        white-space: normal;
-        word-wrap: normal;
-    }
-    .options li:hover, li.selected{
+    padding-top:10px;
+    padding-left: 10px;
+    white-space: normal;
+    word-wrap: normal;
+}
+.options li:hover, li.selected{
 
-      background: rgba(0,0,0,.05);
-      color: rgba(0,0,0,.95);
+  background: rgba(0,0,0,.05);
+  color: rgba(0,0,0,.95);
 
-    }
+}
