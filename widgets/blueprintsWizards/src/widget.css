@@ -138,13 +138,8 @@
   .box .steps ul li.active div::after {
     border-left: 30px solid RGB(212,5,17);
   }
-   
-
-
-
+  
   .box .step-component {
-    /* padding: 20px; */
-    /* height: 200px; */
     display: block;
     align-items: center;
     justify-content: center;
@@ -166,64 +161,18 @@
   color: #9f3a38 !important;
 }
 
-
-    /* Styling for the select box */
-    .searchable-select {
-      position: relative;
-      display: inline-block;
-    }
-  
-    .searchable-select select {
-      width: 200px;
-      padding: 5px;
-      font-size: 16px;
-    }
-  
-    .searchable-select input {
-      width: 100%;
-      padding: 5px;
-      margin-top: 5px;
-      font-size: 16px;
-    }
-
-
-
     ::selection{
       color: #fff;
       background: #4285f4;
     }
-    .wrapper{
-      width: 370px;
-      margin: 85px auto 0;
-    }
-    .select-btn, li{
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-    }
-    .select-btn{
-      height: 65px;
-      padding: 0 20px;
-      font-size: 22px;
-      background: #fff;
-      border-radius: 7px;
-      justify-content: space-between;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-    .select-btn i{
-      font-size: 31px;
-      transition: transform 0.3s linear;
-    }
-    
+
     .contentModalDropdown{
       display: none;
-      padding: 2px;
-      margin-top: 15px;
       background: #fff;
-      border-radius: 7px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       position: absolute;
       z-index: 3000;
+      width: 99%;
+      cursor: pointer;
     }
     .wrapper.active .contentModalDropdown{
       display: block;
@@ -231,23 +180,10 @@
     .contentModalDropdown .search{
       position: relative;
     }
-    .search i{
-      top: 50%;
-      left: 15px;
-      color: #999;
-      font-size: 20px;
-      pointer-events: none;
-      transform: translateY(-50%);
-      position: absolute;
-    }
+
     .search input{
-      height: 50px;
-      width: 100%;
-      outline: none;
-      font-size: 17px;
-      border-radius: 5px;
-      padding: 0 20px 0 43px;
-      border: 1px solid #B3B3B3;
+      padding-top: 2xp;
+      padding-bottom: 2px;
     }
     .search input:focus{
       padding-left: 42px;
@@ -256,11 +192,12 @@
     .search input::placeholder{
       color: #bfbfbf;
     }
+
     .contentModalDropdown .options{
       margin-top: 10px;
       max-height: 250px;
       overflow-y: auto;
-      padding-right: 7px;
+      padding-left: 10px;
     }
     .contentModalDropdown::-webkit-scrollbar{
       width: 7px;
@@ -273,15 +210,23 @@
       background: #ccc;
       border-radius: 25px;
     }
+
     .options::-webkit-scrollbar-thumb:hover{
       background: #b3b3b3;
     }
+    .options {
+      list-style-type: none;
+    }
     .options li{
-      height: 50px;
-      padding: 0 13px;
-      font-size: 21px;
+
+        padding-top:10px;
+        padding-left: 10px;
+        white-space: normal;
+        word-wrap: normal;
     }
     .options li:hover, li.selected{
-      border-radius: 5px;
-      background: #f2f2f2;
+
+      background: rgba(0,0,0,.05);
+      color: rgba(0,0,0,.95);
+
     }

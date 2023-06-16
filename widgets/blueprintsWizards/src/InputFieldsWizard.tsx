@@ -621,19 +621,10 @@ export default function InputFields({
                 const options: string[] = [];
 
                 input.constraints[0].valid_values.forEach((value: { value: string }) => {
-                    options.push(value);
+                    options.push(value); //toto se tvari jako chyba, ale je to korektni a funkcni
                   });
 
-                // const countries = [
-                //     'Afghanistan', 'Algeria', 'Argentina', 'Australia', 'Bangladesh', 'Belgium', 'Bhutan',
-                //     'Brazil', 'Canada', 'China', 'Denmark', 'Ethiopia', 'Finland', 'France', 'Germany',
-                //     'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Italy', 'Japan', 'Malaysia',
-                //     'Maldives', 'Mexico', 'Morocco', 'Nepal', 'Netherlands', 'Nigeria', 'Norway', 'Pakistan',
-                //     'Peru', 'Russia', 'Romania', 'South Africa', 'Spain', 'Sri Lanka', 'Sweden', 'Switzerland',
-                //     'Thailand', 'Turkey', 'Uganda', 'Ukraine', 'United States', 'United Kingdom', 'Vietnam'
-                //   ];
-                  
-                    const [selectedCountry, setSelectedCountry] = React.useState('');
+                    const [selectedVM, setSelectedVM] = React.useState(value);
                     const [searchWord, setSearchWord] = React.useState('');
                     const [isActive, setIsActive] = React.useState(false);
 
@@ -642,7 +633,7 @@ export default function InputFields({
                     );
 
                 const onItemChangeSW = (_value:any)=> {
-                    setSelectedCountry(_value);
+                    setSelectedVM(_value);
                     setSearchWord('');
                     setIsActive(false);
                     toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','vm_size',_value);
@@ -653,26 +644,27 @@ export default function InputFields({
                   };
                 
                   const handleCountryClick = (country: React.SetStateAction<string>) => {
-                    setSelectedCountry(country);
+                    setSelectedVM(country);
                     setSearchWord('');
                     setIsActive(false);
                   };
                 
                   const handleDropdownToggle = () => {
                     setIsActive(!isActive);
-                    setSelectedCountry('');
+                    setSelectedVM('');
                     setSearchWord('');
                   };
                   
                     return (
-                      <div className={`wrapper ${isActive ? 'active' : ''}`}>
-                        <div className="select-btn" onClick={handleDropdownToggle}>
-                          <span>{selectedCountry || 'Select Country'}</span>
+                      <div className={`wrapper field ${isActive ? 'active' : ''}`}>
+                        <label style={{ display: "inline-block" }}>{input.display_label}</label>
+                        <div className="ui selection dropdown select-btn" onClick={handleDropdownToggle}>
+                          <span>{selectedVM || 'Select VM size'}</span>
                           <i className="uil uil-angle-down"></i>
                         </div>
                         <div className="contentModalDropdown">
-                          <div className="search">
-                            <i className="uil uil-search"></i>
+                          <div className="search ui input">
+                            {/* <i className="uil uil-search "></i> */}
                             <input
                               spellCheck="false"
                               type="text"
@@ -681,19 +673,19 @@ export default function InputFields({
                               onChange={handleSearchInputChange}
                             />
                           </div>
-                          <ul className="options">
+                          <ul className="options visible menu transition">
                             {filteredCountries.length ? (
-                              filteredCountries.map((country) => (
+                              filteredCountries.map((vm) => (
                                 <li
-                                  key={country}
-                                  className={selectedCountry === country ? 'selected' : ''}
-                                  onClick={() => onItemChangeSW(country)}
+                                  key={vm}
+                                  className={selectedVM === vm ? 'selected' : ''}
+                                  onClick={() => onItemChangeSW(vm)}
                                 >
-                                  {country}
+                                  {vm}
                                 </li>
                               ))
                             ) : (
-                              <p style={{ marginTop: '10px' }}>Oops! Country not found</p>
+                              <p style={{ marginTop: '10px' }}>VM size not found</p>
                             )}
                           </ul>
                         </div>
