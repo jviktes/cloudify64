@@ -81,6 +81,73 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     function setWorkflowParams(workflowResource: Workflow) {
 
+
+        if (workflow?.name=="request_user_account") {
+            //TODO toto je je mozna fake: mel bych dostavat cely seznam a pro SQL budu pouzivat cely seznam, pro plain OS a zbytek jen 2 pole:    
+            //TODO lepsi zjisteni SQL a OS a jinych typu...
+            if (parametresModal.blueprint_id.indexOf("SQL")) {
+                workflow.parameters.account_role.constraints = [
+                    {
+                    "valid_values": 
+                       [
+                       "Administrator",
+                       "RemoteDesktopUser",
+                       "MSSQL-Public",
+                       "MSSQL-DataReader",
+                       "MSSQL-DataWriter",
+                       "MSSQL-AgentReader",
+                       "MSSQL-DBSSISAdmin",
+                       ]
+                    }
+               ]
+            }
+            else {
+                workflow.parameters.account_role.constraints = [
+                    {
+                    "valid_values": 
+                       [
+                        "Administrator",
+                        "RemoteDesktopUser",
+                       ]
+                    }
+               ]
+            }
+
+        }
+
+        if (workflow?.name=="request_service_account") {
+
+            //TODO lepsi zjisteni SQL a OS a jinych typu...
+            if (parametresModal.blueprint_id.indexOf("SQL")) {
+                workflow.parameters.account_role.constraints = [
+                    {
+                    "valid_values": 
+                       [
+                       "Services",
+                       "ScheduledJobs",
+                       "Administrator",
+                       "MSSQL-DBOwner",
+                       "MSSQL-SysAdmin",
+                       "MSSQL-AgentReader",
+                       "MSSQL-DBSSISAdmin",
+                       ]
+                    }
+               ]
+            }
+            else {
+                workflow.parameters.account_role.constraints = [
+                    {
+                    "valid_values": 
+                       [
+                        "Services",
+                        "ScheduledJobs",
+                       ]
+                    }
+               ]
+            }
+
+        }
+
         //uprava disku, aby se nemohli vybrat premiove pokud k tomu neni vm_size:
         if (workflow?.name=="add_disk") {
 
@@ -210,29 +277,6 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     function onApprove() {
         clearErrors();
 
-        //TODO add some special actions:
-        // if (workflowName=="run_audit") {
-
-        //     try {
-        //         const manager = toolbox.getManager();
-        //         const tenantName=manager.getSelectedTenant();
-        //         let params = {tenant:tenantName,id:deploymentId};
-                
-        //         const labelsUpdated = toolbox.getWidgetBackend().doGet('get_vm_run_unistall_polling2', {params});
-
-        //         // //let _objLabels = {"labels":[{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}]};
-        //         // let _objLabels = [{"csys-consumer-id":"xa124ws601037-disk-0"},{"csys-obj-parent":"7e35f2cd-3e3d-44af-96e7-1ca866883f0e"},{"csys-obj-type":"service"},{"obj-type":"terraform"},{"pokus1":"eee"}];
-        //         // let labels=_objLabels;//JSON.stringify(_objLabels);
-
-        //         // manager.doPatch(`/deployments/${deploymentId}`, { body: { labels } });
-
-        //         console.log(labelsUpdated);
-        //     } catch (error) {
-                
-        //     }
-
-        // }
-        
         executeWorkflow({
             deploymentsList,
             setLoading,

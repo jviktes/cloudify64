@@ -4,6 +4,8 @@ import InputFields from '../../../../common/src/inputs/InputFields';
 import { OnChange } from '../../../../common/src/inputs/types';
 
 import type { BaseWorkflowInputs, OnCheckboxChange, OnDateInputChange, UserWorkflowInputsState } from './types';
+import { Form } from 'semantic-ui-react';
+import InputFieldsVM from './InputFieldsVM';
 
 export interface CommonExecuteWorflowProps {
     baseWorkflowInputs: BaseWorkflowInputs;
@@ -41,10 +43,11 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     if (workflowName=="uninstall") {
         return;
     }
+
     else {
         return (
             <>
-                <InputFields
+                <InputFieldsVM
                     inputs={baseWorkflowInputs}
                     onChange={onWorkflowInputChange}
                     inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
