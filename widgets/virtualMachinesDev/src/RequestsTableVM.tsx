@@ -9,6 +9,7 @@ interface RequestsTableVMProps {
         nodeId: string;
         nodeInstanceId: string;
     };
+    parrentBlueprint:any
     vmData:any
     widget: Stage.Types.Widget;
     toolbox: Stage.Types.Toolbox;

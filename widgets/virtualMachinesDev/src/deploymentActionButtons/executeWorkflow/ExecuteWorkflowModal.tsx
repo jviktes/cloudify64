@@ -36,6 +36,7 @@ export interface ExecuteWorkflowModalProps {
     open: boolean;
     parametresModal:any;
     vmSize:any;
+    rootBlueprintName:any;
 }
 
 const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
@@ -50,6 +51,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     open,
     parametresModal,
     vmSize,
+    rootBlueprintName,
 }) => {
     if (_.isString(workflow) && !(_.isString(deploymentId) && deploymentId)) {
         throw Error(
@@ -66,6 +68,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     const { errors, setMessageAsError, clearErrors, setErrors } = useErrors();
     const [isLoading, setLoading, unsetLoading] = useBoolean();
+    const [isError, setError, unsetError] = useBoolean();
     const [dryRun, setDryRun, clearDryRun] = useInput(false);
     const [isFileLoading, setFileLoading, unsetFileLoading] = useBoolean();
 
@@ -85,7 +88,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         if (workflow?.name=="request_user_account") {
             //TODO toto je je mozna fake: mel bych dostavat cely seznam a pro SQL budu pouzivat cely seznam, pro plain OS a zbytek jen 2 pole:    
             //TODO lepsi zjisteni SQL a OS a jinych typu...
-            if (parametresModal.blueprint_id.indexOf("SQL")) {
+            if (rootBlueprintName.indexOf("SQL")!== -1) {
                 workflow.parameters.account_role.constraints = [
                     {
                     "valid_values": 
@@ -118,7 +121,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         if (workflow?.name=="request_service_account") {
 
             //TODO lepsi zjisteni SQL a OS a jinych typu...
-            if (parametresModal.blueprint_id.indexOf("SQL")) {
+            if (rootBlueprintName.indexOf("SQL")!== -1) {
                 workflow.parameters.account_role.constraints = [
                     {
                     "valid_values": 
@@ -326,6 +329,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     const onWorkflowInputChange: OnChange = (_event, field) => {
 
+        //toto je puvodni:
         // setUserWorkflowParams({
         //     ...userWorkflowParams,
         //     ...Stage.Basic.Form.fieldNameValue(
@@ -334,6 +338,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         // });
 
         clearErrors();
+        unsetError();
 
         let changedValues = [];
         let selectedCheckBoxes: any[] = []; 
@@ -354,20 +359,24 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
         if (field.name=="account_role") { 
 
+            if (workflow.name==="request_user_account") {
 
-            if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
-                let errmessage = {"Error":"Chyba ve validaci - nesmi být Administrator && RemoteDesktopUser"};
-                setErrors(errmessage);
+                    if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
+                        let errmessage = {"Error":"Chyba ve validaci - nesmi být Administrator && RemoteDesktopUser"};
+                        setErrors(errmessage);
+                        setError();
+                    }
+                }
             }
-
-            ////Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
-
-
-            if(selectedCheckBoxes.includes("Services") || selectedCheckBoxes.includes("ScheduledJobs") || (selectedCheckBoxes.includes("Administrator") && (selectedCheckBoxes.includes("ScheduledJobs") || selectedCheckBoxes.includes("Services")))) 
-            {
-                let errmessage = {"Error":"Chyba ve validaci musi byt Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))"};
-                setErrors(errmessage);
-            }
+            if (workflow.name==="request_service_account") {
+                ////Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
+    
+                if ((selectedCheckBoxes.includes("Administrator")) && (!((selectedCheckBoxes.includes("Services")) || (selectedCheckBoxes.includes("ScheduledJobs")))))
+                {
+                    let errmessage = {"Error":"Chyba ve validaci musi byt Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))"};
+                    setErrors(errmessage);
+                    setError();
+                }
 
         }
        
@@ -490,7 +499,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
             <Modal.Actions>
                 <CancelButton onClick={onHide} disabled={isLoading} />
-                <ApproveButton onClick={onApprove} disabled={isLoading} content={t('execute')} icon="cogs" />
+                <ApproveButton onClick={onApprove} disabled={isLoading || isError} content={t('execute')} icon="cogs" />
             </Modal.Actions>
         </Modal>
     );

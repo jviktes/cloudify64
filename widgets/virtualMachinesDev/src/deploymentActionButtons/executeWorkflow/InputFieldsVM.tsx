@@ -144,10 +144,6 @@ export default function InputFieldsVM({
         return;
     }
 
-
-    const ValidateValue = () =>{
-
-    }
     // const isItemChecked = (_itemToCheck: string) => {
     //     let _savedStates = inputsState["account_role"];
 
@@ -162,7 +158,6 @@ export default function InputFieldsVM({
     //     return false;
     // }
 
-    ValidateValue();
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -183,45 +178,35 @@ export default function InputFieldsVM({
                     }
                 }
 
-                return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
+                return <div className="field">
 
+                    <label style={{ display: "inline-block" }}>{input.display_label}</label>
                     <div>{errorsState[input.name]}</div>
+                    <table style={{ width: '60%' }}>
+                        {_.map(_roles, _item => (
+                            <tr style={{ height: '2em' }}>
 
-                     {_.map(_roles, _item => (
-    
-                        <Form.Input
-                            name={input.name}
-                            value={_item}
-                            key={String(input.name)}
-                            id={String(input.name)}
-                            label={_item}
-                            //checked={isItemChecked(_item)}
-                            //onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
-                            onChange = {onChange}
-                            type="Checkbox"
+                                <td style={{ width: '33%' }}><label style={{fontWeight:700}} label-for={input.name}>{_item}</label></td>
+                                <td><Form.Input
+                                    name={input.name}
+                                    value={_item}
+                                    key={String(input.name)}
+                                    id={String(input.name)}
+                                    
+                                    //checked={isItemChecked(_item)}
+                                    //onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+                                    onChange = {onChange}
+                                    type="Checkbox"
+                                    
+                                    //disabled={_item.read_only}
+                                /></td>
+                            </tr>
                             
-                            //disabled={_item.read_only}
-                        />
-
-                    ))}
-
-                </div>
+                        ))}
+                    </table>
+                    </div>
 
             }
-            // //TODO: zbytecne:
-            // else if (input.name=="user_id"){
-            //     return (
-            //         <FormField
-            //             input={input}
-            //             value={value}
-            //             onChange={onChange}
-            //             error={errorsState[input.name]}
-            //             toolbox={toolbox}
-            //             dataType={dataType}
-                        
-            //         />
-            //     );
-            // }
             else {
                 return (
                     <FormField

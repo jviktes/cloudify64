@@ -559,50 +559,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
                             {this.renderRowData(item)}
 
-                            {/* <DataTable.Row 
-                                key={`${item.id}_main`}
-                                id={`${item.id}_main`}
-                                onMouseOver={() => this.setHoveredExecution(item.id)}
-                                onFocus={() => this.setHoveredExecution(item.id)}
-                                onMouseOut={() => this.unsetHoveredExecution(item.id)}
-                                
-                                >
-                                
-                                <DataTable.Data>
-                                    <IdPopupCustomised id={item.id} data={this.getParrentBlueprint(item)} selected={hoveredExecution === item.id} />{item.display_name}
-                                    <Icon name="info circle" title={this.getExtraVMnfo(item)}></Icon>
-                                </DataTable.Data>
-
-                                <DataTable.Data>{item.os} {String(item.isUnistalled)}</DataTable.Data>
-                                <DataTable.Data>{item.ip}</DataTable.Data>
-                                <DataTable.Data>{item.cpus}</DataTable.Data>
-                                <DataTable.Data>{item.ram}</DataTable.Data>
-                                <DataTable.Data>{item.azure_size}</DataTable.Data>
-                                <DataTable.Data>{item.azure_location}</DataTable.Data>
-                                <DataTable.Data>{item.environment}</DataTable.Data>
-
-                                <DataTable.Data>
-                                    {this.getExpandedButton(item)}
-                                    <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
-                                    <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToPaste(item)}></Button>
-                                </DataTable.Data>
-
-                                <DataTable.Data>
-                                    
-                                    <DeploymentActionButtons
-                                        buttonTitle='Actions'
-                                        //deploymentId={item.id}
-                                        fetchedDeploymentStateComplete={this.getMenuData(item, this.state.detailedData[item.id], item.id)}
-                                        toolbox={toolbox}
-                                        currentDeployment={item}
-                                        currentDeploymentId={item.id}
-                                        redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 
-                                        parametresModal={item}
-                                        rootBlueprintName={this.getParrentBlueprint(item)}/>
-                                </DataTable.Data>
-
-                            </DataTable.Row> */}
-
                             <DataTable.Row
                                 key={`${item.id}_ext`}
                                 style={{ display: 'none' }}
@@ -610,7 +566,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     <DataTable.Data colSpan={11}>
                                         <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)}toolbox={toolbox} ></DataDisksTableVM></div>
-                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><RequestsTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></RequestsTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>

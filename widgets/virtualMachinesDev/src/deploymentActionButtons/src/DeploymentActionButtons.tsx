@@ -723,6 +723,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     onHide={resetWorkflow}
                     toolbox={toolbox} 
                     vmSize={fetchedDeploymentStateComplete.itemVM}
+                    rootBlueprintName={rootBlueprintName}
                 />
             )}
         </div>
