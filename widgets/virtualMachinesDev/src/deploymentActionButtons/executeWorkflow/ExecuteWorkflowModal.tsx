@@ -325,6 +325,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     }
 
     const onWorkflowInputChange: OnChange = (_event, field) => {
+
         // setUserWorkflowParams({
         //     ...userWorkflowParams,
         //     ...Stage.Basic.Form.fieldNameValue(
@@ -332,9 +333,12 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         //     )
         // });
 
+        clearErrors();
+
         let changedValues = [];
+        let selectedCheckBoxes: any[] = []; 
         if (field.name=="account_role") {
-            let selectedCheckBoxes: any[] = []; 
+            
             const checkboxes = document.querySelectorAll(`input[name="${field.name}"]`);
             checkboxes.forEach((checkbox) => {
     
@@ -348,6 +352,25 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             changedValues[field.name]=field.value;
         }
 
+        if (field.name=="account_role") { 
+
+
+            if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
+                let errmessage = {"Error":"Chyba ve validaci - nesmi být Administrator && RemoteDesktopUser"};
+                setErrors(errmessage);
+            }
+
+            ////Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
+
+
+            if(selectedCheckBoxes.includes("Services") || selectedCheckBoxes.includes("ScheduledJobs") || (selectedCheckBoxes.includes("Administrator") && (selectedCheckBoxes.includes("ScheduledJobs") || selectedCheckBoxes.includes("Services")))) 
+            {
+                let errmessage = {"Error":"Chyba ve validaci musi byt Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))"};
+                setErrors(errmessage);
+            }
+
+        }
+       
         setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, changedValues));
 
     };
@@ -362,6 +385,8 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         
         //Record newValues = {"account_role":fieldNameValue};
 
+        //userWorkflowParams=getUpdatedInputs(baseWorkflowParams, userWorkflowParams, {"account_role":fieldNameValue});
+
         setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, {"account_role":fieldNameValue}));
 
         console.log(userWorkflowParams);
@@ -375,7 +400,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
 
     }
 
-    toolbox.getEventBus().on('workflow:setIputs', setDeploymentIputs, this);
+    //toolbox.getEventBus().on('workflow:setIputs', setDeploymentIputs, this);
 
 
     const { ApproveButton, CancelButton, Form, Icon, Modal } = Stage.Basic;

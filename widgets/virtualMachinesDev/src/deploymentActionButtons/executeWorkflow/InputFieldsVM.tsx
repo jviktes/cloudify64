@@ -125,7 +125,7 @@ export default function InputFieldsVM({
               }
             }
 
-
+            
             //seervisni ucet: request_service_account
             //# Validate roles: Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
 
@@ -144,6 +144,10 @@ export default function InputFieldsVM({
         return;
     }
 
+
+    const ValidateValue = () =>{
+
+    }
     // const isItemChecked = (_itemToCheck: string) => {
     //     let _savedStates = inputsState["account_role"];
 
@@ -157,6 +161,8 @@ export default function InputFieldsVM({
     //     });  
     //     return false;
     // }
+
+    ValidateValue();
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -179,6 +185,8 @@ export default function InputFieldsVM({
 
                 return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
 
+                    <div>{errorsState[input.name]}</div>
+
                      {_.map(_roles, _item => (
     
                         <Form.Input
@@ -191,8 +199,8 @@ export default function InputFieldsVM({
                             //onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                             onChange = {onChange}
                             type="Checkbox"
-                            //disabled={_item.read_only}
                             
+                            //disabled={_item.read_only}
                         />
 
                     ))}
@@ -220,10 +228,10 @@ export default function InputFieldsVM({
                         input={input}
                         value={value}
                         onChange={onChange}
+                        
                         error={errorsState[input.name]}
                         toolbox={toolbox}
                         dataType={dataType}
-                        
                     />
                 );
             }
