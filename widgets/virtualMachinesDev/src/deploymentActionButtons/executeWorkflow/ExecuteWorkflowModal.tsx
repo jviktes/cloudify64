@@ -325,12 +325,31 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     }
 
     const onWorkflowInputChange: OnChange = (_event, field) => {
-        setUserWorkflowParams({
-            ...userWorkflowParams,
-            ...Stage.Basic.Form.fieldNameValue(
-                field as { name: string; value: unknown; type: string; checked?: string | undefined }
-            )
-        });
+        // setUserWorkflowParams({
+        //     ...userWorkflowParams,
+        //     ...Stage.Basic.Form.fieldNameValue(
+        //         field as { name: string; value: unknown; type: string; checked?: string | undefined }
+        //     )
+        // });
+
+        let changedValues = [];
+        if (field.name=="account_role") {
+            let selectedCheckBoxes: any[] = []; 
+            const checkboxes = document.querySelectorAll(`input[name="${field.name}"]`);
+            checkboxes.forEach((checkbox) => {
+    
+                    if (checkbox.checked==true) {
+                        selectedCheckBoxes.push(checkbox.value);
+                    }
+            })
+            changedValues[field.name]=selectedCheckBoxes;
+        }
+        else {
+            changedValues[field.name]=field.value;
+        }
+
+        setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, changedValues));
+
     };
 
     const setDeploymentIputs=(fieldName: string,fieldNameValue: string) => 

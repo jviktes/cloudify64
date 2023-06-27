@@ -62,7 +62,8 @@ export default function InputFieldsVM({
     inputsState,
     errorsState,
     toolbox,
-    dataTypes
+    dataTypes,
+    workflowName,
 }: {
     inputs: Record<string, any>;
     onChange: OnChange;
@@ -70,7 +71,12 @@ export default function InputFieldsVM({
     errorsState: Record<string, any>;
     toolbox: Stage.Types.WidgetlessToolbox;
     dataTypes?: Record<string, any>;
+    workflowName:String;
 }) {
+
+    const isItem= () => {
+        return typeof inputsState !== 'undefined' && inputsState.hasOwnProperty("account_role");
+      }
 
     //Validace dat?
     const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
@@ -79,59 +85,78 @@ export default function InputFieldsVM({
         //console.log("onItemChangeSW e.target:" + e);
         //console.log("onItemChangeSW value:" + _value);
 
+            if (workflowName==="request_user_account") {
+            //USER ACCOUNT: bud Administrator nebo RemoteDesktopUser:
 
             // Check if the selected value is "admin"
             if (_value === "Administrator") {
-              // Iterate over the checkboxes to find the one with value "user"
-              const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
-              checkboxes.forEach((checkbox) => {
-                if (checkbox.value === "RemoteDesktopUser" && _e.checked==true) {
-                  // Set the checked property to false and make it read-only
-                  checkbox.checked = false;
-                  checkbox.disabled = true;
-                }
-                if (checkbox.value === "RemoteDesktopUser" && _e.checked==false) {
-                    // Set the checked property to false and make it read-only
-                    checkbox.checked = true;
-                    checkbox.disabled = false;
-                  }
-              });
-            }
-        
-            if (_value === "RemoteDesktopUser") {
                 // Iterate over the checkboxes to find the one with value "user"
                 const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
                 checkboxes.forEach((checkbox) => {
-
-                  if (checkbox.value === "Administrator" && _e.checked==true) {
+                  if (checkbox.value === "RemoteDesktopUser" && _e.checked==true) {
                     // Set the checked property to false and make it read-only
                     checkbox.checked = false;
                     checkbox.disabled = true;
                   }
-                  if (checkbox.value === "Administrator" && _e.checked==false) {
+                  if (checkbox.value === "RemoteDesktopUser" && _e.checked==false) {
                       // Set the checked property to false and make it read-only
                       checkbox.checked = true;
                       checkbox.disabled = false;
                     }
                 });
               }
+          
+              if (_value === "RemoteDesktopUser") {
+                  // Iterate over the checkboxes to find the one with value "user"
+                  const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+                  checkboxes.forEach((checkbox) => {
+  
+                    if (checkbox.value === "Administrator" && _e.checked==true) {
+                      // Set the checked property to false and make it read-only
+                      checkbox.checked = false;
+                      checkbox.disabled = true;
+                    }
+                    if (checkbox.value === "Administrator" && _e.checked==false) {
+                        // Set the checked property to false and make it read-only
+                        checkbox.checked = true;
+                        checkbox.disabled = false;
+                      }
+                  });
+              }
+            }
 
-              let selectedCheckBoxes: any[] = []; 
 
-              const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
-              checkboxes.forEach((checkbox) => {
+            //seervisni ucet: request_service_account
+            //# Validate roles: Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
+
+            let selectedCheckBoxes: any[] = []; 
+
+            const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+            checkboxes.forEach((checkbox) => {
 
                 if (checkbox.checked==true) {
                     selectedCheckBoxes.push(checkbox.value);
                 }
-              });
+            });
 
-              toolbox.getEventBus().trigger('workflow:setIputs', 'account_role', JSON.stringify(selectedCheckBoxes));
+            toolbox.getEventBus().trigger('workflow:setIputs', 'account_role', JSON.stringify(selectedCheckBoxes));
 
         return;
     }
 
-    
+    // const isItemChecked = (_itemToCheck: string) => {
+    //     let _savedStates = inputsState["account_role"];
+
+    //     //pokud polozku najdu v sznamu, pak dam checked=true
+    //     _savedStates.forEach((item: string) => {
+
+    //         if (item===_itemToCheck) {
+    //             return true;
+    //         }
+
+    //     });  
+    //     return false;
+    // }
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
@@ -143,9 +168,6 @@ export default function InputFieldsVM({
 
             if (input.name=="account_role"){
                
-                //tady musi byt nejaky for-each pro vsecny constrinst:
-
-
                 let _roles=[];
 
                 for (const key in input.constraints[0].valid_values) {
@@ -155,7 +177,6 @@ export default function InputFieldsVM({
                     }
                 }
 
-
                 return <div className="field"><label style={{ display: "inline-block" }}>{input.display_label}</label>
 
                      {_.map(_roles, _item => (
@@ -163,12 +184,12 @@ export default function InputFieldsVM({
                         <Form.Input
                             name={input.name}
                             value={_item}
-                            // key={_item.key}
-                            // id={_item.key}
+                            key={String(input.name)}
+                            id={String(input.name)}
                             label={_item}
-                            //checked={parsingValueBoolean(_item)}
-                            onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
-                            //onChange = {onChange}
+                            //checked={isItemChecked(_item)}
+                            //onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+                            onChange = {onChange}
                             type="Checkbox"
                             //disabled={_item.read_only}
                             
@@ -179,20 +200,20 @@ export default function InputFieldsVM({
                 </div>
 
             }
-            //TODO: zbytecne:
-            else if (input.name=="user_id"){
-                return (
-                    <FormField
-                        input={input}
-                        value={value}
-                        onChange={onChange}
-                        error={errorsState[input.name]}
-                        toolbox={toolbox}
-                        dataType={dataType}
+            // //TODO: zbytecne:
+            // else if (input.name=="user_id"){
+            //     return (
+            //         <FormField
+            //             input={input}
+            //             value={value}
+            //             onChange={onChange}
+            //             error={errorsState[input.name]}
+            //             toolbox={toolbox}
+            //             dataType={dataType}
                         
-                    />
-                );
-            }
+            //         />
+            //     );
+            // }
             else {
                 return (
                     <FormField

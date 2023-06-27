@@ -53,6 +53,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
                     inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
                     errorsState={errors}
                     toolbox={toolbox}
+                    workflowName={workflowName}
                     //hidden={true}
                 />
             </>
