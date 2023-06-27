@@ -71,6 +71,68 @@ export default function InputFieldsVM({
     toolbox: Stage.Types.WidgetlessToolbox;
     dataTypes?: Record<string, any>;
 }) {
+
+    //Validace dat?
+    const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
+
+         //console.log("onItemChangeSW:" + _item);
+        //console.log("onItemChangeSW e.target:" + e);
+        //console.log("onItemChangeSW value:" + _value);
+
+
+            // Check if the selected value is "admin"
+            if (_value === "Administrator") {
+              // Iterate over the checkboxes to find the one with value "user"
+              const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+              checkboxes.forEach((checkbox) => {
+                if (checkbox.value === "RemoteDesktopUser" && _e.checked==true) {
+                  // Set the checked property to false and make it read-only
+                  checkbox.checked = false;
+                  checkbox.disabled = true;
+                }
+                if (checkbox.value === "RemoteDesktopUser" && _e.checked==false) {
+                    // Set the checked property to false and make it read-only
+                    checkbox.checked = true;
+                    checkbox.disabled = false;
+                  }
+              });
+            }
+        
+            if (_value === "RemoteDesktopUser") {
+                // Iterate over the checkboxes to find the one with value "user"
+                const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+                checkboxes.forEach((checkbox) => {
+
+                  if (checkbox.value === "Administrator" && _e.checked==true) {
+                    // Set the checked property to false and make it read-only
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                  }
+                  if (checkbox.value === "Administrator" && _e.checked==false) {
+                      // Set the checked property to false and make it read-only
+                      checkbox.checked = true;
+                      checkbox.disabled = false;
+                    }
+                });
+              }
+
+              let selectedCheckBoxes: any[] = []; 
+
+              const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+              checkboxes.forEach((checkbox) => {
+
+                if (checkbox.checked==true) {
+                    selectedCheckBoxes.push(checkbox.value);
+                }
+              });
+
+              toolbox.getEventBus().trigger('workflow:setIputs', 'account_role', JSON.stringify(selectedCheckBoxes));
+
+        return;
+    }
+
+    
+
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
         .reject('hidden')
@@ -98,7 +160,6 @@ export default function InputFieldsVM({
 
                      {_.map(_roles, _item => (
     
-
                         <Form.Input
                             name={input.name}
                             value={_item}
@@ -106,9 +167,11 @@ export default function InputFieldsVM({
                             // id={_item.key}
                             label={_item}
                             //checked={parsingValueBoolean(_item)}
-                            onChange={onChange}
+                            onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
+                            //onChange = {onChange}
                             type="Checkbox"
                             //disabled={_item.read_only}
+                            
                         />
 
                     ))}
@@ -116,6 +179,7 @@ export default function InputFieldsVM({
                 </div>
 
             }
+            //TODO: zbytecne:
             else if (input.name=="user_id"){
                 return (
                     <FormField

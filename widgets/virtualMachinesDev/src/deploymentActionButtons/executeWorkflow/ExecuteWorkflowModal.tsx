@@ -333,6 +333,32 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         });
     };
 
+    const setDeploymentIputs=(fieldName: string,fieldNameValue: string) => 
+    {
+        console.log("setDeploymentIputs:"+fieldName + ";"+fieldNameValue);
+
+        //TODO: toto prepisovalo hodnoty, co byly v userWorkflowParams a fieldName misto account_role
+        //let _remappadValues= {fieldName:fieldNameValue};
+        //setUserWorkflowParams(_remappadValues);
+        
+        //Record newValues = {"account_role":fieldNameValue};
+
+        setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, {"account_role":fieldNameValue}));
+
+        console.log(userWorkflowParams);
+
+        // setUserWorkflowParams({
+        //     ...userWorkflowParams,
+        //     ...Stage.Basic.Form.fieldNameValue(
+        //         field as { name: string; value: unknown; type: string; checked?: string | undefined }
+        //     )
+        // });
+
+    }
+
+    toolbox.getEventBus().on('workflow:setIputs', setDeploymentIputs, this);
+
+
     const { ApproveButton, CancelButton, Form, Icon, Modal } = Stage.Basic;
 
     let headerKey = 'header.';

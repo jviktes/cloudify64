@@ -206,7 +206,7 @@ export function SoftwareConfigurationTable({
                     value={_item[_paramName]}
                     onChange={(e, { value }) => onItemChangeSW(e.target,_item,value)}
                     disabled={_item.read_only}
-                />
+                    />
                 )
             }
 
