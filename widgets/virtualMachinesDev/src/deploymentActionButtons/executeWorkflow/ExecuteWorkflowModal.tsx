@@ -379,7 +379,23 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                 }
 
         }
-       
+        
+        if (field.name=="service_account_name") { 
+            //kotrola na regEx:
+            //workflow
+
+            let _regex = "(^a1[ed]_.+)|(^$)";
+            const myRe = new RegExp(_regex, 'g');
+            const regResults = myRe.exec(field.value);
+            
+            let errorMesssage="Parameter \"service_account_name\" does not meet its constraints: Value " + field.value+ " of input service_account_name violates constraint pattern((^a1[ed]_.+)|(^$)) operator."
+            if (regResults==null) {
+                let errmessage = {"Error":errorMesssage};
+                setErrors(errmessage);
+                setError();
+            }
+        }
+
         setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, changedValues));
 
     };
