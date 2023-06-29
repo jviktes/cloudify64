@@ -493,6 +493,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     //deploymentId={item.id}
                     fetchedDeploymentStateComplete={this.getMenuData(item, this.state.detailedData[item.id], item.id)}
                     toolbox={toolbox}
+                    widget={widget}
                     currentDeployment={item}
                     currentDeploymentId={item.id}
                     redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete} 

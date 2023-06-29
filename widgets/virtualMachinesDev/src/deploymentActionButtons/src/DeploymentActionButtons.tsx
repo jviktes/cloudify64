@@ -11,6 +11,7 @@ interface DeploymentActionButtonsProps {
  
     fetchedDeploymentStateComplete: FetchedDeploymentStateComplete;
     toolbox: Stage.Types.Toolbox;
+    widget: Stage.Types.Widget;
     redirectToParentPageAfterDelete: boolean;
     buttonTitle:string;
     currentDeployment:any;
@@ -26,6 +27,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
     currentDeploymentId,
     parametresModal,
     rootBlueprintName,
+    widget,
 }) => {
     const {
         Basic: { Button },
@@ -724,6 +726,7 @@ const DeploymentActionButtons: FunctionComponent<DeploymentActionButtonsProps> =
                     toolbox={toolbox} 
                     vmSize={fetchedDeploymentStateComplete.itemVM}
                     rootBlueprintName={rootBlueprintName}
+                    widget={widget}
                 />
             )}
         </div>

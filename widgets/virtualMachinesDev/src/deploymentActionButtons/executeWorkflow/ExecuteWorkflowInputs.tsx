@@ -29,6 +29,7 @@ interface ExecuteWorkflowInputsProps extends CommonExecuteWorflowProps {
     onScheduleChange: OnCheckboxChange;
     onScheduledTimeChange: OnDateInputChange;
     toolbox: Stage.Types.Toolbox;
+    widget: Stage.Types.Widget;
     workflowName:string;
     
 }
@@ -39,6 +40,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
     onWorkflowInputChange,
     errors,
     toolbox,
+    widget,
     workflowName}) => {
     if (workflowName=="uninstall") {
         return;
@@ -53,6 +55,7 @@ const ExecuteWorkflowInputs: FunctionComponent<ExecuteWorkflowInputsProps> = ({
                     inputsState={userWorkflowInputsState} //sem nacpat predvyplnene hodnoty, tady je treba lun="";
                     errorsState={errors}
                     toolbox={toolbox}
+                    widget={widget}
                     workflowName={workflowName}
                     //hidden={true}
                 />

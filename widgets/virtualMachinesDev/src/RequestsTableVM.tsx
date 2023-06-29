@@ -118,6 +118,23 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
         }
 
     }
+
+    formatRoles = (_rolesData:any)=> {
+
+        //let data = ['Services\nMSSQL-SysAdmin'];
+
+        // Join the array elements with ", "
+        let _formattedRole = _rolesData.join(', ');
+
+        // Replace "\n" with ", "
+        _formattedRole = _formattedRole.replace(/\n/g, ', ');
+
+        //console.log(_formattedRole); // Output: "Services, MSSQL-SysAdmin"
+
+        return _formattedRole;
+
+    }
+
     render() {
         /* eslint-disable no-console, no-process-exit */
         const { toolbox, widget,data,menuData } = this.props;
@@ -141,7 +158,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                             <DataTable.Row>
 
                                 <DataTable.Data>{this.getAccount(item)}</DataTable.Data>
-                                <DataTable.Data>{item?.role}</DataTable.Data>
+                                <DataTable.Data>{this.formatRoles(item?.role)}</DataTable.Data>
                                 <DataTable.Data>{this.getPAMStatus(item)}</DataTable.Data>
                                 <DataTable.Data>{this.getRequestor(item)}</DataTable.Data>
                                 
@@ -155,6 +172,7 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
                                             toolbox={toolbox}
                                             parametresModal={item}
                                             redirectToParentPageAfterDelete={!widget.configuration.preventRedirectToParentPageAfterDelete}
+                                            widget={widget}
                                      />
                                 </DataTable.Data>
 

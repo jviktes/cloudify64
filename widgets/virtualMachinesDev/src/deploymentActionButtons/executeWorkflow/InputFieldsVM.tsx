@@ -62,6 +62,7 @@ export default function InputFieldsVM({
     inputsState,
     errorsState,
     toolbox,
+    widget,
     dataTypes,
     workflowName,
 }: {
@@ -70,6 +71,7 @@ export default function InputFieldsVM({
     inputsState: Record<string, any>;
     errorsState: Record<string, any>;
     toolbox: Stage.Types.WidgetlessToolbox;
+    widget: Stage.Types.Widget;
     dataTypes?: Record<string, any>;
     workflowName:String;
 }) {
@@ -144,21 +146,6 @@ export default function InputFieldsVM({
         return;
     }
 
-    // const isItemChecked = (_itemToCheck: string) => {
-    //     let _savedStates = inputsState["account_role"];
-
-    //     //pokud polozku najdu v sznamu, pak dam checked=true
-    //     _savedStates.forEach((item: string) => {
-
-    //         if (item===_itemToCheck) {
-    //             return true;
-    //         }
-
-    //     });  
-    //     return false;
-    // }
-
-
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
         .reject('hidden')
@@ -208,12 +195,32 @@ export default function InputFieldsVM({
 
             }
             else {
+
+                //clean value:
+                let _value = "";
+                if (input.name!="approve") {
+
+                    try {
+                        if (typeof value !== 'undefined' && value !== null) {
+                            _value = value.replace(/^"(.*)"$/, '$1');
+                            
+                            if (input.name=="service_account_name" && value.trim().length === 0) {
+                                let serviceAccountPrefix = widget.configuration.serviceAccountPrefix;
+                                _value=String(serviceAccountPrefix);
+                            }
+
+                        }
+                    } catch (error) {}
+                }
+                else {
+                    _value=value;
+                }
+
                 return (
                     <FormField
                         input={input}
-                        value={value}
+                        value={_value}
                         onChange={onChange}
-                        
                         error={errorsState[input.name]}
                         toolbox={toolbox}
                         dataType={dataType}

@@ -28,6 +28,13 @@ Stage.defineWidget({
             default: "support@greycorbel.com",
             type: Stage.Basic.GenericField.STRING_TYPE
         },
+        {
+            id: 'serviceAccountPrefix',
+            name: 'serviceAccountPrefix',
+            default: "a1e_",
+            type: Stage.Basic.GenericField.STRING_TYPE
+        },
+
         //this version works only if current widget is remove and place again...:
         // {
         //     id: 'version',

@@ -32,6 +32,7 @@ export interface ExecuteWorkflowModalProps {
     onExecute?: (workflowParameters: WorkflowParameters, workflowOptions: WorkflowOptions) => void;
     onHide: () => void;
     toolbox: Stage.Types.Toolbox;
+    widget: Stage.Types.Widget;
     workflow: Workflow | string;
     open: boolean;
     parametresModal:any;
@@ -52,6 +53,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
     parametresModal,
     vmSize,
     rootBlueprintName,
+    widget,
 }) => {
     if (_.isString(workflow) && !(_.isString(deploymentId) && deploymentId)) {
         throw Error(
@@ -354,9 +356,13 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             changedValues[field.name]=selectedCheckBoxes;
         }
         else {
-            changedValues[field.name]=field.value;
+
+
+            
+            //changedValues[field.name]=field.value;
         }
 
+        //reseni validaci:
         if (field.name=="account_role") { 
 
             if (workflow.name==="request_user_account") {
@@ -367,19 +373,18 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                         setError();
                     }
                 }
-            }
+            
             if (workflow.name==="request_service_account") {
                 ////Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
     
                 if ((selectedCheckBoxes.includes("Administrator")) && (!((selectedCheckBoxes.includes("Services")) || (selectedCheckBoxes.includes("ScheduledJobs")))))
                 {
-                    let errmessage = {"Error":"Chyba ve validaci musi byt Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))"};
+                    let errmessage = {"Error":"If Administrator role is selected then the service account must also be assigned with Services or ScheduledJobs role or both these roles. Any combinations with the other roles are allowed."};
                     setErrors(errmessage);
                     setError();
                 }
-
+            }
         }
-        
         if (field.name=="service_account_name") { 
             //kotrola na regEx:
             //workflow
@@ -388,15 +393,29 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             const myRe = new RegExp(_regex, 'g');
             const regResults = myRe.exec(field.value);
             
-            let errorMesssage="Parameter \"service_account_name\" does not meet its constraints: Value " + field.value+ " of input service_account_name violates constraint pattern((^a1[ed]_.+)|(^$)) operator."
+            let serviceAccountPrefix = widget.configuration.serviceAccountPrefix;
+
+            let errorMesssage="The name of the service account must start with "+serviceAccountPrefix+". The name must match this regular expression: ^a1[ed]_.+)|(^$)"
+
+            //let errorMesssage="Parameter \"service_account_name\" does not meet its constraints: Value " + field.value+ " of input service_account_name violates constraint pattern((^a1[ed]_.+)|(^$)) operator."
             if (regResults==null) {
                 let errmessage = {"Error":errorMesssage};
                 setErrors(errmessage);
                 setError();
             }
         }
-
-        setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, changedValues));
+        if (field.name=="account_role") {
+            setUserWorkflowParams(getUpdatedInputs(baseWorkflowParams, userWorkflowParams, changedValues));
+        }
+        else {
+            //pro vsechny ostatni necham tak jak to je:
+            setUserWorkflowParams({
+                ...userWorkflowParams,
+                ...Stage.Basic.Form.fieldNameValue(
+                    field as { name: string; value: unknown; type: string; checked?: string | undefined }
+                )
+                });
+        }
 
     };
 
@@ -489,7 +508,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                     <DeploymentIdContext.Provider value={contextDeploymentId}>
                         <ExecuteWorkflowInputs
                             toolbox={toolbox}
-
+                            widget={widget}
                             baseWorkflowInputs={baseWorkflowParams}
                             userWorkflowInputsState={userWorkflowParams}
 
