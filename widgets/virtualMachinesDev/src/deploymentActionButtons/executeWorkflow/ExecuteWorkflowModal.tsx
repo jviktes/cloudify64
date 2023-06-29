@@ -368,7 +368,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             if (workflow.name==="request_user_account") {
 
                     if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
-                        let errmessage = {"Error":"Chyba ve validaci - nesmi být Administrator && RemoteDesktopUser"};
+                        let errmessage = {"Error":"Roles Administrator and RemoteDesktopUser must not be combined one with each other (exclusive OR). Any combinations with the other roles are allowed."};
                         setErrors(errmessage);
                         setError();
                     }
