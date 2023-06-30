@@ -353,13 +353,15 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                         selectedCheckBoxes.push(checkbox.value);
                     }
             })
-            changedValues[field.name]=selectedCheckBoxes;
-        }
-        else {
-
-
-            
-            //changedValues[field.name]=field.value;
+            if (rootBlueprintName.indexOf("SQL")!== -1) {
+                changedValues[field.name]=selectedCheckBoxes;
+            }
+            else {
+                
+                let _selectedCheckBoxes = JSON.stringify(selectedCheckBoxes);
+                _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
+                changedValues[field.name]=_selectedCheckBoxes;
+            }
         }
 
         //reseni validaci:

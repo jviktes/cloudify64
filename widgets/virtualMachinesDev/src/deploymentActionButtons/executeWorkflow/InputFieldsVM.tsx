@@ -81,70 +81,70 @@ export default function InputFieldsVM({
       }
 
     //Validace dat?
-    const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
+    // const onItemChangeSW = (_e: any, _item:any, _value:any)=> {
 
-         //console.log("onItemChangeSW:" + _item);
-        //console.log("onItemChangeSW e.target:" + e);
-        //console.log("onItemChangeSW value:" + _value);
+    //      //console.log("onItemChangeSW:" + _item);
+    //     //console.log("onItemChangeSW e.target:" + e);
+    //     //console.log("onItemChangeSW value:" + _value);
 
-            if (workflowName==="request_user_account") {
-            //USER ACCOUNT: bud Administrator nebo RemoteDesktopUser:
+    //         if (workflowName==="request_user_account") {
+    //         //USER ACCOUNT: bud Administrator nebo RemoteDesktopUser:
 
-            // Check if the selected value is "admin"
-            if (_value === "Administrator") {
-                // Iterate over the checkboxes to find the one with value "user"
-                const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
-                checkboxes.forEach((checkbox) => {
-                  if (checkbox.value === "RemoteDesktopUser" && _e.checked==true) {
-                    // Set the checked property to false and make it read-only
-                    checkbox.checked = false;
-                    checkbox.disabled = true;
-                  }
-                  if (checkbox.value === "RemoteDesktopUser" && _e.checked==false) {
-                      // Set the checked property to false and make it read-only
-                      checkbox.checked = true;
-                      checkbox.disabled = false;
-                    }
-                });
-              }
+    //         // Check if the selected value is "admin"
+    //         if (_value === "Administrator") {
+    //             // Iterate over the checkboxes to find the one with value "user"
+    //             const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+    //             checkboxes.forEach((checkbox) => {
+    //               if (checkbox.value === "RemoteDesktopUser" && _e.checked==true) {
+    //                 // Set the checked property to false and make it read-only
+    //                 checkbox.checked = false;
+    //                 checkbox.disabled = true;
+    //               }
+    //               if (checkbox.value === "RemoteDesktopUser" && _e.checked==false) {
+    //                   // Set the checked property to false and make it read-only
+    //                   checkbox.checked = true;
+    //                   checkbox.disabled = false;
+    //                 }
+    //             });
+    //           }
           
-              if (_value === "RemoteDesktopUser") {
-                  // Iterate over the checkboxes to find the one with value "user"
-                  const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
-                  checkboxes.forEach((checkbox) => {
+    //           if (_value === "RemoteDesktopUser") {
+    //               // Iterate over the checkboxes to find the one with value "user"
+    //               const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+    //               checkboxes.forEach((checkbox) => {
   
-                    if (checkbox.value === "Administrator" && _e.checked==true) {
-                      // Set the checked property to false and make it read-only
-                      checkbox.checked = false;
-                      checkbox.disabled = true;
-                    }
-                    if (checkbox.value === "Administrator" && _e.checked==false) {
-                        // Set the checked property to false and make it read-only
-                        checkbox.checked = true;
-                        checkbox.disabled = false;
-                      }
-                  });
-              }
-            }
+    //                 if (checkbox.value === "Administrator" && _e.checked==true) {
+    //                   // Set the checked property to false and make it read-only
+    //                   checkbox.checked = false;
+    //                   checkbox.disabled = true;
+    //                 }
+    //                 if (checkbox.value === "Administrator" && _e.checked==false) {
+    //                     // Set the checked property to false and make it read-only
+    //                     checkbox.checked = true;
+    //                     checkbox.disabled = false;
+    //                   }
+    //               });
+    //           }
+    //         }
 
             
-            //seervisni ucet: request_service_account
-            //# Validate roles: Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
+    //         //seervisni ucet: request_service_account
+    //         //# Validate roles: Services OR ScheduledJobs OR (Administrator AND (ScheduledJobs OR Services))
 
-            let selectedCheckBoxes: any[] = []; 
+    //         let selectedCheckBoxes: any[] = []; 
 
-            const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
-            checkboxes.forEach((checkbox) => {
+    //         const checkboxes = document.querySelectorAll(`input[name="${_e.name}"]`);
+    //         checkboxes.forEach((checkbox) => {
 
-                if (checkbox.checked==true) {
-                    selectedCheckBoxes.push(checkbox.value);
-                }
-            });
+    //             if (checkbox.checked==true) {
+    //                 selectedCheckBoxes.push(checkbox.value);
+    //             }
+    //         });
 
-            toolbox.getEventBus().trigger('workflow:setIputs', 'account_role', JSON.stringify(selectedCheckBoxes));
+    //         toolbox.getEventBus().trigger('workflow:setIputs', 'account_role', JSON.stringify(selectedCheckBoxes));
 
-        return;
-    }
+    //     return;
+    // }
 
     const inputFields = _(inputs)
         .map((input, name) => ({ name, ...input }))
