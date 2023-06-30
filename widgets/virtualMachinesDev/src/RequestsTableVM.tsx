@@ -121,15 +121,17 @@ export default class RequestsTableVM extends React.Component<RequestsTableVMProp
 
     formatRoles = (_rolesData:any)=> {
 
-        //let data = ['Services\nMSSQL-SysAdmin'];
+        let _formattedRole=_rolesData;
+        if (_rolesData!="" || _rolesData==!undefined) 
+        {
 
-        // Join the array elements with ", "
-        let _formattedRole = _rolesData.join(', ');
+            if (Array.isArray(_rolesData)) {
+                _formattedRole=_rolesData.join(', ');
+            }
 
-        // Replace "\n" with ", "
-        _formattedRole = _formattedRole.replace(/\n/g, ', ');
-
-        //console.log(_formattedRole); // Output: "Services, MSSQL-SysAdmin"
+            // Replace "\n" with ", "
+            _formattedRole = _formattedRole.replace(/\n/g, ', ');
+        }
 
         return _formattedRole;
 
