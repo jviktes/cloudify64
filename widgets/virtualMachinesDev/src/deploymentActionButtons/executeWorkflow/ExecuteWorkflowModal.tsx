@@ -353,11 +353,12 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                         selectedCheckBoxes.push(checkbox.value);
                     }
             })
+            //u SQL to chce pole rolí
             if (rootBlueprintName.indexOf("SQL")!== -1) {
                 changedValues[field.name]=selectedCheckBoxes;
             }
             else {
-                
+            //u zbytku to chce seznam roli do jednoho stringu   
                 let _selectedCheckBoxes = JSON.stringify(selectedCheckBoxes);
                 _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
                 changedValues[field.name]=_selectedCheckBoxes;

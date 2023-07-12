@@ -4,8 +4,8 @@ import VirtualMachinesTable from './VirtualMachinesTable';
 
 
 Stage.defineWidget({
-       //id: 'virtual-machines',
-       //name: 'Virtual machines',
+    //    id: 'virtual-machines',
+    //    name: 'Virtual machines',
     id: 'virtual-machines-dev',
     name: 'Virtual machines development',
     description: 'Virtual machines management',
