@@ -518,8 +518,23 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         return this.onSubmit(deployValidationMessage, deploySteps);
     }
 
+    getParameterName = (_items:any, parameterName: any) => {
+        var _parameterValue = "";
+        for (const key in _items) {
+
+            var _row = _items[key];
+
+                if (_row[parameterName]!=null) {
+                    _parameterValue = _row[parameterName];
+                    break;
+                }
+        }
+        return String(_parameterValue);
+    }
+
     onDeployAndInstall() {
         const { toolbox, deployAndInstallValidationMessage, deployAndInstallSteps } = this.props;
+        const {deploymentInputs } = this.state;
         const {
             installWorkflow,
             baseInstallWorkflowParams,
@@ -533,7 +548,32 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         } = this.state;
         const deploymentsList: string[] = _.compact([deploymentId]);
 
-        //console.log(deploymentsList);
+        console.log();
+
+        console.log("onDeployAndInstall:");
+        console.log(deploymentInputs);
+
+        //odmazani disk_based_on_service, pokud neni vybrana sluzba:
+        let _filteredDisks: any[] = [];
+        let dataDiskData = JSON.parse(deploymentInputs.data_disks);
+
+        dataDiskData.forEach((_disk: any) => {
+            if (_disk.disk_based_on_service!=null) {
+                //najit hodnotu pro _dataDisk.disk_based_on_service v swconfigu
+                let swInfo = String(deploymentInputs.service_names);
+                let _swInfoParsed = JSON.parse(swInfo);
+                let _parNameValue=this.getParameterName(_swInfoParsed,_disk.disk_based_on_service);
+                if (_parNameValue=="true") {
+                    _filteredDisks.push(_disk);
+                }
+            }
+            else {
+                _filteredDisks.push(_disk);
+            }
+        });
+        deploymentInputs.data_disks=_filteredDisks;
+        this.setState({deploymentInputs});
+
 
         this.setState({ activeSection: -1, loading: true, errors: {} });
         return this.validateInputs()
@@ -905,48 +945,10 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         var uniqueID = function () {
                             return '_' + Math.random().toString(36).slice(2, 11);
                         };
-                        // var isLabelValid = function(_item:any) {
-
-                        //     if (_item.error!=undefined && _item.error!="" ) {
-                        //         return _item.error;
-                        //     }
-
-                        //     if (_item.label=="" || _item.label==null) {
-                        //         return {text:"Label may not be blank.", element:"label"};
-                        //     } 
-                        //     else {
-                        //         return {};
-                        //     }
-                        // }
-
-                        // var getDiskMountingPointValue = (_item: any) => {
-                        //     try {
-                        //         //_valueMountingPoint[0].path;
-                        //         if (_item.error!=undefined && _item.error.length>0) {
-                        //             return _item.error;
-                        //         }
-                        //         if (_item.mountpoint==null || _item.mountpoint.length==0 || _item.mountpoint[0].path=="") {
-                        //             return {text:"Mounting point may not be blank.", element:"mountpoint"};
-                        //         }
-                        //         else {
-                        //             return {};
-                        //         }
-                        //     } catch (error) {
-                        //         return {};
-                        //     }
-                        // }
-
                         let dataDiskData = JSON.parse(deploymentInputs.data_disks);
                         _.map(dataDiskData, item => (
                             item.key = uniqueID())
-                        )
-                        //validace na vstupu disku
-                        // _.map(dataDiskData, item => (
-                        //     item.error = isLabelValid(item))
-                        // )
-                        // _.map(dataDiskData, item => (
-                        //     item.error = getDiskMountingPointValue(item))
-                        // )       
+                        )     
                         deploymentInputs.data_disks = JSON.stringify(dataDiskData);
                     }    
 
@@ -1008,6 +1010,8 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             const { showDeploymentNameInput, showDeploymentIdInput } = this.props;
             const errors: Errors = {};
 
+            console.log(stateDeploymentInputs);
+
             if (showDeploymentNameInput && _.isEmpty(deploymentName)) {
                 errors.deploymentName = t('errors.noDeploymentName');
             }
@@ -1018,8 +1022,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             if (_.isEmpty(blueprint.id)) {
                 errors.blueprintName = t('errors.noBlueprintName');
             }
-            console.log("validateInputs:");
-            console.log(stateDeploymentInputs);
+
             const inputsWithoutValue = getInputsWithoutValues(blueprint.plan.inputs, stateDeploymentInputs);
             addErrors(inputsWithoutValue, errors);
 
@@ -1273,23 +1276,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                     >
                         {loading && <LoadingOverlay message={loadingMessage} />}
 
-                        {/* {showDeploymentNameInput && (
-                            <Form.Field
-                                error={errors.deploymentName}
-                                label={deploymentNameLabel}
-                                required
-                                help={deploymentNameHelp}
-                            >
-                                <Form.Input
-                                    name="deploymentName"
-                                    value={deploymentName}
-                                    onChange={(_: ChangeEvent<HTMLInputElement>, { value }: { value: string }) =>
-                                        this.setState({ deploymentName: value })
-                                    }
-                                />
-                            </Form.Field>
-                        )} */}
-
                     <div className="box">
                         <div className="steps">
                             <ul className="nav">
@@ -1333,7 +1319,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                                 }
                             />}
                         </div>
-
 
                     </div>
 
