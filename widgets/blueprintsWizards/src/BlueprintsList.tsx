@@ -19,6 +19,7 @@ interface BlueprintListState {
     confirmDelete: boolean;
     error: any;
     force: boolean;
+    gsnData:[];
 }
 
 export default class BlueprintList extends React.Component<BlueprintListProps, BlueprintListState> {
@@ -28,6 +29,7 @@ export default class BlueprintList extends React.Component<BlueprintListProps, B
         this.state = {
             showDeploymentModal: false,
             showDeploymentWizardModal:false,
+            gsnData:[],
             blueprintId: '',
             confirmDelete: false,
             error: null,
@@ -74,7 +76,7 @@ export default class BlueprintList extends React.Component<BlueprintListProps, B
     };
 
     createDeploymentWizard: BlueprintsViewProps['onCreateDeploymentWizard'] = item => {
-        this.setState({ error: null, blueprintId: item.id, showDeploymentWizardModal: true });
+        this.setState({ error: null, blueprintId: item.id, showDeploymentWizardModal: true,gsnData:item.gsnData });
     };
 
     deleteBlueprintConfirm: BlueprintsViewProps['onDeleteBlueprint'] = item => {
@@ -142,7 +144,7 @@ export default class BlueprintList extends React.Component<BlueprintListProps, B
     }
 
     render() {
-        const { blueprintId, confirmDelete, error, force, showDeploymentModal, showDeploymentWizardModal} = this.state;
+        const { blueprintId,gsnData,confirmDelete, error, force, showDeploymentModal, showDeploymentWizardModal} = this.state;
         const { data, toolbox, widget } = this.props;
         const NO_DATA_MESSAGE = 'There are no Blueprints available. Click "Upload" to add Blueprints.';
         const { ErrorMessage } = Stage.Basic;
@@ -200,6 +202,7 @@ export default class BlueprintList extends React.Component<BlueprintListProps, B
                 <DeployBlueprintModalWizard
                     open={showDeploymentWizardModal}
                     blueprintId={blueprintId}
+                    gsnData={gsnData}
                     onHide={this.hideDeploymentModal}
                     toolbox={toolbox}
                 />

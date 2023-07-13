@@ -22,6 +22,7 @@ interface Blueprint {
     visibility: string;
     state: string;
     error: string | null;
+    gsnData:any;
     /* eslint-enable camelcase */
 }
 

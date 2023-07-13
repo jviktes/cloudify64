@@ -71,6 +71,27 @@ Stage.defineWidget<unknown, unknown, BlueprintsWidgetConfiguration>({
         }
     ],
 
+    //GSN data:
+    // fetchInternalData = async () => {
+    //     const { toolbox } = this.props;
+    //     const response = await toolbox.getWidgetBackend().doGet('GSNAPI');
+    //     const data = await response;
+    //     //console.log("fetchInternalData:");
+    //     //console.log(data.result);
+    //     return data;
+    // },
+
+    // fetchGSNFromFile = async () =>{
+    //     // GSNAPI
+    //     const _dataFromExternalSource = await this.fetchInternalData(); //nactu data,
+
+    //     const gsnData =  _dataFromExternalSource;//JSON.parse(_dataFromExternalSource); 
+    //     console.log(gsnData);
+    //     this.setState({gsnData}); //tady je pole hodnot ve value
+    //     return gsnData;
+
+    // },
+
     fetchData(widget, toolbox, params) {
         const result = {};
         const filterRules = [...(widget.configuration.filterRules || [])];
@@ -101,8 +122,13 @@ Stage.defineWidget<unknown, unknown, BlueprintsWidgetConfiguration>({
             })
             .then(data => {
                 result.deployments = data;
+                return toolbox.getWidgetBackend().doGet('GSNAPI');
+            })
+            .then(data => {
+                result.gsnData = data;
                 return result;
-            });
+            })
+            
     },
     fetchParams: (widget, toolbox) => {
         const params = {};
@@ -120,6 +146,7 @@ Stage.defineWidget<unknown, unknown, BlueprintsWidgetConfiguration>({
     processData(data, toolbox) {
         const blueprintsData = data.blueprints;
         const deploymentData = data.deployments;
+        //const gsnData=data.gsnData;
 
         // Count deployments
         const depCount = _.reduce(
@@ -138,12 +165,14 @@ Stage.defineWidget<unknown, unknown, BlueprintsWidgetConfiguration>({
 
         return {
             ...blueprintsData,
+            //...gsnData,
             items: _.map(blueprintsData.items, item => {
                 return {
                     ...item,
                     created_at: Stage.Utils.Time.formatTimestamp(item.created_at),
                     updated_at: Stage.Utils.Time.formatTimestamp(item.updated_at),
-                    isSelected: selectedBlueprint === item.id
+                    isSelected: selectedBlueprint === item.id,
+                    gsnData:data.gsnData,
                 };
             }),
             total: _.get(blueprintsData, 'metadata.pagination.total', 0)
@@ -160,7 +189,7 @@ Stage.defineWidget<unknown, unknown, BlueprintsWidgetConfiguration>({
         const formattedData = this.processData(data, toolbox);
         return (
             <div>
-                <BlueprintsList widget={widget} data={formattedData} toolbox={toolbox} />
+                <BlueprintsList widget={widget} data={formattedData} toolbox={toolbox}/>
             </div>
         );
     }

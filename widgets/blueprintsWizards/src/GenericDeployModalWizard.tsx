@@ -84,6 +84,7 @@ type GenericDeployModalProps = {
      */
     blueprintId?: string;
 
+    gsnData:[];
     /**
      * function to be called when the modal is closed
      */
@@ -155,6 +156,7 @@ type GenericDeployModalProps = {
 
 const defaultProps: Partial<GenericDeployModalProps> = {
     blueprintId: '',
+    gsnData:[],
     onHide: _.noop,
     showDeploymentNameInput: false,
     showDeploymentIdInput: false,
@@ -254,7 +256,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
 
     static initialState = {
         blueprint: GenericDeployModal.EMPTY_BLUEPRINT,
-        gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
+        //gsnData:{result: PropTypes.arrayOf(GSNBusinessServiceProps)},
         gsnCountries:{},
         defaultValues:{},
         gsnRegions:{},
@@ -390,7 +392,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
 
     }
     componentDidUpdate(prevProps: GenericDeployModalProps) {
-        const { blueprintId, open } = this.props;
+        const { blueprintId, open} = this.props;
         if (!prevProps.open && open && typeof blueprintId === 'string') {
             // eslint-disable-next-line react/no-did-update-set-state
             this.setState({ ...GenericDeployModal.initialState, deploymentId: Stage.Utils.uuid() }, () =>
@@ -574,7 +576,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         deploymentInputs.data_disks=_filteredDisks;
         this.setState({deploymentInputs});
 
-
         this.setState({ activeSection: -1, loading: true, errors: {} });
         return this.validateInputs()
             .then(() =>
@@ -689,14 +690,14 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         return _.isEmpty(blueprintId);
     }
 
-    fetchInternalData = async () => {
-        const { toolbox } = this.props;
-        const response = await toolbox.getWidgetBackend().doGet('GSNAPI');
-        const data = await response;
-        //console.log("fetchInternalData:");
-        //console.log(data.result);
-        return data;
-      };
+    // fetchInternalData = async () => {
+    //     const { toolbox } = this.props;
+    //     const response = await toolbox.getWidgetBackend().doGet('GSNAPI');
+    //     const data = await response;
+    //     //console.log("fetchInternalData:");
+    //     //console.log(data.result);
+    //     return data;
+    //   };
 
     fetchDataFromAzure = async () => {
         const response = await fetch("https://jsonplaceholder.typicode.com/users");
@@ -756,71 +757,16 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         
     }
 
-    fetchGSNFromFile = async () =>{
-        // GSNAPI
-        const _dataFromExternalSource = await this.fetchInternalData(); //nactu data,
+    // fetchGSNFromFile = async () =>{
+    //     // GSNAPI
+    //     const _dataFromExternalSource = await this.fetchInternalData(); //nactu data,
 
-        const gsnData =  _dataFromExternalSource;//JSON.parse(_dataFromExternalSource); 
-        console.log(gsnData);
-        this.setState({gsnData}); //tady je pole hodnot ve value
-        return gsnData;
+    //     const gsnData =  _dataFromExternalSource;//JSON.parse(_dataFromExternalSource); 
+    //     console.log(gsnData);
+    //     this.setState({gsnData}); //tady je pole hodnot ve value
+    //     return gsnData;
 
-    }
-
-    fetchGSN = async () => {
-        console.log("calling fetchGSN");
-        
-        const { toolbox } = this.props;
-        let _secretDataFull = null;
-        let _refreshedSecretData = null;
-        try {
-            _secretDataFull = await toolbox.getManager().doGet(`/secrets/${GSN_BUSINESS_SERVICES_CASH}`);
-        } catch (error:any) {
-            console.log(error);
-            // {
-            //     "message": "Requested `Secret` with ID `GSN_BUSINESS_SERVICES_CASH` was not found",
-            //     "status": 404,
-            //     "code": "not_found_error"
-            // }
-            if (error.code == 'not_found_error') {
-                console.log("createSecret:");
-                await this.createSecret(GSN_BUSINESS_SERVICES_CASH);
-            }
-            else {
-                throw error;
-            }
-        }
-
-        //console.log("GSN_Business_services_cash:");
-        //console.log(_secretDataFull);
-
-        // kontrola, jestli jsou nějaká data:
-        if (_secretDataFull==null || _secretDataFull.value ==null || _secretDataFull.value =="null" || this.isRequiredUpdateGSNData(_secretDataFull) ) {
-            
-            //nutno se poprve zeptat azure nebo updatovat hodnoty
-            const _dataFromExternalSource = await this.fetchInternalData(); //nactu data,
-            // console.log("_dataFromExternalSource fresh::"+JSON.stringify(_dataFromExternalSource));
-            await this.updateSecret(GSN_BUSINESS_SERVICES_CASH,JSON.stringify(_dataFromExternalSource)).then(
-                async promises => {
-                    console.log(promises);
-                    toolbox.refresh();
-                    _refreshedSecretData = await toolbox.getManager().doGet(`/secrets/${GSN_BUSINESS_SERVICES_CASH}`); // nactu z cloudify db a ulozim
-                    console.log("GSN_Business_services_cash refreshing:");
-                    console.log(_refreshedSecretData);
-                }
-            ); 
-        }
-
-        //toto je pro nacteni dat do widgetu:
-        console.log("GSN_Business_services_cash:");
-        if (_refreshedSecretData!=null) {
-            _secretDataFull = _refreshedSecretData;
-        }
-        console.log(_secretDataFull);
-        const gsnData =  JSON.parse(_secretDataFull.value); 
-        this.setState({gsnData}); //tady je pole hodnot ve value
-        return gsnData;
-    }
+    // }
 
     fetchImpactedCountriesGSNData = async () => {
         console.log("calling fetchImpactedCountriesGSNData");
@@ -977,9 +923,10 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         errors: {},
                         loading: false
                     });
-                }).then (
-                    await this.fetchGSNFromFile()
-                )
+                })
+                // .then (
+                //     await this.fetchGSNFromFile()
+                // )
                 .then (
                     await this.fetchImpactedCountriesGSNData()
                 )
@@ -1036,7 +983,8 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
 
     render() {
         const { Form, Icon, LoadingOverlay, Modal, VisibilityField } = Stage.Basic;
-
+        const { gsnData } = this.props;
+        console.log(gsnData);
         const renderWizardStepContent= () =>{
 
             if (activeStep.key==="GeneralStep") {
@@ -1103,7 +1051,7 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                 fileLoading={fileLoading}
                 onDeploymentInputChange={this.handleDeploymentInputChange}
                 deploymentInputs={deploymentInputs}
-                gsnData = {this.state.gsnData}
+                gsnData = {this.props.gsnData}
                 gsnCountries = {this.state.gsnCountries}
                 gsnRegions={this.state.gsnRegions}
                 errors={errors}
