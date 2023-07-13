@@ -616,29 +616,39 @@ export default function InputFields({
             //business_service: 
             if (input.name=="business_service") {
 
-                let _valueCalculated = value;
-                if (value.length>0) {
-                    gsnData.result.forEach((element: {name: string; u_number: string; }) => {
-                        if (element.u_number.toLowerCase().includes(value.toLowerCase())) {
-                            _valueCalculated = value+" ("+element.name+")";
-                        }
-                    });
-                }
+                // let _valueCalculated = value;
+                // if (value.length>0) {
+                //     gsnData.result.forEach((element: {name: string; u_number: string; }) => {
+                //         if (element.u_number.toLowerCase().includes(value.toLowerCase())) {
+                //             _valueCalculated = value+" ("+element.name+")";
+                //         }
+                //     });
+                // }
 
-                            return ( 
-                                <div style={{marginTop: "310px"}}>
-                                    
-                                    <FormSearchField
-                                        input={input}
-                                        value={_valueCalculated}
-                                        onChange={onChange}
-                                        error={errorsState[input.name]}
-                                        toolbox={toolbox}
-                                        dataType={dataType}
-                                        gsnData={gsnData}
-                                    />
-                                    
-                                </div>
+                    let _valueCalculated = value;
+                        if (value.length > 0) {
+                        const matchedElement = gsnData.result.find((element: { u_number: string; }) =>
+                            element.u_number.toLowerCase().includes(value.toLowerCase())
+                        );
+                        if (matchedElement) {
+                            _valueCalculated = `${value} (${matchedElement.name})`;
+                        }
+                    }
+
+                return ( 
+                    <div style={{marginTop: "310px"}}>
+                        
+                        <FormSearchField
+                            input={input}
+                            value={_valueCalculated}
+                            onChange={onChange}
+                            error={errorsState[input.name]}
+                            toolbox={toolbox}
+                            dataType={dataType}
+                            gsnData={gsnData}
+                        />
+                        
+                    </div>
                             )
             }
             //impact: 

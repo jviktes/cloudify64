@@ -1,15 +1,10 @@
 import { AccordionTitleProps, CheckboxProps } from 'semantic-ui-react';
 import React, { SyntheticEvent } from 'react';
-import FileActions from '../../common/src/actions/FileActions';//'../actions/FileActions';
+import FileActions from '../../common/src/actions/FileActions';
 import BlueprintActions, { FullBlueprintData } from '../../common/src/blueprints/BlueprintActions';
-//import DynamicDropdown from '../../common/src/components/DynamicDropdown';
 import Consts from '../../common/src/Consts';
-//import LabelsInput from '../../common/src/labels/LabelsInput';
 import MissingSecretsError from '../../common/src/secrets/MissingSecretsError';
-//import AccordionSectionWithDivider from '../../common/src/components/accordion/AccordionSectionWithDivider';
-//import DeploymentInputs from './DeploymentInputsWizard';
 import DeployModalActions, { Buttons as ApproveButtons } from '../../common/src/deployModal/DeployModalActions';
-//import { ExecuteWorkflowInputs, executeWorkflow } from '../../common/src/executeWorkflow';
 import { executeWorkflow } from '../../common/src/executeWorkflow';
 import type {
     BaseWorkflowInputs,
@@ -39,7 +34,6 @@ import GSNBusinessServiceProps from './GSNBusinessService';
 const { i18n } = Stage;
 const t = Stage.Utils.getT('widgets.common.deployments.deployModal');
 
-const GSN_BUSINESS_SERVICES_CASH = "GSN_BUSINESS_SERVICES_CASH";
 const GSN_COUNTRIES_CASH = "countries";
 const DEFAULT_VALUES = "defaults";
 const REFRESHING_CASH_PERIOD_MINUTES = 5;
@@ -188,7 +182,7 @@ type GenericDeployModalState = {
     activeSection: any;
     areSecretsMissing: boolean;
     blueprint: any;
-    gsnData:any;
+    //gsnData:any;
     gsnCountries:any;
     defaultValues:any;
     gsnRegions:any;
@@ -757,19 +751,8 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
         
     }
 
-    // fetchGSNFromFile = async () =>{
-    //     // GSNAPI
-    //     const _dataFromExternalSource = await this.fetchInternalData(); //nactu data,
-
-    //     const gsnData =  _dataFromExternalSource;//JSON.parse(_dataFromExternalSource); 
-    //     console.log(gsnData);
-    //     this.setState({gsnData}); //tady je pole hodnot ve value
-    //     return gsnData;
-
-    // }
-
     fetchImpactedCountriesGSNData = async () => {
-        console.log("calling fetchImpactedCountriesGSNData");
+        //console.log("calling fetchImpactedCountriesGSNData");
         
         const { toolbox } = this.props;
         //let _secretDataFull = null;
@@ -802,59 +785,16 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
     }
 
     fetchDefaultValues = async () => {
-        //console.log("calling fetchDefaultValues");
-        
         const { toolbox } = this.props;
-        //const { deploymentInputs } = this.state;
         try {
             const _secretDataFull = await toolbox.getManager().doGet(`/secrets/${DEFAULT_VALUES}`);
-            //console.log(_secretDataFull);
             var defaultValues =  JSON.parse(_secretDataFull.value); 
-            
-            this.assignDefautlValues(defaultValues);
-
-            // deploymentInputs["impacted_region"] = ((defaultValues.impacted_region!=undefined || defaultValues.impacted_region!=null)? JSON.stringify(defaultValues.impacted_region) : "");//JSON.stringify(defaultValues.impacted_region);
-            // deploymentInputs["impacted_country"] = ((defaultValues.impacted_country!=undefined || defaultValues.impacted_country!=null)? JSON.stringify(defaultValues.impacted_country) : "");//JSON.stringify(defaultValues.impacted_country);
-            // deploymentInputs["business_unit"] = ((defaultValues.business_unit!=undefined || defaultValues.business_unit!=null)? defaultValues.business_unit : "");//defaultValues.business_unit
-            // deploymentInputs["business_service"] = ((defaultValues.business_service!=undefined || defaultValues.business_service!=null)? defaultValues.business_service : "");//defaultValues.business_service;
-            // deploymentInputs["impact"] = ((defaultValues.impact!=undefined || defaultValues.impact!=null)? defaultValues.impact : "");//defaultValues.impact;
-
-            defaultValues=(JSON.parse(JSON.stringify(defaultValues)));
             this.setState({defaultValues});
-            
-            return _secretDataFull;
-
         } catch (error:any) {
             console.log(error);
-            this.assignDefautlValues(defaultValues);
-            //throw error;
         }
     }
-    assignDefautlValues = (defaultValues:any) => {
-        try {
-            const { deploymentInputs } = this.state;
 
-            if (defaultValues==undefined) {
-                deploymentInputs["impacted_region"] = "";
-                deploymentInputs["impacted_country"] = "";
-                deploymentInputs["business_unit"] = "";
-                deploymentInputs["business_service"] = "";
-                deploymentInputs["impact"] = "";
-            }
-            else {
-                deploymentInputs["impacted_region"] = ((defaultValues.impacted_region!=undefined || defaultValues.impacted_region!=null)? JSON.stringify(defaultValues.impacted_region) : "");//JSON.stringify(defaultValues.impacted_region);
-                deploymentInputs["impacted_country"] = ((defaultValues.impacted_country!=undefined || defaultValues.impacted_country!=null)? JSON.stringify(defaultValues.impacted_country) : "");//JSON.stringify(defaultValues.impacted_country);
-                deploymentInputs["business_unit"] = ((defaultValues.business_unit!=undefined || defaultValues.business_unit!=null)? defaultValues.business_unit : "");//defaultValues.business_unit
-                deploymentInputs["business_service"] = ((defaultValues.business_service!=undefined || defaultValues.business_service!=null)? defaultValues.business_service : "");//defaultValues.business_service;
-                deploymentInputs["impact"] = ((defaultValues.impact!=undefined || defaultValues.impact!=null)? defaultValues.impact : "");//defaultValues.impact;
-    
-            }
-            this.setState({deploymentInputs});
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
-    };
     getDeploymentNameByTime  = (blueprint: FullBlueprintData) =>{
         const { Json } = Stage.Utils;
         const stringInputValue = Json.getStringValue(blueprint.plan.inputs["product_name"]).replace(/ /g,'');
@@ -864,16 +804,20 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             return _deploymentName+"_"+dateTime;
         
     }
+
     async selectBlueprint(id: DropdownValue) {
         if (!_.isEmpty(id) && typeof id === 'string') {
+
+            //load defaultsValues that will be used in deploymentInputs as defaults:
+            await this.fetchDefaultValues();
+
             this.setState({ loading: true, loadingMessage: t('inputs.deploymentInputs.loading') });
             const { toolbox } = this.props;
-            //const { defaultValues } = this.state;
+            const { defaultValues } = this.state;
             const actions = new BlueprintActions(toolbox);
             actions
                 .doGetFullBlueprintData(id)
                 .then(blueprint => {
-                    //console.log(blueprint);
                     const deploymentInputs = getInputsInitialValues(blueprint.plan);
                     const installWorkflow = {
                         ...(blueprint.plan.workflows.install as Record<string, unknown>),
@@ -883,8 +827,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                     const _deploymentName = this.getDeploymentNameByTime(blueprint);
                     this.setState({deploymentName: _deploymentName});
                     
-                    //console.log("check keys in data_disks");
-
                     //check keys in data_disks:
                     if (deploymentInputs.data_disks) {
                         
@@ -912,6 +854,28 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         deploymentInputs.service_names = JSON.stringify(dataDiskData);
                     }  
 
+                    try {
+
+                        if (defaultValues==undefined) {
+                            deploymentInputs["impacted_region"] = "";
+                            deploymentInputs["impacted_country"] = "";
+                            deploymentInputs["business_unit"] = "";
+                            deploymentInputs["business_service"] = "";
+                            deploymentInputs["impact"] = "";
+                        }
+                        else {
+                            deploymentInputs["impacted_region"] = ((defaultValues.impacted_region!=undefined || defaultValues.impacted_region!=null)? JSON.stringify(defaultValues.impacted_region) : "");//JSON.stringify(defaultValues.impacted_region);
+                            deploymentInputs["impacted_country"] = ((defaultValues.impacted_country!=undefined || defaultValues.impacted_country!=null)? JSON.stringify(defaultValues.impacted_country) : "");//JSON.stringify(defaultValues.impacted_country);
+                            deploymentInputs["business_unit"] = ((defaultValues.business_unit!=undefined || defaultValues.business_unit!=null)? defaultValues.business_unit : "");//defaultValues.business_unit
+                            deploymentInputs["business_service"] = ((defaultValues.business_service!=undefined || defaultValues.business_service!=null)? defaultValues.business_service : "");//defaultValues.business_service;
+                            deploymentInputs["impact"] = ((defaultValues.impact!=undefined || defaultValues.impact!=null)? defaultValues.impact : "");//defaultValues.impact;
+                        }
+
+                    } catch (error) {
+                        console.log(error);
+                        throw error;
+                    }
+
                     this.setState({
                         deploymentInputs,
                         blueprint,
@@ -924,14 +888,8 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
                         loading: false
                     });
                 })
-                // .then (
-                //     await this.fetchGSNFromFile()
-                // )
                 .then (
                     await this.fetchImpactedCountriesGSNData()
-                )
-                .then (
-                    await this.fetchDefaultValues()
                 )
                 .catch(err => {
                     this.setState({
@@ -983,8 +941,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
 
     render() {
         const { Form, Icon, LoadingOverlay, Modal, VisibilityField } = Stage.Basic;
-        const { gsnData } = this.props;
-        console.log(gsnData);
         const renderWizardStepContent= () =>{
 
             if (activeStep.key==="GeneralStep") {
@@ -1002,7 +958,6 @@ class GenericDeployModal extends React.Component<GenericDeployModalProps, Generi
             if (activeStep.key==="VMConfigStep") {
                 return VMConfigStepComponent();
             }
-
             return "";
         }
 
