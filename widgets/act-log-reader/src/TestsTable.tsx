@@ -82,6 +82,9 @@ export default class TestsTable extends React.Component<TestDataProps> {
                     sortColumn={widget.configuration.sortColumn}
                     sortAscending={widget.configuration.sortAscending}
                     searchable
+                    pageSize={widget.configuration.pageSize}
+                    //pageSize={2}
+                    totalSize={data.total}
                 >
                     <DataTable.Column label="Test date" name="testDatum" width="10%" />
                     <DataTable.Column label="Virtual machine" name="virtualMachine" width="20%" />

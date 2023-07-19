@@ -28,8 +28,11 @@ Stage.defineWidget({
     },
 
     render(widget, data, error, toolbox) {
+        console.log(widget.configuration.pageSize);
+
         const formattedData = {
-            items: data
+            items: data.itemsData,
+            total: data.total,
         };
         return <TestsTable widget={widget} data={formattedData} toolbox={toolbox} />;
     }

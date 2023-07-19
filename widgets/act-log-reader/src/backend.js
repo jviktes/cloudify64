@@ -14,8 +14,9 @@ module.exports = async function(r) {
 
     const _sortParam = lodash.castArray(params._sort)[0];
     const _searchParam = lodash.castArray(params._search)[0];
-    const _sizeParam = lodash.castArray(params._size)[0];
     const _tenantName =  lodash.castArray(params.tenant)[0];   
+    const _sizeParam = parseInt(lodash.castArray(params._size)[0]);
+    const _offsetparam = parseInt(lodash.castArray(params._offset)[0]);
 
     console.log(_tenantName);
     //<archive-root-folder>\<tentant-ID> 
@@ -33,6 +34,16 @@ module.exports = async function(r) {
         // after the decimal.
         return '_' + Math.random().toString(36).slice(2, 11);
       };
+
+
+     
+    const paginate=(data, offset, page_size)=> {
+        const start_index = offset;
+        const end_index = offset + page_size;
+        
+        const paginated_data = data.slice(start_index, end_index);
+        return paginated_data;
+      }
 
     const processedDataToJson = data => {
 
@@ -277,7 +288,21 @@ module.exports = async function(r) {
                     }
                 }
 
-                res.send(preparedData);
+                //tady vyberu kolik toho chci:
+
+                //_sizeParam = kolik
+                //_offsetparam = od čeho
+
+                const paginated_data = paginate(preparedData, _offsetparam, _sizeParam);
+                const dataOut = {};
+                dataOut.itemsData = paginated_data;
+                dataOut.total = preparedData.length;
+
+                //paginated_data.total = preparedData.length;
+                //console.log("paginated_data total:");
+                console.log(dataOut);
+                //console.log(paginated_data);
+                res.send(dataOut);
             });
         });
 
