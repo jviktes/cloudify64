@@ -29,12 +29,17 @@ Stage.defineWidget({
             type: Stage.Basic.GenericField.STRING_TYPE
         },
         {
+            id: 'unistallWorkflowIgnoreFailure',
+            name: 'Uninstall workflow - ignore failure',
+            default: true,
+            type: Stage.Basic.GenericField.BOOLEAN_TYPE
+        },
+        {
             id: 'serviceAccountPrefix',
             name: 'serviceAccountPrefix',
             default: "a1e_",
             type: Stage.Basic.GenericField.STRING_TYPE
         },
-
         //this version works only if current widget is remove and place again...:
         // {
         //     id: 'version',
