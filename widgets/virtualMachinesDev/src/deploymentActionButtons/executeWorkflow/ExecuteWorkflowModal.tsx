@@ -193,12 +193,22 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         else {
             setBaseWorkflowParams(workflowResource.parameters);
         }
-        
+        //for testing only:
+        // let unistallWorkflowIgnoreFailure = widget.configuration.unistallWorkflowIgnoreFailure;
+        // if (unistallWorkflowIgnoreFailure==undefined || unistallWorkflowIgnoreFailure==null) {
+        //     unistallWorkflowIgnoreFailure = true;
+        // }
+        // console.log(unistallWorkflowIgnoreFailure);
+
         //TODO: zde se nastavuje defautni hodnota force na false
         if (workflow?.name=="uninstall") {
             setForce(true);
-            //toto nefunguje:
-            let _remappadValues= {ignore_failure:true};
+            
+            let unistallWorkflowIgnoreFailure = widget.configuration.unistallWorkflowIgnoreFailure;
+            if (unistallWorkflowIgnoreFailure==undefined || unistallWorkflowIgnoreFailure==null) {
+                unistallWorkflowIgnoreFailure = true;
+            }
+            let _remappadValues= {ignore_failure:unistallWorkflowIgnoreFailure};
             setUserWorkflowParams(_remappadValues);
         }
         //console.log(parametresModal);
@@ -354,8 +364,8 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                     }
             })
             //u SQL to chce pole rolí
-            if (rootBlueprintName.indexOf("SQL")!== -1) {
-                changedValues[field.name]=selectedCheckBoxes;
+            if (rootBlueprintName.indexOf("SQL")!== -1 || workflow.name==="request_service_account") {
+                    changedValues[field.name]=JSON.stringify(selectedCheckBoxes);
             }
             else {
             //u zbytku to chce seznam roli do jednoho stringu   
