@@ -7,6 +7,7 @@ import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
 import { getDetails } from './VMHelpers';
 import IdPopupCustomised from './IdPopupCustomised';
+import OATTestTableVM from './OATTestTableVM';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -531,7 +532,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.51</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.52</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}
@@ -568,6 +569,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)}toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></RequestsTableVM></div>
+                                            <div style={{width:"50%"}}><OATTestTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></OATTestTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>
