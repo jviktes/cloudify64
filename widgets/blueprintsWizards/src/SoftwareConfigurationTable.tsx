@@ -235,7 +235,26 @@ export function SoftwareConfigurationTable({
                     setSelectedVM(_value);
                     setSearchWord('');
                     setIsActive(false);
-                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs',_paramName,_value);
+
+                    //tady ukladama bokem "sql_collation" misto aby se to ulozilo do cele struktrury services:
+
+                    let swConfigs = inputStates;
+
+                    var  _par= getParameterName(_item);
+            
+                    //console.log("onItemChangeSW value:" + _par);
+            
+                    for (let index = 0; index < swConfigs.length; index++) {
+                        const element = swConfigs[index];
+            
+                        if (element.hasOwnProperty(_par)) {
+                            element[_par] = _value;
+                            break;
+                        }
+                    }
+
+                    //toolbox.getEventBus().trigger('blueprint:setDeploymentIputs',_paramName,_value);
+                    toolbox.getEventBus().trigger('blueprint:setDeploymentIputs','service_names',JSON.stringify(swConfigs));
                 }
                 
                   const handleSearchInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
