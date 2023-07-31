@@ -148,27 +148,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     // eslint-disable-next-line class-methods-use-this
     onRowClick(_item:any) {
 
-        //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
         const elExt = document.getElementById(`${_item.id}_ext`);
         const elMain = document.getElementById(`${_item.id}_main`);
-        const elOAT = document.getElementById(`${_item.id}_oat`);
 
         if (elExt.style.display === 'none') {
             elExt.style.display = '';
             elExt.style.backgroundColor = '#e0e0e0';
-            elMain.style.backgroundColor = '#AAAAAA';
-        }
-        else if (elOAT.style.display === 'none') {
-            elOAT.style.display = '';
-            elOAT.style.backgroundColor = '#e0e0e0';
             elMain.style.backgroundColor = '#AAAAAA';
         } else {
             elExt.style.display = 'none';
             elExt.style.backgroundColor = '';
             elMain.style.backgroundColor = '';
         }
-
     }
+
     getExpandedButton (item:any) {
         //pokud v expanded data budou nejake chyby nebo waitingy, pak se tlacitko bude zobrazovat jinak:
         //nactu data pro
@@ -223,7 +216,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     }
     onRowExecutionClick(_item:any) {
 
-        //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
         const el = document.getElementById(`${_item.id}_executions`);
         const elMain = document.getElementById(`${_item.id}_main`);
         if (el.style.display === 'none') {
@@ -236,6 +228,21 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             elMain.style.backgroundColor = '';
         }
 
+    }
+
+    onRowOATClick(_item:any) {
+
+        const el = document.getElementById(`${_item.id}_oat`);
+        const elMain = document.getElementById(`${_item.id}_main`);
+        if (el.style.display === 'none') {
+            el.style.display = '';
+            el.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#AAAAAA';
+        } else {
+            el.style.display = 'none';
+            el.style.backgroundColor = '';
+            elMain.style.backgroundColor = '';
+        }
     }
 
     fetchGridData = fetchParams => {
@@ -491,6 +498,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             <DataTable.Data>
                 {this.getExpandedButton(item)}
                 <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
+                <Button icon="magnify" onClick={() => this.onRowOATClick(item)} />
                 <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToEmail(item)}></Button>
             </DataTable.Data>
     
@@ -539,7 +547,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.52</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.53</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}
@@ -589,7 +597,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                                 <div style={{width:"100%"}}><ExecutionsTableVM widget={widget} vmData={item} data={this.getExecutionData(item,this.state.detailedData[item.id])} toolbox={toolbox} ></ExecutionsTableVM></div>
                                         </div>
                                     </DataTable.Data>
-                                    
                             </DataTable.Row>
 
                             <DataTable.Row
