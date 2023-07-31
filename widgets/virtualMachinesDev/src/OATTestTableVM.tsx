@@ -16,20 +16,9 @@ interface OATTestTableVMProps {
     menuData:any;
 }
 
-interface YourComponentState {
-    formattedData: {
-      items: any[]; // Update this with the appropriate data type for items
-      total: number; // Update this with the appropriate data type for total
-    } | null;
-  }
-
 // eslint-disable-next-line react/prefer-stateless-function
 export default class OATTestTableVM extends React.Component<OATTestTableVMProps> {
 
-    // static initialState = {
-    //     requestsData:{},
-    //     detailedData:{},
-    // };
 
     constructor(props: OATTestTableVMProps) {
         super(props);
@@ -48,14 +37,6 @@ export default class OATTestTableVM extends React.Component<OATTestTableVMProps>
         this.loadOATData();
 
    }
-
-
-    // fetchData(widget, toolbox,params) {
-    //     const manager = toolbox.getManager();
-    //     const tenantName=manager.getSelectedTenant();
-    //     params.tenant = tenantName;
-    //     return toolbox.getWidgetBackend().doGet('filesAPI', { params });
-    // },
 
     loadOATData= async () => {
         const { toolbox } = this.props;

@@ -149,15 +149,22 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
     onRowClick(_item:any) {
 
         //TODO --> zmena ikony (asi trojuhelnik nahoru/dolu)
-        const el = document.getElementById(`${_item.id}_ext`);
+        const elExt = document.getElementById(`${_item.id}_ext`);
         const elMain = document.getElementById(`${_item.id}_main`);
-        if (el.style.display === 'none') {
-            el.style.display = '';
-            el.style.backgroundColor = '#e0e0e0';
-            elMain.style.backgroundColor = '#AAAAAA'; ;
+        const elOAT = document.getElementById(`${_item.id}_oat`);
+
+        if (elExt.style.display === 'none') {
+            elExt.style.display = '';
+            elExt.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#AAAAAA';
+        }
+        else if (elOAT.style.display === 'none') {
+            elOAT.style.display = '';
+            elOAT.style.backgroundColor = '#e0e0e0';
+            elMain.style.backgroundColor = '#AAAAAA';
         } else {
-            el.style.display = 'none';
-            el.style.backgroundColor = '';
+            elExt.style.display = 'none';
+            elExt.style.backgroundColor = '';
             elMain.style.backgroundColor = '';
         }
 
@@ -569,7 +576,6 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
                                             <div style={{width:"50%"}}><DataDisksTableVM widget={widget} vmData={item} data={this.getDataDiskData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)}toolbox={toolbox} ></DataDisksTableVM></div>
                                             <div style={{width:"50%"}}><RequestsTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></RequestsTableVM></div>
-                                            <div style={{width:"50%"}}><OATTestTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></OATTestTableVM></div>
                                         </div>
                                     </DataTable.Data>
                             </DataTable.Row>
@@ -584,6 +590,17 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                         </div>
                                     </DataTable.Data>
                                     
+                            </DataTable.Row>
+
+                            <DataTable.Row
+                                key={`${item.id}_oat`}
+                                style={{ display: 'none' }}
+                                id={`${item.id}_oat`}>
+                                    <DataTable.Data colSpan={11}>
+                                        <div className='virtualMachineMainLayout' style={{marginLeft:"25px"}}>
+                                         <div style={{width:"100%"}}><OATTestTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></OATTestTableVM></div>
+                                        </div>
+                                    </DataTable.Data>
                             </DataTable.Row>
 
                             </DataTable.RowExpandable>
