@@ -138,10 +138,10 @@ export default function InputFieldsVM({
                         if (typeof value !== 'undefined' && value !== null) {
 
                             if (typeof value === "number" && !isNaN(value)) {
-                                console.log("The value is a number.");
+                                //console.log("The value is a number.");
                                 _value=String(value);
                               } else {
-                                console.log("The value is not a number.");
+                                //console.log("The value is not a number.");
                                 _value = value.replace(/^"(.*)"$/, '$1');
                               }
 

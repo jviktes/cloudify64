@@ -370,8 +370,25 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             else {
             //u zbytku to chce seznam roli do jednoho stringu   
                 let _selectedCheckBoxes = JSON.stringify(selectedCheckBoxes);
-                _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
+                if (workflow.name==="request_user_account") {
+                    console.log("request_user_account:");
+                    try {
+                        if (workflow.parameters.account_role.type=="string") {
+                            _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
+                            //toto je stara verze, kde musim posilat jen 1 roli a to jako string
+                            
+                        }
+                        if (workflow.parameters.account_role.type=="list") {
+                            
+                        }
+                    } catch (error) {
+                        
+                    } 
+                    
+                }
+                
                 changedValues[field.name]=_selectedCheckBoxes;
+
             }
         }
 
@@ -379,11 +396,19 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         if (field.name=="account_role") { 
 
             if (workflow.name==="request_user_account") {
+                    try {
+                        var paramterType  = workflow.parameters.account_role.type;
 
-                    if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
-                        let errmessage = {"Error":"Roles Administrator and RemoteDesktopUser must not be combined one with each other (exclusive OR). Any combinations with the other roles are allowed."};
-                        setErrors(errmessage);
-                        setError();
+                        if (paramterType=="string") { 
+    
+                            if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
+                                let errmessage = {"Error":"Roles Administrator and RemoteDesktopUser must not be combined one with each other (exclusive OR). Any combinations with the other roles are allowed."};
+                                setErrors(errmessage);
+                                setError();
+                            }
+                        }
+                    } catch (error) {
+                        
                     }
                 }
             

@@ -45,6 +45,7 @@ export default class DeploymentActions {
     }
 
     doExecute(
+        
         deploymentId: string,
         workflowId: string,
         workflowParameters: Record<string, any> = {},
@@ -55,6 +56,7 @@ export default class DeploymentActions {
             scheduledTime: undefined
         }
     ) {
+        console.log(workflowParameters);
         return this.toolbox.getManager().doPost('/executions', {
             body: {
                 deployment_id: deploymentId,

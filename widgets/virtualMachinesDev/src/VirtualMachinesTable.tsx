@@ -7,7 +7,7 @@ import ExecutionsTableVM from './ExecutionsTableVM';
 import RequestsTableVM from './RequestsTableVM';
 import { getDetails } from './VMHelpers';
 import IdPopupCustomised from './IdPopupCustomised';
-import OATTestTableVM from './OATTestTableVM';
+//import OATTestTableVM from './OATTestTableVM';
 
 interface VirtualMachinesDataProps {
     data: {
@@ -230,20 +230,20 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
 
     }
 
-    onRowOATClick(_item:any) {
+    // onRowOATClick(_item:any) {
 
-        const el = document.getElementById(`${_item.id}_oat`);
-        const elMain = document.getElementById(`${_item.id}_main`);
-        if (el.style.display === 'none') {
-            el.style.display = '';
-            el.style.backgroundColor = '#e0e0e0';
-            elMain.style.backgroundColor = '#AAAAAA';
-        } else {
-            el.style.display = 'none';
-            el.style.backgroundColor = '';
-            elMain.style.backgroundColor = '';
-        }
-    }
+    //     const el = document.getElementById(`${_item.id}_oat`);
+    //     const elMain = document.getElementById(`${_item.id}_main`);
+    //     if (el.style.display === 'none') {
+    //         el.style.display = '';
+    //         el.style.backgroundColor = '#e0e0e0';
+    //         elMain.style.backgroundColor = '#AAAAAA';
+    //     } else {
+    //         el.style.display = 'none';
+    //         el.style.backgroundColor = '';
+    //         elMain.style.backgroundColor = '';
+    //     }
+    // }
 
     fetchGridData = fetchParams => {
         const { toolbox } = this.props;
@@ -498,7 +498,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
             <DataTable.Data>
                 {this.getExpandedButton(item)}
                 <Button icon="clock" onClick={() => this.onRowExecutionClick(item)} />
-                <Button icon="magnify" onClick={() => this.onRowOATClick(item)} />
+                {/* <Button icon="magnify" onClick={() => this.onRowOATClick(item)} /> */}
                 <Button basic compact title="Send information" icon="mail" onClick={() => this.copyToEmail(item)}></Button>
             </DataTable.Data>
     
@@ -547,7 +547,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.53</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.54</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}
@@ -599,7 +599,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                     </DataTable.Data>
                             </DataTable.Row>
 
-                            <DataTable.Row
+                            {/* <DataTable.Row
                                 key={`${item.id}_oat`}
                                 style={{ display: 'none' }}
                                 id={`${item.id}_oat`}>
@@ -608,7 +608,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                                          <div style={{width:"100%"}}><OATTestTableVM widget={widget} parrentBlueprint={this.getParrentBlueprint(item)} vmData={item} data={this.getPAMData(this.state.detailedData[item.id])} menuData={this.getMenuData(item,this.state.detailedData[item.id],item.id)} toolbox={toolbox} ></OATTestTableVM></div>
                                         </div>
                                     </DataTable.Data>
-                            </DataTable.Row>
+                            </DataTable.Row> */}
 
                             </DataTable.RowExpandable>
                         )

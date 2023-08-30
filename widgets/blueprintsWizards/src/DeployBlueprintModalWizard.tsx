@@ -41,7 +41,8 @@ const DeployBlueprintModalWizard: FunctionComponent<DeployBlueprintModalProps> =
         installWorkflowOptions?: WorkflowOptions
     ) {
         const deploymentActions = new DeploymentActions(toolbox);
-
+        console.log("installWorkflowParameters:");
+        console.log(installWorkflowParameters);
         return deploymentActions
             .doExecute(deploymentId, 'install', installWorkflowParameters, installWorkflowOptions)
             .then(() => deploymentId)
