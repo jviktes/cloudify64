@@ -396,20 +396,12 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
         if (field.name=="account_role") { 
 
             if (workflow.name==="request_user_account") {
-                    try {
-                        var paramterType  = workflow.parameters.account_role.type;
 
-                        if (paramterType=="string") { 
-    
-                            if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
-                                let errmessage = {"Error":"Roles Administrator and RemoteDesktopUser must not be combined one with each other (exclusive OR). Any combinations with the other roles are allowed."};
-                                setErrors(errmessage);
-                                setError();
-                            }
+                        if (selectedCheckBoxes.includes("Administrator") && selectedCheckBoxes.includes("RemoteDesktopUser") ) {
+                            let errmessage = {"Error":"Roles Administrator and RemoteDesktopUser must not be combined one with each other (exclusive OR). Any combinations with the other roles are allowed."};
+                            setErrors(errmessage);
+                            setError();
                         }
-                    } catch (error) {
-                        
-                    }
                 }
             
             if (workflow.name==="request_service_account") {
