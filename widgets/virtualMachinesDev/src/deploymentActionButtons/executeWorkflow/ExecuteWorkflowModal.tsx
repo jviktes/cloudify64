@@ -371,7 +371,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
             //u zbytku to chce seznam roli do jednoho stringu   
                 let _selectedCheckBoxes = JSON.stringify(selectedCheckBoxes);
                 if (workflow.name==="request_user_account") {
-                    console.log("request_user_account:");
+                    console.log("request_user_account:"); 
                     try {
                         if (workflow.parameters.account_role.type=="string") {
                             _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
@@ -386,7 +386,14 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                     } 
                     
                 }
-                
+                //pro ne-windows:
+                if (vmSize?.os.indexOf("Windows")==-1) {
+                    _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
+                }
+
+                console.log("Selected checboxes for account_role|OS:"+vmSize?.os);
+
+                //console.log("Selected checboxes:"+_selectedCheckBoxes);
                 changedValues[field.name]=_selectedCheckBoxes;
 
             }

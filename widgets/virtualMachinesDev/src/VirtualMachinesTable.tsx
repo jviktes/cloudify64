@@ -547,7 +547,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.55</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.56</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}
@@ -572,7 +572,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
                     {_.map(data.items, item => (          
                             <DataTable.RowExpandable key={item.id} >
 
-                            {getDetails(item)}
+                            {getDetails(item)} 
 
                             {this.renderRowData(item)}
 
