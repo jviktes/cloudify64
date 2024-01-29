@@ -547,7 +547,7 @@ export default class VirtualMachinesTable extends React.Component<VirtualMachine
         
         return (
             <div>
-                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.56</span>
+                <span style={{float:"right",fontSize:"smaller"}}>Version: 1.57</span>
                 <DataTable
                     className="table-scroll-vm"
                     pageSize={widget.configuration.pageSize}

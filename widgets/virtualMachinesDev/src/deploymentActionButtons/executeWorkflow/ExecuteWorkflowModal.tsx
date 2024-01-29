@@ -386,7 +386,7 @@ const ExecuteWorkflowModal: FunctionComponent<ExecuteWorkflowModalProps> = ({
                     } 
                     
                 }
-                //pro ne-windows:
+                //pro linux:
                 if (vmSize?.os.indexOf("Windows")==-1) {
                     _selectedCheckBoxes = _selectedCheckBoxes.replace('["', '').replace('"]', '');
                 }

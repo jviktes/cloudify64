@@ -137,16 +137,27 @@ export default function InputFieldsVM({
                     try {
                         if (typeof value !== 'undefined' && value !== null) {
 
-                            if (typeof value === "number" && !isNaN(value)) {
+                            if (typeof value === "number" && !isNaN(value)) 
+                            {
                                 //console.log("The value is a number.");
-                                _value=String(value);
-                              } else {
+                                return (
+                                    <FormField
+                                        input={input}
+                                        value={value}
+                                        onChange={onChange}
+                                        error={errorsState[input.name]}
+                                        toolbox={toolbox}
+                                        dataType={dataType}
+                                    />
+                                );
+                            } 
+                            else //string:
+                            {
                                 //console.log("The value is not a number.");
                                 _value = value.replace(/^"(.*)"$/, '$1');
-                              }
+                            }
 
                             //odstranen nadbytecnych uvozovek pro stringy:
-                            
                             if (input.name=="service_account_name" && value.trim().length === 0) {
                                 let serviceAccountPrefix = widget.configuration.serviceAccountPrefix;
                                 _value=String(serviceAccountPrefix);
